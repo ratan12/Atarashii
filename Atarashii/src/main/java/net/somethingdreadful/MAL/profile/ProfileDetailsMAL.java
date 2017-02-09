@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -20,8 +19,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
 import net.somethingdreadful.MAL.AppLog;
 import net.somethingdreadful.MAL.Card;
@@ -259,31 +260,20 @@ public class ProfileDetailsMAL extends Fragment implements SwipeRefreshLayout.On
                 setText();
                 setcolor();
 
-                Picasso.with(activity)
+                Glide.with(activity)
                         .load(activity.record.getImageUrl())
                         .error(R.drawable.cover_error)
                         .placeholder(R.drawable.cover_loading)
-                        .into(new Target() {
+                        .into(new GlideDrawableImageViewTarget(image) {
                             @Override
-                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                imagecard.wrapImage(bitmap.getWidth(), bitmap.getHeight());
-                                image.setImageBitmap(bitmap);
+                            public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> animation) {
+                                super.onResourceReady(resource, animation);
                             }
 
                             @Override
-                            public void onBitmapFailed(Drawable errorDrawable) {
-                                try {
-                                    Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.cover_error);
-                                    imagecard.wrapImage(225, 320);
-                                    image.setImageDrawable(drawable);
-                                } catch (Exception e) {
-                                    AppLog.log(Log.ERROR, "Atarashii", "ProfileDetailsMAL.refresh(): " + e.getMessage());
-                                }
-                            }
-
-                            @Override
-                            public void onPrepareLoad(Drawable placeHolderDrawable) {
-                                Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.cover_loading);
+                            public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                                super.onLoadFailed(e, errorDrawable);
+                                Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.cover_error);
                                 imagecard.wrapImage(225, 320);
                                 image.setImageDrawable(drawable);
                             }

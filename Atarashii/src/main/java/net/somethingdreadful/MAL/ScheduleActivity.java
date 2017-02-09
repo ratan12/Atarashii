@@ -21,7 +21,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.api.APIHelper;
@@ -312,7 +312,7 @@ public class ScheduleActivity extends AppCompatActivity implements Serializable,
                         itemHolder.progressCount.setText(record.getAiring().getNormaltime());
                     }
 
-                    Picasso.with(activity)
+                    Glide.with(activity)
                             .load(record.getImageUrl())
                             .error(R.drawable.cover_error)
                             .placeholder(R.drawable.cover_loading)

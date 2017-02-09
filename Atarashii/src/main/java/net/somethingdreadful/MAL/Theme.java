@@ -21,9 +21,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import java.util.Locale;
+
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 import static net.somethingdreadful.MAL.AppLog.initFabric;
 
@@ -196,12 +198,13 @@ public class Theme extends Application {
             }
 
             // init images
-            Picasso.with(activity)
+            Glide.with(activity)
                     .load(net.somethingdreadful.MAL.PrefManager.getProfileImage())
-                    .transform(new net.somethingdreadful.MAL.RoundedTransformation(username))
+
+                    .bitmapTransform(new CropCircleTransformation(context))
                     .into(image);
             if (net.somethingdreadful.MAL.PrefManager.getNavigationBackground() != null)
-                Picasso.with(activity)
+                Glide.with(activity)
                         .load(net.somethingdreadful.MAL.PrefManager.getNavigationBackground())
                         .placeholder(R.drawable.atarashii_background)
                         .error(R.drawable.atarashii_background)

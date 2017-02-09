@@ -21,12 +21,11 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import net.somethingdreadful.MAL.AppLog;
 import net.somethingdreadful.MAL.DetailView;
 import net.somethingdreadful.MAL.R;
-import net.somethingdreadful.MAL.RoundedTransformation;
 import net.somethingdreadful.MAL.Theme;
 import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.api.APIHelper;
@@ -41,6 +40,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import lombok.Getter;
 
 public class DetailViewReviews extends Fragment implements NetworkTask.NetworkTaskListener {
@@ -208,9 +208,9 @@ public class DetailViewReviews extends Fragment implements NetworkTask.NetworkTa
                 holder.subTitle3.setText(activity.isAnime() ? review.getEpisodesSeen(episeen) : review.getChaptersRead(chapseen));
                 holder.content.setText(Html.fromHtml(review.getShortReview()));
 
-                Picasso.with(context)
+                Glide.with(context)
                         .load(image)
-                        .transform(new RoundedTransformation(title)).fit()
+                        .bitmapTransform(new CropCircleTransformation(context))
                         .into(holder.imageView);
 
             } catch (Exception e) {

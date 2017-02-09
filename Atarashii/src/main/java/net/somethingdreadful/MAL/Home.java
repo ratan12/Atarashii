@@ -26,7 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.adapters.IGFPagerAdapter;
@@ -412,8 +412,8 @@ public class Home extends AppCompatActivity implements ChooseDialogFragment.onCl
     }
 
     @Override
-    public void onItemClick(int id, MALApi.ListType listType, String username, View view) {
-        DetailView.createDV(this, view, id, listType, username);
+    public void onItemClick(int id, MALApi.ListType listType, String username, View view, String coverImage) {
+        DetailView.createDV(this, view, id, listType, username, coverImage);
     }
 
     @Override
@@ -545,7 +545,7 @@ public class Home extends AppCompatActivity implements ChooseDialogFragment.onCl
 
     @Override
     public void onPosInputButtonClicked(String text, int id) {
-        Picasso.with(this)
+        Glide.with(this)
                 .load(text)
                 .placeholder(R.drawable.atarashii_background)
                 .error(R.drawable.atarashii_background)
@@ -556,7 +556,7 @@ public class Home extends AppCompatActivity implements ChooseDialogFragment.onCl
 
     @Override
     public void onNegInputButtonClicked(int id) {
-        Picasso.with(this)
+        Glide.with(this)
                 .load(R.drawable.atarashii_background)
                 .placeholder(R.drawable.atarashii_background)
                 .error(R.drawable.atarashii_background)

@@ -26,11 +26,13 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.api.APIHelper;
@@ -843,7 +845,7 @@ public class IGF extends Fragment implements OnScrollListener, OnItemClickListen
      */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        callback.onItemClick(gl.get(position).getId(), listType, username, view);
+        callback.onItemClick(gl.get(position).getId(), listType, username, view, gl.get(position).getImageUrl());
     }
 
     static class ViewHolder {
@@ -1004,29 +1006,31 @@ public class IGF extends Fragment implements OnScrollListener, OnItemClickListen
                         viewHolder.flavourText.setText(getString(R.string.unknown));
                     }
                 }
-                // Picasso will fail at high res images because of MAL support.
+                // Glide will fail at high res images because of MAL support.
                 // We will request a low res to at least display something.
                 final ImageView cover = viewHolder.cover;
-                Picasso.with(context)
+                Glide.with(context)
                         .load(record.getImageUrl())
                         .error(R.drawable.cover_error)
                         .placeholder(R.drawable.cover_loading)
-                        .into(viewHolder.cover, new Callback() {
-
+                        .listener(new RequestListener<String, GlideDrawable>() {
                             @Override
-                            public void onSuccess() {
-
-                            }
-
-                            @Override
-                            public void onError() {
-                                Picasso.with(context)
+                            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                                Glide.with(context)
                                         .load(record.getImageUrl().replace("l.jpg", ".jpg"))
                                         .error(R.drawable.cover_error)
                                         .placeholder(R.drawable.cover_loading)
                                         .into(cover);
+                                Log.e("e", record.getImageUrl());
+                                return true;
                             }
-                        });
+
+                            @Override
+                            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                return false;
+                            }
+                        })
+                        .into(cover);
             } catch (Exception e) {
                 AppLog.logTaskCrash("IGF", "ListViewAdapter()", e);
             }
@@ -1084,6 +1088,6 @@ public class IGF extends Fragment implements OnScrollListener, OnItemClickListen
 
         void onRecordsLoadingFinished(TaskJob job);
 
-        void onItemClick(int id, ListType listType, String username, View view);
+        void onItemClick(int id, ListType listType, String username, View view, String cover);
     }
 }

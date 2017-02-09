@@ -5,7 +5,6 @@ import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.nfc.NdefMessage;
@@ -18,7 +17,6 @@ import android.os.Parcelable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -29,8 +27,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
 import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.adapters.DetailViewPagerAdapter;
@@ -99,6 +99,12 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
             animeRecord = (Anime) state.getSerializable("anime");
             mangaRecord = (Manga) state.getSerializable("manga");
         }
+
+        if (getIntent().hasExtra("coverImage"))
+            Glide.with(this)
+                    .load(getIntent().getStringExtra("coverImage"))
+                    .placeholder(R.drawable.cover_loading)
+                    .into(coverImage);
 
         if (isEmpty())
             getRecord(false);
@@ -528,42 +534,34 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
             GenericRecord record = (type == ListType.ANIME ? animeRecord : mangaRecord);
             final String imageUrl = record.getImageUrl();
             final Activity activity = this;
-            Picasso.with(this)
+            Glide.with(this)
                     .load(imageUrl)
                     .placeholder(R.drawable.cover_loading)
-                    .into(new Target() {
+                    .into(new GlideDrawableImageViewTarget(coverImage) {
+
                         @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            coverImage.setImageBitmap(bitmap);
+                        public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> animation) {
+                            super.onResourceReady(resource, animation);
                             coverImageLoaded = true;
                         }
 
                         @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-                            try {
-                                Picasso.with(activity)
-                                        .load(imageUrl.replace("l.jpg", ".jpg"))
-                                        .error(R.drawable.cover_error)
-                                        .placeholder(R.drawable.cover_loading)
-                                        .into(coverImage);
-                            } catch (Exception e) {
-                                AppLog.log(Log.ERROR, "Atarashii", "DetailViewGeneral.setText(): " + e.getMessage());
-                            }
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-                            Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.cover_loading);
-                            coverImage.setImageDrawable(drawable);
+                        public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                            super.onLoadFailed(e, errorDrawable);
+                            Glide.with(activity)
+                                    .load(imageUrl.replace("l.jpg", ".jpg"))
+                                    .error(R.drawable.cover_error)
+                                    .placeholder(R.drawable.cover_loading)
+                                    .into(coverImage);
                         }
                     });
 
             if (record.getBannerUrl() != null && !record.getBannerUrl().equals("")) {
-                Picasso.with(this)
+                Glide.with(this)
                         .load(record.getBannerUrl())
                         .into(bannerImage);
             } else {
-                Picasso.with(this)
+                Glide.with(this)
                         .load(record.getImageUrl())
                         .error(R.drawable.atarashii_background)
                         .into(bannerImage);
@@ -690,6 +688,21 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
         startDetails.putExtra("recordID", id);
         startDetails.putExtra("recordType", listType);
         startDetails.putExtra("username", username);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, view, "coverImage");
+            activity.startActivity(startDetails, options.toBundle());
+        } else {
+            activity.startActivity(startDetails);
+        }
+    }
+
+    public static void createDV(Activity activity, View view, int id, ListType listType, String username, String coverImage) {
+        Intent startDetails = new Intent(activity, DetailView.class);
+        startDetails.putExtra("recordID", id);
+        startDetails.putExtra("recordType", listType);
+        startDetails.putExtra("username", username);
+        startDetails.putExtra("coverImage", coverImage);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, view, "coverImage");

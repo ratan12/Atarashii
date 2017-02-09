@@ -348,8 +348,8 @@ public class ProfileActivity extends AppCompatActivity implements UserNetworkTas
     }
 
     @Override
-    public void onItemClick(int id, MALApi.ListType listType, String username, View view) {
-        DetailView.createDV(this, view, id, listType, AccountService.getUsername());
+    public void onItemClick(int id, MALApi.ListType listType, String username, View view, String coverImage) {
+        DetailView.createDV(this, view, id, listType, AccountService.getUsername(), coverImage);
     }
 
     @Override

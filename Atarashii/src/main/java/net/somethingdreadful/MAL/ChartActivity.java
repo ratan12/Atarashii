@@ -87,8 +87,8 @@ public class ChartActivity extends AppCompatActivity implements SwipeRefreshLayo
     }
 
     @Override
-    public void onItemClick(int id, MALApi.ListType listType, String username, View view) {
-        DetailView.createDV(this, view, id, listType, username);
+    public void onItemClick(int id, MALApi.ListType listType, String username, View view, String coverImage) {
+        DetailView.createDV(this, view, id, listType, username, coverImage);
     }
 
     @Override

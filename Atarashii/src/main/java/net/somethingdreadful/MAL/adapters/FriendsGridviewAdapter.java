@@ -10,12 +10,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import net.somethingdreadful.MAL.AppLog;
 import net.somethingdreadful.MAL.DateTools;
 import net.somethingdreadful.MAL.R;
-import net.somethingdreadful.MAL.RoundedTransformation;
 import net.somethingdreadful.MAL.Theme;
 import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.api.BaseModels.Profile;
@@ -24,6 +23,8 @@ import org.apache.commons.lang3.text.WordUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class FriendsGridviewAdapter<T> extends ArrayAdapter<T> {
     private final Context context;
@@ -76,10 +77,10 @@ public class FriendsGridviewAdapter<T> extends ArrayAdapter<T> {
             } else {
                 viewHolder.lastOnline.setText(context.getString(R.string.unknown));
             }
-            Picasso.with(context).load(record.getImageUrl())
+            Glide.with(context).load(record.getImageUrl())
                     .error(R.drawable.cover_error)
                     .placeholder(R.drawable.cover_loading)
-                    .transform(new RoundedTransformation(record.getUsername()))
+                    .bitmapTransform(new CropCircleTransformation(context))
                     .into(viewHolder.avatar);
         } catch (Exception e) {
             AppLog.log(Log.ERROR, "Atarashii", "FriendsActivity.ListViewAdapter(): " + e.getMessage());

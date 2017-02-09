@@ -107,7 +107,7 @@ public class SearchActivity extends AppCompatActivity implements IGF.IGFCallback
     }
 
     @Override
-    public void onItemClick(int id, ListType listType, String username, View view) {
-        DetailView.createDV(this, view, id, listType, username);
+    public void onItemClick(int id, ListType listType, String username, View view, String coverImage) {
+        DetailView.createDV(this, view, id, listType, username, coverImage);
     }
 }

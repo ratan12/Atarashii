@@ -17,14 +17,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import net.somethingdreadful.MAL.AppLog;
 import net.somethingdreadful.MAL.DetailView;
 import net.somethingdreadful.MAL.NfcHelper;
 import net.somethingdreadful.MAL.ProfileActivity;
 import net.somethingdreadful.MAL.R;
-import net.somethingdreadful.MAL.RoundedTransformation;
 import net.somethingdreadful.MAL.Theme;
 import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.api.APIHelper;
@@ -36,6 +35,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class ProfileHistory extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     public ProfileActivity activity;
@@ -167,9 +167,9 @@ public class ProfileHistory extends Fragment implements SwipeRefreshLayout.OnRef
                         break;
                 }
 
-                Picasso.with(context)
+                Glide.with(context)
                         .load(image)
-                        .transform(new RoundedTransformation(image + "History")).fit()
+                        .bitmapTransform(new CropCircleTransformation(context))
                         .into(holder.imageView);
 
             } catch (Exception e) {
