@@ -167,6 +167,8 @@
     <string name="label_Chapters">Chapters:</string>
     <string name="label_Volumes">Volumes:</string>
     <string name="label_Number">Number:</string>
+    <string name="cover_Episodes">Episodes:</string>
+    <string name="cover_Members">Members:</string>
 
     <!-- Navigation drawer (item & action) Strings -->
     <string name="nav_item_my_profile">My Profile</string>
@@ -302,6 +304,23 @@
         <item>Plan to watch</item>
         <item>Reading</item>
         <item>Plan to read</item>
+    </string-array>
+
+    <string-array name="igf_strings" translatable="false">
+        <item>@string/cover_Watching</item>
+        <item>@string/cover_Reading</item>
+        <item>@string/cover_Completed</item>
+        <item>@string/cover_OnHold</item>
+        <item>@string/cover_Dropped</item>
+        <item>@string/cover_PlanningToWatch</item>
+        <item>@string/cover_PlanningToRead</item>
+        <item>@string/cover_score</item>
+        <item>@string/cover_status</item>
+        <item>@string/cover_score</item>
+        <item>@string/cover_Episodes</item>
+        <item>@string/cover_Members</item>
+        <item>@string/label_Chapters</item>
+        <item>@string/label_Volumes</item>
     </string-array>
 
     <!-- BaseActionBarSearchView (Unknown) Strings -->

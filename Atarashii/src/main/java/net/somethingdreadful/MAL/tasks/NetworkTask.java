@@ -108,7 +108,7 @@ public class NetworkTask extends AsyncTask<String, Void, Object> {
                     break;
                 case GETFRIENDLIST:
                     if (params != null)
-                        taskResult = isAnimeTask() ? cManager.downloadAnimeList(params[0]) : cManager.downloadMangaList(params[0]);
+                        taskResult = isAnimeTask() ? cManager.getProfileAnimeList(params[0]) : cManager.getProfileMangaList(params[0]);
                     break;
                 case FORCESYNC:
                     if (params != null) {

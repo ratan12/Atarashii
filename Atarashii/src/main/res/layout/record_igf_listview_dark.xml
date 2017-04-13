@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:background="@color/bg_dark">
+
+    <TextView
+        android:id="@+id/igf_title"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="4dp"
+        android:gravity="left|center_vertical"
+        android:text="TextView"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textColor="@color/text_light_primary"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/igf_text3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/igf_text2"
+        android:layout_alignLeft="@+id/igf_text2"
+        android:layout_alignRight="@+id/igf_text2"
+        android:layout_alignStart="@+id/igf_text2"
+        android:layout_below="@+id/igf_text2"
+        android:layout_marginTop="2dp"
+        android:maxLines="1"
+        android:text="TextView"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="@color/text_light_secondary"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/igf_text2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/igf_text1"
+        android:layout_alignLeft="@+id/igf_text1"
+        android:layout_alignRight="@+id/igf_text1"
+        android:layout_alignStart="@+id/igf_text1"
+        android:layout_below="@+id/igf_text1"
+        android:layout_marginTop="2dp"
+        android:maxLines="1"
+        android:text="TextView"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="@color/text_light_secondary"
+        android:textSize="16sp"/>
+
+    <View
+        android:id="@+id/divider1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/include"
+        android:layout_alignLeft="@+id/include"
+        android:layout_alignStart="@+id/include"
+        android:background="@color/bg_dark_card"/>
+
+    <TextView
+        android:id="@+id/igf_text1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/igf_title"
+        android:layout_alignRight="@+id/igf_title"
+        android:layout_alignTop="@+id/coverImage"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@+id/coverImage"
+        android:text="TextView"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="@color/text_light_secondary"
+        android:textSize="16sp"/>
+
+    <RelativeLayout
+        android:id="@+id/mainPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/highlite"/>
+
+    <ImageView
+        android:id="@+id/coverImage"
+        android:layout_width="78dp"
+        android:layout_height="102dp"
+        android:layout_alignLeft="@+id/igf_title"
+        android:layout_alignStart="@+id/igf_title"
+        android:layout_below="@+id/igf_title"
+        android:layout_marginTop="4dp"
+        android:cropToPadding="true"
+        android:scaleType="centerCrop"/>
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/igf_buttonpanel"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_alignLeft="@+id/igf_text3"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignStart="@+id/igf_text3"
+        android:background="@color/bg_dark"/>
+</RelativeLayout>

@@ -21,8 +21,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
 import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.api.APIHelper;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Anime;
@@ -312,11 +310,11 @@ public class ScheduleActivity extends AppCompatActivity implements Serializable,
                         itemHolder.progressCount.setText(record.getAiring().getNormaltime());
                     }
 
-                    Glide.with(activity)
+                    /*Glide.with(activity)
                             .load(record.getImageUrl())
                             .error(R.drawable.cover_error)
                             .placeholder(R.drawable.cover_loading)
-                            .into(itemHolder.cover);
+                            .into(itemHolder.cover);*/
                 }
             } catch (Exception e) {
                 AppLog.logTaskCrash("ScheduleActivity", e.getMessage(), e);

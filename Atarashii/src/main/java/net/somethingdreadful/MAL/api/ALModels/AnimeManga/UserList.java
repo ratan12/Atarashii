@@ -3,12 +3,15 @@ package net.somethingdreadful.MAL.api.ALModels.AnimeManga;
 import com.google.gson.annotations.SerializedName;
 
 import net.somethingdreadful.MAL.PrefManager;
+import net.somethingdreadful.MAL.api.BaseModels.IGFModel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
 import lombok.Getter;
+
+import static net.somethingdreadful.MAL.api.ALModels.AnimeManga.GenericRecord.getLanguageTitle;
 
 public class UserList implements Serializable {
     @Getter
@@ -81,6 +84,56 @@ public class UserList implements Serializable {
         return newList;
     }
 
+    public IGFModel arrayManga() {
+        IGFModel igfModel = new IGFModel(0);
+        convertM(getLists().completed, igfModel);
+        convertM(getLists().planToRead, igfModel);
+        convertM(getLists().dropped, igfModel);
+        convertM(getLists().reading, igfModel);
+        convertM(getLists().onHold, igfModel);
+        return igfModel;
+    }
+
+    public static IGFModel convertM(ArrayList<ListDetails> ALArray, IGFModel igfModel) {
+        if (ALArray != null)
+            for (ListDetails anime : ALArray) {
+                IGFModel.IGFItem igfItem = igfModel.new IGFItem();
+                Manga AD = anime.getManga();
+                igfItem.setId(anime.getId());
+                igfItem.setTitle(getLanguageTitle(AD.getTitleRomaji(), AD.getTitleEnglish(), AD.getTitleJapanese()));
+                igfItem.setImageUrl(AD.getImageUrlLge());
+                igfItem.setShortDetails(AD.getType());
+                igfItem.setUserStatusRaw(anime.getListStatus());
+                igfModel.getTitles().add(igfItem);
+            }
+        return igfModel;
+    }
+
+    public IGFModel arrayAnime() {
+        IGFModel igfModel = new IGFModel(0);
+        convertA(getLists().completed, igfModel);
+        convertA(getLists().planToWatch, igfModel);
+        convertA(getLists().dropped, igfModel);
+        convertA(getLists().watching, igfModel);
+        convertA(getLists().onHold, igfModel);
+        return igfModel;
+    }
+
+    public static IGFModel convertA(ArrayList<ListDetails> ALArray, IGFModel igfModel) {
+        if (ALArray != null)
+            for (ListDetails anime : ALArray) {
+                IGFModel.IGFItem igfItem = igfModel.new IGFItem();
+                Anime AD = anime.getAnime();
+                igfItem.setId(anime.getId());
+                igfItem.setTitle(getLanguageTitle(AD.getTitleRomaji(), AD.getTitleEnglish(), AD.getTitleJapanese()));
+                igfItem.setImageUrl(AD.getImageUrlLge());
+                igfItem.setShortDetails(AD.getType());
+                igfItem.setUserStatusRaw(anime.getListStatus());
+                igfModel.getTitles().add(igfItem);
+            }
+        return igfModel;
+    }
+
     private ArrayList<net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Anime> convertAnime(ArrayList<ListDetails> list) {
         ArrayList<net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Anime> newList = new ArrayList<>();
         if (list != null)
@@ -89,7 +142,7 @@ public class UserList implements Serializable {
                     net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Anime anime = new net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Anime();
                     Anime AD = detail.getAnime();
                     anime.setId(AD.getId());
-                    anime.setTitle(GenericRecord.getLanguageTitle(AD.getTitleRomaji(), AD.getTitleEnglish(), AD.getTitleJapanese()));
+                    anime.setTitle(getLanguageTitle(AD.getTitleRomaji(), AD.getTitleEnglish(), AD.getTitleJapanese()));
                     anime.setType(AD.getType());
                     anime.setImageUrl(AD.getImageUrlLge());
                     anime.setPopularity(AD.getPopularity());
@@ -149,7 +202,7 @@ public class UserList implements Serializable {
                     net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Manga manga = new net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Manga();
                     Manga MD = detail.getManga();
                     manga.setId(MD.getId());
-                    manga.setTitle(GenericRecord.getLanguageTitle(MD.getTitleRomaji(), MD.getTitleEnglish(), MD.getTitleJapanese()));
+                    manga.setTitle(getLanguageTitle(MD.getTitleRomaji(), MD.getTitleEnglish(), MD.getTitleJapanese()));
                     manga.setImageUrl(MD.getImageUrlLge());
                     manga.setType(MD.getType());
                     manga.setReadStatus(detail.getListStatus());

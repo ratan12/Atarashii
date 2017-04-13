@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -16,12 +17,11 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.facebook.drawee.view.DraweeView;
 
 import net.somethingdreadful.MAL.AppLog;
 import net.somethingdreadful.MAL.DetailView;
@@ -40,7 +40,6 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import lombok.Getter;
 
 public class DetailViewReviews extends Fragment implements NetworkTask.NetworkTaskListener {
@@ -207,11 +206,7 @@ public class DetailViewReviews extends Fragment implements NetworkTask.NetworkTa
                 holder.subTitle2.setText(rating + " " + review.getRating() + (!AccountService.isMAL() ? "/100" : ""));
                 holder.subTitle3.setText(activity.isAnime() ? review.getEpisodesSeen(episeen) : review.getChaptersRead(chapseen));
                 holder.content.setText(Html.fromHtml(review.getShortReview()));
-
-                Glide.with(context)
-                        .load(image)
-                        .bitmapTransform(new CropCircleTransformation(context))
-                        .into(holder.imageView);
+                holder.imageView.setImageURI(Uri.parse(image));
 
             } catch (Exception e) {
                 AppLog.logTaskCrash("DetailViewReviews", e.getMessage(), e);
@@ -288,7 +283,7 @@ public class DetailViewReviews extends Fragment implements NetworkTask.NetworkTa
         public final TextView subTitle2;
         public final TextView subTitle3;
         public final TextView content;
-        public final ImageView imageView;
+        public final DraweeView imageView;
         public final RelativeLayout header;
 
         public reviewAdapterHolder(View itemView) {
@@ -298,7 +293,7 @@ public class DetailViewReviews extends Fragment implements NetworkTask.NetworkTa
             subTitle2 = (TextView) itemView.findViewById(R.id.Cardsub2);
             subTitle3 = (TextView) itemView.findViewById(R.id.Cardsub3);
             content = (TextView) itemView.findViewById(R.id.content);
-            imageView = (ImageView) itemView.findViewById(R.id.coverImage);
+            imageView = (DraweeView) itemView.findViewById(R.id.coverImage);
             header = (RelativeLayout) itemView.findViewById(R.id.header);
 
             GradientDrawable shape = (GradientDrawable) header.getBackground();

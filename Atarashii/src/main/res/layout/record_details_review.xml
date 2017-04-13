@@ -80,7 +80,7 @@
 
         </RelativeLayout>
         
-        <ImageView
+        <com.facebook.drawee.view.DraweeView
             android:id="@+id/coverImage"
             android:layout_width="48dp"
             android:layout_height="48dp"

@@ -2,6 +2,8 @@ package net.somethingdreadful.MAL.api.ALModels.AnimeManga;
 
 import com.google.gson.annotations.SerializedName;
 
+import net.somethingdreadful.MAL.api.BaseModels.IGFModel;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -33,13 +35,17 @@ public class Manga extends GenericRecord implements Serializable {
         return model;
     }
 
-    public static ArrayList<net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Manga> convertBaseArray(ArrayList<Manga> ALArray) {
-        ArrayList<net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Manga> base = new ArrayList<>();
-        if (ALArray != null) {
-            for (Manga manga : ALArray) {
-                base.add(manga.createBaseModel());
+    public static IGFModel convertBaseArray(ArrayList<Manga> ALArray) {
+        IGFModel igfModel = new IGFModel(0);
+        if (ALArray != null)
+            for (Manga anime : ALArray) {
+                IGFModel.IGFItem igfItem = igfModel.new IGFItem();
+                igfItem.setId(anime.getId());
+                igfItem.setTitle(getLanguageTitle(anime.getTitleRomaji(), anime.getTitleEnglish(), anime.getTitleJapanese()));
+                igfItem.setImageUrl(anime.getImageUrlLge());
+                igfItem.setShortDetails(anime.getType());
+                igfModel.getTitles().add(igfItem);
             }
-        }
-        return base;
+        return igfModel;
     }
 }

@@ -7,6 +7,8 @@ import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -18,14 +20,13 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
 
 import java.util.Locale;
-
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 import static net.somethingdreadful.MAL.AppLog.initFabric;
 
@@ -33,7 +34,7 @@ public class Theme extends Application {
     public static boolean darkTheme;
     private static float density;
     private Configuration config;
-    static Context context;
+    public static Context context;
 
     @Override
     public void onCreate() {
@@ -42,6 +43,7 @@ public class Theme extends Application {
         net.somethingdreadful.MAL.PrefManager.create(getApplicationContext());
         context = getApplicationContext();
 
+        Fresco.initialize(this, ImagePipelineConfig.newBuilder(this).setDownsampleEnabled(true).build());
         initFabric(context);
 
         Locale locale = net.somethingdreadful.MAL.PrefManager.getLocale();
@@ -174,8 +176,8 @@ public class Theme extends Application {
         try {
             View view = navigationView.getHeaderView(0);
             String username = net.somethingdreadful.MAL.account.AccountService.getUsername();
-            ImageView image = (ImageView) view.findViewById(R.id.Image);
-            ImageView image2 = (ImageView) view.findViewById(R.id.NDimage);
+            SimpleDraweeView image = (SimpleDraweeView) view.findViewById(R.id.Image);
+            SimpleDraweeView image2 = (SimpleDraweeView) view.findViewById(R.id.NDimage);
             ((TextView) view.findViewById(R.id.siteName)).setText(activity.getString(net.somethingdreadful.MAL.account.AccountService.isMAL() ? R.string.init_hint_myanimelist : R.string.init_hint_anilist));
             ((TextView) view.findViewById(R.id.name)).setText(username);
 
@@ -198,17 +200,9 @@ public class Theme extends Application {
             }
 
             // init images
-            Glide.with(activity)
-                    .load(net.somethingdreadful.MAL.PrefManager.getProfileImage())
-
-                    .bitmapTransform(new CropCircleTransformation(context))
-                    .into(image);
-            if (net.somethingdreadful.MAL.PrefManager.getNavigationBackground() != null)
-                Glide.with(activity)
-                        .load(net.somethingdreadful.MAL.PrefManager.getNavigationBackground())
-                        .placeholder(R.drawable.atarashii_background)
-                        .error(R.drawable.atarashii_background)
-                        .into(image2);
+            image.setImageURI(Uri.parse(PrefManager.getProfileImage()));
+            if (PrefManager.getNavigationBackground() != null)
+                image2.setImageURI(Uri.parse(PrefManager.getNavigationBackground()));
             if (listener != null) {
                 image.setOnClickListener(listener);
                 image2.setOnClickListener(listener);
@@ -233,13 +227,29 @@ public class Theme extends Application {
      *
      * @param c    The context
      * @param view The view which should use this drawable
-     * @param id   The drawable/color id of the wanted color/drawable
+     * @param id   The drawable id of the wanted drawable
      */
     public static void setBackground(Context c, View view, int id) {
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
             view.setBackgroundDrawable(ContextCompat.getDrawable(c, id));
         } else {
             view.setBackground(ContextCompat.getDrawable(c, id));
+        }
+    }
+
+    /**
+     * Set the background of a view.
+     *
+     * @param c    The context
+     * @param view The view which should use this drawable
+     * @param id   The drawable id of the wanted drawable
+     */
+    public static void setBackgroundColor(Context c, View view, int id) {
+        ColorDrawable colorDrawable = new ColorDrawable(ContextCompat.getColor(c, id));
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            view.setBackgroundDrawable(colorDrawable);
+        } else {
+            view.setBackground(colorDrawable);
         }
     }
 

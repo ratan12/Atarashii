@@ -5,31 +5,30 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.adapters.ProfilePagerAdapter;
 import net.somethingdreadful.MAL.api.APIHelper;
+import net.somethingdreadful.MAL.api.BaseModels.IGFModel;
 import net.somethingdreadful.MAL.api.BaseModels.Profile;
-import net.somethingdreadful.MAL.api.MALApi;
+import net.somethingdreadful.MAL.cover.CoverAction;
+import net.somethingdreadful.MAL.cover.CoverFragment;
 import net.somethingdreadful.MAL.dialog.ShareDialogFragment;
 import net.somethingdreadful.MAL.profile.ProfileDetailsAL;
 import net.somethingdreadful.MAL.profile.ProfileDetailsMAL;
 import net.somethingdreadful.MAL.profile.ProfileFriends;
 import net.somethingdreadful.MAL.profile.ProfileHistory;
-import net.somethingdreadful.MAL.tasks.TaskJob;
 import net.somethingdreadful.MAL.tasks.UserNetworkTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ProfileActivity extends AppCompatActivity implements UserNetworkTask.UserNetworkTaskListener, IGF.IGFCallbackListener, ViewPager.OnPageChangeListener {
+public class ProfileActivity extends AppCompatActivity implements UserNetworkTask.UserNetworkTaskListener, CoverFragment.CoverListener, ViewPager.OnPageChangeListener {
     private Context context;
     public Profile record;
     private ProfileFriends friends;
@@ -37,8 +36,8 @@ public class ProfileActivity extends AppCompatActivity implements UserNetworkTas
     private ProfileDetailsMAL detailsMAL;
     private ProfileHistory history;
     private ProfileFriends followers;
-    private IGF animeList;
-    private IGF mangaList;
+    private CoverFragment animeList;
+    private CoverFragment mangaList;
     private Menu menu;
     private ProfilePagerAdapter adapter;
     private boolean isLoading = false;
@@ -135,38 +134,24 @@ public class ProfileActivity extends AppCompatActivity implements UserNetworkTas
                 filterRecords(6, item);
                 break;
             case R.id.sort_title:
-                sortRecords(1, item);
+                sortRecords(1, item, animeList.isInversed);
                 break;
             case R.id.sort_score:
-                sortRecords(2, item);
+                sortRecords(2, item, animeList.isInversed);
                 break;
             case R.id.sort_type:
-                sortRecords(3, item);
+                sortRecords(3, item, animeList.isInversed);
                 break;
             case R.id.sort_status:
-                sortRecords(4, item);
+                sortRecords(4, item, animeList.isInversed);
                 break;
             case R.id.sort_progress:
-                sortRecords(5, item);
-                break;
-            case R.id.menu_details:
-                if (!animeList.isLoading() && !mangaList.isLoading()) {
-                    item.setChecked(!item.isChecked());
-                    if (animeList != null && mangaList != null) {
-                        animeList.details();
-                        mangaList.details();
-                    }
-                } else {
-                    Theme.Snackbar(this, R.string.toast_info_hold_on);
-                }
+                sortRecords(5, item, animeList.isInversed);
                 break;
             case R.id.menu_inverse:
-                if (!animeList.isLoading() && !mangaList.isLoading()) {
+                if (!animeList.isLoading && !mangaList.isLoading) {
                     item.setChecked(!item.isChecked());
-                    if (animeList != null && mangaList != null) {
-                        animeList.inverse();
-                        mangaList.inverse();
-                    }
+                    sortRecords(animeList.sortType, null, item.isChecked());
                 } else {
                     Theme.Snackbar(this, R.string.toast_info_hold_on);
                 }
@@ -175,12 +160,12 @@ public class ProfileActivity extends AppCompatActivity implements UserNetworkTas
         return true;
     }
 
-    private void sortRecords(int sortType, MenuItem item) {
+    private void sortRecords(int sortType, MenuItem item, boolean inverse) {
         if (item != null)
             item.setChecked(true);
         if (animeList != null && mangaList != null) {
-            animeList.sort(sortType);
-            mangaList.sort(sortType);
+            animeList.sortUnsavedList(sortType, inverse);
+            mangaList.sortUnsavedList(sortType, inverse);
         }
     }
 
@@ -319,57 +304,19 @@ public class ProfileActivity extends AppCompatActivity implements UserNetworkTas
     }
 
     @Override
-    public void onIGFReady(IGF igf) {
-        try {
-            if (igf.isAnime()) {
-                animeList = igf;
-                animeList.viewflipper.setBackgroundColor(ContextCompat.getColor(context, R.color.bg_dark));
-                if (record != null) {
-                    animeList.setUsername(record.getUsername());
-                    animeList.getRecords(true, TaskJob.GETFRIENDLIST, PrefManager.getDefaultList());
-                }
-            } else {
-                mangaList = igf;
-                mangaList.viewflipper.setBackgroundColor(ContextCompat.getColor(context, R.color.bg_dark));
-                if (record != null) {
-                    mangaList.setUsername(record.getUsername());
-                    mangaList.getRecords(true, TaskJob.GETFRIENDLIST, PrefManager.getDefaultList());
-                }
-            }
-        } catch (Exception e) {
-            AppLog.log(Log.INFO, "Atarashii", "ProfileActivity.onIGFReady()");
-            AppLog.logException(e);
-        }
-    }
-
-    @Override
-    public void onRecordsLoadingFinished(TaskJob job) {
-
-    }
-
-    @Override
-    public void onItemClick(int id, MALApi.ListType listType, String username, View view, String coverImage) {
-        DetailView.createDV(this, view, id, listType, AccountService.getUsername(), coverImage);
-    }
-
-    @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         if (menu != null) {
-            boolean isIGF = adapter.getItem(position) instanceof IGF;
+            boolean isIGF = adapter.getItem(position) instanceof CoverFragment;
             menu.findItem(R.id.menu_listType).setVisible(isIGF);
             menu.findItem(R.id.menu_sort).setVisible(isIGF);
             menu.findItem(R.id.forceSync).setVisible(!isIGF);
 
             // Check if the IGF is on the screen and the user has been loaded
-            if (isIGF && record != null) {
-                if (animeList != null && animeList.getUsername() == null) {
-                    animeList.setUsername(record.getUsername());
-                    animeList.getRecords(true, TaskJob.GETFRIENDLIST, PrefManager.getDefaultList());
-                }
-                if (mangaList != null && mangaList.getUsername() == null) {
-                    mangaList.setUsername(record.getUsername());
-                    mangaList.getRecords(true, TaskJob.GETFRIENDLIST, PrefManager.getDefaultList());
-                }
+            if (isIGF && record != null && record.getUsername() != null) {
+                if (animeList != null)
+                    animeList.getProfileList(record.getUsername());
+                if (mangaList != null)
+                    mangaList.getProfileList(record.getUsername());
             }
         }
     }
@@ -381,5 +328,33 @@ public class ProfileActivity extends AppCompatActivity implements UserNetworkTas
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    @Override
+    public void onCoverLoaded(CoverFragment coverFragment) {
+        try {
+            if (coverFragment.isAnime) {
+                animeList = coverFragment;
+                if (record != null)
+                    animeList.getProfileList(record.getUsername());
+            } else {
+                mangaList = coverFragment;
+                if (record != null)
+                    mangaList.getProfileList(record.getUsername());
+            }
+        } catch (Exception e) {
+            AppLog.log(Log.INFO, "Atarashii", "ProfileActivity.onIGFReady()");
+            AppLog.logException(e);
+        }
+    }
+
+    @Override
+    public void onCoverRequest(boolean isAnime) {
+
+    }
+
+    @Override
+    public void onCoverClicked(int position, int actionId, boolean isAnime, IGFModel.IGFItem item) {
+        new CoverAction(this, isAnime).openDetails(item);
     }
 }

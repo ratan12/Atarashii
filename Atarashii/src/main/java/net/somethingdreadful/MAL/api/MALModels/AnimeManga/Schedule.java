@@ -57,14 +57,21 @@ public class Schedule implements Serializable {
 
     public net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Schedule convertBaseSchedule() {
         net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Schedule schedule = new net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Schedule();
-        schedule.setMonday(AnimeList.convertBaseArray(getMonday()));
-        schedule.setTuesday(AnimeList.convertBaseArray(getTuesday()));
-        schedule.setWednesday(AnimeList.convertBaseArray(getWednesday()));
-        schedule.setThursday(AnimeList.convertBaseArray(getThursday()));
-        schedule.setFriday(AnimeList.convertBaseArray(getFriday()));
-        schedule.setSaturday(AnimeList.convertBaseArray(getSaturday()));
-        schedule.setSunday(AnimeList.convertBaseArray(getSunday()));
+        schedule.setMonday(convertBaseArray(getMonday()));
+        schedule.setTuesday(convertBaseArray(getTuesday()));
+        schedule.setWednesday(convertBaseArray(getWednesday()));
+        schedule.setThursday(convertBaseArray(getThursday()));
+        schedule.setFriday(convertBaseArray(getFriday()));
+        schedule.setSaturday(convertBaseArray(getSaturday()));
+        schedule.setSunday(convertBaseArray(getSunday()));
 
         return schedule;
+    }
+
+    private ArrayList<net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Anime> convertBaseArray(ArrayList<Anime> animeList) {
+        ArrayList<net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Anime> list = new ArrayList<>();
+        for (Anime anime : animeList)
+            list.add(anime.createBaseModel());
+        return list;
     }
 }

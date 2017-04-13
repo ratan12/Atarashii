@@ -12,20 +12,19 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
-import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.adapters.IGFPagerAdapter;
-import net.somethingdreadful.MAL.api.MALApi.ListType;
+import net.somethingdreadful.MAL.api.BaseModels.IGFModel;
+import net.somethingdreadful.MAL.cover.CoverAction;
+import net.somethingdreadful.MAL.cover.CoverFragment;
 import net.somethingdreadful.MAL.dialog.SearchIdDialogFragment;
-import net.somethingdreadful.MAL.tasks.TaskJob;
 
 import org.apache.commons.lang3.text.WordUtils;
 
-public class SearchActivity extends AppCompatActivity implements IGF.IGFCallbackListener {
+public class SearchActivity extends AppCompatActivity implements CoverFragment.CoverListener {
     public String query;
-    private IGF af;
-    private IGF mf;
+    private CoverFragment af;
+    private CoverFragment mf;
 
     @Override
     public void onCreate(Bundle state) {
@@ -55,11 +54,9 @@ public class SearchActivity extends AppCompatActivity implements IGF.IGFCallback
             if (TextUtils.isDigitsOnly(query)) {
                 FragmentManager fm = getFragmentManager();
                 (new SearchIdDialogFragment()).show(fm, "fragment_id_search");
-            } else {
-                if (af != null && mf != null) {
-                    af.searchRecords(query);
-                    mf.searchRecords(query);
-                }
+            } else if (af != null && mf != null) {
+                af.getSearchRecords(true, query);
+                mf.getSearchRecords(true, query);
             }
         }
     }
@@ -87,27 +84,30 @@ public class SearchActivity extends AppCompatActivity implements IGF.IGFCallback
     }
 
     @Override
-    public void onIGFReady(IGF igf) {
-        /* Set Username to the search IGFs, looks strange but has a reason:
-         * The username is passed to DetailViews if clicked, the DetailView tries to get user-specific
-         * details (read/watch status, score). To do this it needs the username to determine the correct
-         * anime-/mangalist
-         */
-        igf.setUsername(AccountService.getUsername());
-        if (igf.isAnime())
-            af = igf;
+    public void onCoverLoaded(CoverFragment coverFragment) {
+        if (coverFragment.isAnime)
+            af = coverFragment;
         else
-            mf = igf;
+            mf = coverFragment;
         if (query != null && !TextUtils.isDigitsOnly(query)) // there is already a search to do
-            igf.searchRecords(WordUtils.capitalize(query));
+            coverFragment.getSearchRecords(true, WordUtils.capitalize(query));
     }
 
     @Override
-    public void onRecordsLoadingFinished(TaskJob job) {
+    public void onCoverRequest(boolean isAnime) {
+        if (af != null && mf != null) {
+            af.getSearchRecords(false, WordUtils.capitalize(query));
+            mf.getSearchRecords(false, WordUtils.capitalize(query));
+        }
     }
 
     @Override
-    public void onItemClick(int id, ListType listType, String username, View view, String coverImage) {
-        DetailView.createDV(this, view, id, listType, username, coverImage);
+    public void onCoverClicked(int position, int actionId, boolean isAnime, IGFModel.IGFItem item) {
+        if (actionId == 1)
+            new CoverAction(this, isAnime).addCoverItem(item);
+        else if (actionId == 2)
+            new CoverAction(this, isAnime).addCoverItem(item);
+        else if (actionId == 3)
+            new CoverAction(this, isAnime).addCoverItem(item);
     }
 }

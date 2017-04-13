@@ -1,7 +1,8 @@
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/Image"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
-    android:contentDescription="@string/layout_discription"
-    android:scaleType="fitXY" />
+<com.facebook.drawee.view.SimpleDraweeView xmlns:android="http://schemas.android.com/apk/res/android"
+                                           xmlns:fresco="http://schemas.android.com/apk/res-auto"
+                                           android:id="@+id/Image"
+                                           android:layout_width="match_parent"
+                                           android:layout_height="wrap_content"
+                                           android:layout_gravity="center_horizontal"
+                                           android:contentDescription="@string/layout_discription"
+                                           fresco:viewAspectRatio="1.00"/>

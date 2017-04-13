@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:res-auto="http://schemas.android.com/apk/res-auto">
+      xmlns:res-auto="http://schemas.android.com/apk/res-auto"
+      xmlns:app="http://schemas.android.com/tools">
     <item
         android:id="@+id/menu_listType"
         android:icon="@drawable/ic_filter"
@@ -74,12 +75,6 @@
             <item
                 android:id="@+id/menu_inverse"
                 android:title="@string/menu_inverse"
-                android:checkable="true"
-                res-auto:showAsAction="never"/>
-
-            <item
-                android:id="@+id/menu_details"
-                android:title="@string/menu_details"
                 android:checkable="true"
                 res-auto:showAsAction="never"/>
         </menu>

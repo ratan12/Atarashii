@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:fresco="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/mainPanel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/coverImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        fresco:failureImage="@drawable/cover_error"
+        fresco:placeholderImage="@drawable/cover_loading"/>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/igf_gradient"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/igf_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            />
+
+        <TextView
+            android:id="@+id/igf_text3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/igf_text2"
+            android:layout_alignBottom="@+id/igf_text2"
+            android:layout_toEndOf="@+id/igf_text2"
+            android:layout_toRightOf="@+id/igf_text2"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:textColor="@color/text_light_secondary"
+            android:textSize="14sp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/igf_text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/igf_text1"
+            android:layout_alignBottom="@+id/igf_text1"
+            android:layout_toEndOf="@+id/igf_text1"
+            android:layout_toRightOf="@+id/igf_text1"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:textColor="@color/text_light_secondary"
+            android:textSize="14sp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/igf_text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/igf_title"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:textColor="@color/text_light_secondary"
+            android:textSize="12sp"/>
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/igf_action1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_above="@+id/relativeLayout"
+        android:layout_toEndOf="@+id/igf_action2"
+        android:layout_toRightOf="@+id/igf_action2"
+        android:background="@color/primary"
+        android:padding="8dp"/>
+
+    <ImageView
+        android:id="@+id/igf_action2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/highlite"
+        android:padding="8dp"/>
+
+    <ImageView
+        android:id="@+id/igf_action3"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:background="@drawable/igf_buttonshape"
+        android:foreground="@drawable/highlite"
+        android:paddingBottom="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="22dp"
+        android:paddingTop="8dp"
+        android:layout_alignBottom="@+id/igf_action1"
+        android:layout_toRightOf="@+id/igf_action1"
+        android:layout_toEndOf="@+id/igf_action1"/>
+</RelativeLayout>

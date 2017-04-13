@@ -19,6 +19,7 @@ import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Manga;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Reviews;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Schedule;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.UserList;
+import net.somethingdreadful.MAL.api.BaseModels.IGFModel;
 import net.somethingdreadful.MAL.api.BaseModels.Profile;
 
 import java.text.SimpleDateFormat;
@@ -109,6 +110,28 @@ public class ALApi {
         }
     }
 
+    public IGFModel getProfileAnimeList(String username) {
+        retrofit2.Response<net.somethingdreadful.MAL.api.ALModels.AnimeManga.UserList> response = null;
+        try {
+            response = service.getAnimeList(username).execute();
+            return response.body().arrayAnime();
+        } catch (Exception e) {
+            APIHelper.logE(activity, response, "MALApi", "getAnimeList", e);
+            return null;
+        }
+    }
+
+    public IGFModel getProfileMangaList(String username) {
+        retrofit2.Response<net.somethingdreadful.MAL.api.ALModels.AnimeManga.UserList> response = null;
+        try {
+            response = service.getMangaList(username).execute();
+            return response.body().arrayManga();
+        } catch (Exception e) {
+            APIHelper.logE(activity, response, "MALApi", "getMangaList", e);
+            return null;
+        }
+    }
+
     public UserList getAnimeList(String username) {
         retrofit2.Response<net.somethingdreadful.MAL.api.ALModels.AnimeManga.UserList> response = null;
         try {
@@ -174,25 +197,25 @@ public class ALApi {
         }
     }
 
-    public ArrayList<Anime> searchAnime(String query, int page) {
+    public IGFModel searchAnime(String query, int page) {
         retrofit2.Response<ArrayList<net.somethingdreadful.MAL.api.ALModels.AnimeManga.Anime>> response = null;
         try {
             response = service.searchAnime(query, page).execute();
             return net.somethingdreadful.MAL.api.ALModels.AnimeManga.Anime.convertBaseArray(response.body());
         } catch (Exception e) {
             APIHelper.logE(activity, response, "ALApi", "searchAnime", e);
-            return new ArrayList<>();
+            return null;
         }
     }
 
-    public ArrayList<Manga> searchManga(String query, int page) {
+    public IGFModel searchManga(String query, int page) {
         retrofit2.Response<ArrayList<net.somethingdreadful.MAL.api.ALModels.AnimeManga.Manga>> response = null;
         try {
             response = service.searchManga(query, page).execute();
             return net.somethingdreadful.MAL.api.ALModels.AnimeManga.Manga.convertBaseArray(response.body());
         } catch (Exception e) {
             APIHelper.logE(activity, response, "ALApi", "searchManga", e);
-            return new ArrayList<>();
+            return new IGFModel(0);
         }
     }
 
@@ -345,49 +368,49 @@ public class ALApi {
         }
     }
 
-    public ArrayList<Anime> getMostPopularAnime(int page) {
+    public IGFModel getMostPopularAnime(int page) {
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "popularity-desc");
         map.put("page", String.valueOf(page));
         return getBrowseAnime(map);
     }
 
-    public ArrayList<Manga> getMostPopularManga(int page) {
+    public IGFModel getMostPopularManga(int page) {
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "popularity-desc");
         map.put("page", String.valueOf(page));
         return getBrowseManga(map);
     }
 
-    public ArrayList<Anime> getTopRatedAnime(int page) {
+    public IGFModel getTopRatedAnime(int page) {
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "score-desc");
         map.put("page", String.valueOf(page));
         return getBrowseAnime(map);
     }
 
-    public ArrayList<Manga> getTopRatedManga(int page) {
+    public IGFModel getTopRatedManga(int page) {
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "score-desc");
         map.put("page", String.valueOf(page));
         return getBrowseManga(map);
     }
 
-    public ArrayList<Anime> getJustAddedAnime(int page) {
+    public IGFModel getJustAddedAnime(int page) {
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "id-desc");
         map.put("page", String.valueOf(page));
         return getBrowseAnime(map);
     }
 
-    public ArrayList<Manga> getJustAddedManga(int page) {
+    public IGFModel getJustAddedManga(int page) {
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "id-desc");
         map.put("page", String.valueOf(page));
         return getBrowseManga(map);
     }
 
-    public ArrayList<Anime> getUpcomingAnime(int page) {
+    public IGFModel getUpcomingAnime(int page) {
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "id-desc");
         map.put("status", "Not Yet Aired");
@@ -395,7 +418,7 @@ public class ALApi {
         return getBrowseAnime(map);
     }
 
-    public ArrayList<Manga> getUpcomingManga(int page) {
+    public IGFModel getUpcomingManga(int page) {
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "id-desc");
         map.put("status", "Not Yet Published");
@@ -412,7 +435,7 @@ public class ALApi {
         return getBrowseSchedule(map);
     }
 
-    public ArrayList<Anime> getPopularSeasonAnime(int page) {
+    public IGFModel getPopularSeasonAnime(int page) {
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "popularity-desc");
         map.put("status", "Currently Airing");
@@ -420,7 +443,7 @@ public class ALApi {
         return getBrowseAnime(map);
     }
 
-    public ArrayList<Manga> getPopularSeasonManga(int page) {
+    public IGFModel getPopularSeasonManga(int page) {
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "popularity-desc");
         map.put("status", "Publishing");
@@ -428,7 +451,7 @@ public class ALApi {
         return getBrowseManga(map);
     }
 
-    public ArrayList<Anime> getPopularYearAnime(int page) {
+    public IGFModel getPopularYearAnime(int page) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy", Locale.getDefault());
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "popularity-desc");
@@ -437,7 +460,7 @@ public class ALApi {
         return getBrowseAnime(map);
     }
 
-    public ArrayList<Manga> getPopularYearManga(int page) {
+    public IGFModel getPopularYearManga(int page) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy", Locale.getDefault());
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "popularity-desc");
@@ -446,7 +469,7 @@ public class ALApi {
         return getBrowseManga(map);
     }
 
-    public ArrayList<Anime> getTopSeasonAnime(int page) {
+    public IGFModel getTopSeasonAnime(int page) {
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "score-desc");
         map.put("status", "Currently Airing");
@@ -454,7 +477,7 @@ public class ALApi {
         return getBrowseAnime(map);
     }
 
-    public ArrayList<Manga> getTopSeasonManga(int page) {
+    public IGFModel getTopSeasonManga(int page) {
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "score-desc");
         map.put("status", "Publishing");
@@ -462,7 +485,7 @@ public class ALApi {
         return getBrowseManga(map);
     }
 
-    public ArrayList<Anime> getTopYearAnime(int page) {
+    public IGFModel getTopYearAnime(int page) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy", Locale.getDefault());
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "score-desc");
@@ -471,7 +494,7 @@ public class ALApi {
         return getBrowseAnime(map);
     }
 
-    public ArrayList<Manga> getTopYearManga(int page) {
+    public IGFModel getTopYearManga(int page) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy", Locale.getDefault());
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "score-desc");
@@ -480,7 +503,7 @@ public class ALApi {
         return getBrowseManga(map);
     }
 
-    public ArrayList<Anime> getBrowseAnime(Map<String, String> queries) {
+    public IGFModel getBrowseAnime(Map<String, String> queries) {
         retrofit2.Response<ArrayList<net.somethingdreadful.MAL.api.ALModels.AnimeManga.Anime>> response = null;
         AppLog.log(Log.INFO, "Atarashii", "MALApi.getBrowseAnime(): queries=" + queries.toString());
         try {
@@ -503,7 +526,7 @@ public class ALApi {
         }
     }
 
-    public ArrayList<Manga> getBrowseManga(Map<String, String> queries) {
+    public IGFModel getBrowseManga(Map<String, String> queries) {
         retrofit2.Response<ArrayList<net.somethingdreadful.MAL.api.ALModels.AnimeManga.Manga>> response = null;
         AppLog.log(Log.INFO, "Atarashii", "MALApi.getBrowseManga(): queries=" + queries.toString());
         try {

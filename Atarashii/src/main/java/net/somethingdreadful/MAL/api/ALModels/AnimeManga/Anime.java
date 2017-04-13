@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import net.somethingdreadful.MAL.DateTools;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Schedule;
+import net.somethingdreadful.MAL.api.BaseModels.IGFModel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -99,13 +100,17 @@ public class Anime extends GenericRecord implements Serializable {
         return model;
     }
 
-    public static ArrayList<net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Anime> convertBaseArray(ArrayList<Anime> ALArray) {
-        ArrayList<net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Anime> base = new ArrayList<>();
-        if (ALArray != null) {
+    public static IGFModel convertBaseArray(ArrayList<Anime> ALArray) {
+        IGFModel igfModel = new IGFModel(0);
+        if (ALArray != null)
             for (Anime anime : ALArray) {
-                base.add(anime.createBaseModel());
+                IGFModel.IGFItem igfItem = igfModel.new IGFItem();
+                igfItem.setId(anime.getId());
+                igfItem.setTitle(getLanguageTitle(anime.getTitleRomaji(), anime.getTitleEnglish(), anime.getTitleJapanese()));
+                igfItem.setImageUrl(anime.getImageUrlLge());
+                igfItem.setShortDetails(anime.getType());
+                igfModel.getTitles().add(igfItem);
             }
-        }
-        return base;
+        return igfModel;
     }
 }

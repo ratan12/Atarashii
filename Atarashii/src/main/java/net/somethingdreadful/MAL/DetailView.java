@@ -5,7 +5,6 @@ import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -25,12 +24,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.adapters.DetailViewPagerAdapter;
@@ -75,9 +70,8 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
     private Context context;
     private boolean coverImageLoaded = false;
 
-
-    @BindView(R.id.coverImage) ImageView coverImage;
-    @BindView(R.id.bannerImage) ImageView bannerImage;
+    @BindView(R.id.coverImage) SimpleDraweeView coverImage;
+    @BindView(R.id.bannerImage) SimpleDraweeView bannerImage;
     @Getter @BindView(R.id.collapsingToolbarLayout) CollapsingToolbarLayout collapsingToolbarLayout;
     @Getter @BindView(R.id.pager) ViewPager viewPager;
     @BindView(R.id.actionbar) Toolbar toolbar;
@@ -99,12 +93,13 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
             animeRecord = (Anime) state.getSerializable("anime");
             mangaRecord = (Manga) state.getSerializable("manga");
         }
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
         if (getIntent().hasExtra("coverImage"))
-            Glide.with(this)
-                    .load(getIntent().getStringExtra("coverImage"))
-                    .placeholder(R.drawable.cover_loading)
-                    .into(coverImage);
+            coverImage.setImageURI(getIntent().getStringExtra("coverImage"));
 
         if (isEmpty())
             getRecord(false);
@@ -532,40 +527,12 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
     public void setToolbarImages() {
         try {
             GenericRecord record = (type == ListType.ANIME ? animeRecord : mangaRecord);
-            final String imageUrl = record.getImageUrl();
-            final Activity activity = this;
-            Glide.with(this)
-                    .load(imageUrl)
-                    .placeholder(R.drawable.cover_loading)
-                    .into(new GlideDrawableImageViewTarget(coverImage) {
-
-                        @Override
-                        public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> animation) {
-                            super.onResourceReady(resource, animation);
-                            coverImageLoaded = true;
-                        }
-
-                        @Override
-                        public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                            super.onLoadFailed(e, errorDrawable);
-                            Glide.with(activity)
-                                    .load(imageUrl.replace("l.jpg", ".jpg"))
-                                    .error(R.drawable.cover_error)
-                                    .placeholder(R.drawable.cover_loading)
-                                    .into(coverImage);
-                        }
-                    });
-
             if (record.getBannerUrl() != null && !record.getBannerUrl().equals("")) {
-                Glide.with(this)
-                        .load(record.getBannerUrl())
-                        .into(bannerImage);
+                bannerImage.setImageURI(record.getBannerUrl());
             } else {
-                Glide.with(this)
-                        .load(record.getImageUrl())
-                        .error(R.drawable.atarashii_background)
-                        .into(bannerImage);
+                bannerImage.setImageURI(record.getBannerUrl());
             }
+            coverImageLoaded = true;
         } catch (Exception e) {
             AppLog.logException(e);
         }

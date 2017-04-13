@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,10 +15,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import net.somethingdreadful.MAL.AppLog;
 import net.somethingdreadful.MAL.DetailView;
@@ -35,7 +35,6 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class ProfileHistory extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     public ProfileActivity activity;
@@ -167,10 +166,7 @@ public class ProfileHistory extends Fragment implements SwipeRefreshLayout.OnRef
                         break;
                 }
 
-                Glide.with(context)
-                        .load(image)
-                        .bitmapTransform(new CropCircleTransformation(context))
-                        .into(holder.imageView);
+                holder.imageView.setImageURI(Uri.parse(image));
 
             } catch (Exception e) {
                 AppLog.logTaskCrash("ProfileHistory", e.getMessage(), e);
@@ -224,7 +220,7 @@ public class ProfileHistory extends Fragment implements SwipeRefreshLayout.OnRef
         public final TextView time;
         public final TextView value;
         public final TextView type;
-        public final ImageView imageView;
+        public final SimpleDraweeView imageView;
 
         public historyAdapterHolder(View view) {
             super(view);
@@ -232,7 +228,7 @@ public class ProfileHistory extends Fragment implements SwipeRefreshLayout.OnRef
             time = (TextView) view.findViewById(R.id.time);
             value = (TextView) view.findViewById(R.id.value);
             type = (TextView) view.findViewById(R.id.type);
-            imageView = (ImageView) view.findViewById(R.id.profileImg);
+            imageView = (SimpleDraweeView) view.findViewById(R.id.profileImg);
 
             itemView.setOnClickListener(this);
 

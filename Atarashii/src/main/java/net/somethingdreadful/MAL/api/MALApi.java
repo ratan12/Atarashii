@@ -11,6 +11,7 @@ import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Manga;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Reviews;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Schedule;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.UserList;
+import net.somethingdreadful.MAL.api.BaseModels.IGFModel;
 import net.somethingdreadful.MAL.api.BaseModels.Profile;
 import net.somethingdreadful.MAL.api.MALModels.AnimeManga.AnimeList;
 import net.somethingdreadful.MAL.api.MALModels.AnimeManga.MangaList;
@@ -52,10 +53,6 @@ public class MALApi {
         setupRESTService(username, password);
     }
 
-    public static String getListTypeString(ListType type) {
-        return type.name().toLowerCase();
-    }
-
     private void setupRESTService(String username, String password) {
         service = APIHelper.createClient(API_HOST, MALInterface.class, Credentials.basic(username, password));
     }
@@ -64,7 +61,7 @@ public class MALApi {
         return APIHelper.isOK(service.verifyAuthentication(), "isAuth");
     }
 
-    public ArrayList<Anime> searchAnime(String query, int page) {
+    public IGFModel searchAnime(String query, int page) {
         if (PrefManager.getNSFWEnabled()) {
             Response<ArrayList<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Anime>> response = null;
             try {
@@ -72,7 +69,7 @@ public class MALApi {
                 return AnimeList.convertBaseArray(response.body());
             } catch (Exception e) {
                 APIHelper.logE(activity, response, "MALApi", "searchAnime", e);
-                return new ArrayList<>();
+                return new IGFModel(0);
             }
         } else {
             HashMap<String, String> map = new HashMap<>();
@@ -84,7 +81,7 @@ public class MALApi {
         }
     }
 
-    public ArrayList<Manga> searchManga(String query, int page) {
+    public IGFModel searchManga(String query, int page) {
         if (PrefManager.getNSFWEnabled()) {
             Response<ArrayList<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Manga>> response = null;
             try {
@@ -92,7 +89,7 @@ public class MALApi {
                 return MangaList.convertBaseArray(response.body());
             } catch (Exception e) {
                 APIHelper.logE(activity, response, "MALApi", "searchManga", e);
-                return new ArrayList<>();
+                return new IGFModel(0);
             }
         } else {
             HashMap<String, String> map = new HashMap<>();
@@ -101,6 +98,28 @@ public class MALApi {
             map.put("genre_type", "1");
             map.put("genres", "Hentai");
             return getBrowseManga(checkNSFW(map));
+        }
+    }
+
+    public IGFModel getProfileAnimeList(String username) {
+        Response<AnimeList> response = null;
+        try {
+            response = service.getAnimeList(username).execute();
+            return AnimeList.convertBaseArray(response.body().getAnime());
+        } catch (Exception e) {
+            APIHelper.logE(activity, response, "MALApi", "getAnimeList", e);
+            return null;
+        }
+    }
+
+    public IGFModel getProfileMangaList(String username) {
+        Response<MangaList> response = null;
+        try {
+            response = service.getMangaList(username).execute();
+            return MangaList.convertBaseArray(response.body().getManga());
+        } catch (Exception e) {
+            APIHelper.logE(activity, response, "MALApi", "getMangaList", e);
+            return null;
         }
     }
 
@@ -231,7 +250,7 @@ public class MALApi {
         return APIHelper.isOK(service.deleteManga(id), "deleteMangaFromList");
     }
 
-    public ArrayList<Anime> getBrowseAnime(Map<String, String> queries) {
+    public IGFModel getBrowseAnime(Map<String, String> queries) {
         retrofit2.Response<ArrayList<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Anime>> response = null;
         AppLog.log(Log.INFO, "Atarashii", "MALApi.getBrowseAnime(): queries=" + queries.toString());
         try {
@@ -243,7 +262,7 @@ public class MALApi {
         }
     }
 
-    public ArrayList<Manga> getBrowseManga(Map<String, String> queries) {
+    public IGFModel getBrowseManga(Map<String, String> queries) {
         retrofit2.Response<ArrayList<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Manga>> response = null;
         AppLog.log(Log.INFO, "Atarashii", "MALApi.getBrowseManga(): queries=" + queries.toString());
         try {
@@ -263,7 +282,7 @@ public class MALApi {
         return map;
     }
 
-    public ArrayList<Anime> getMostPopularAnime(int page) {
+    public IGFModel getMostPopularAnime(int page) {
         Response<ArrayList<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Anime>> response = null;
         try {
             response = service.getPopularAnime(page).execute();
@@ -274,7 +293,7 @@ public class MALApi {
         }
     }
 
-    public ArrayList<Manga> getMostPopularManga(int page) {
+    public IGFModel getMostPopularManga(int page) {
         Response<ArrayList<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Manga>> response = null;
         try {
             response = service.getPopularManga(page).execute();
@@ -285,7 +304,7 @@ public class MALApi {
         }
     }
 
-    public ArrayList<Anime> getTopRatedAnime(int page) {
+    public IGFModel getTopRatedAnime(int page) {
         Response<ArrayList<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Anime>> response = null;
         try {
             response = service.getTopRatedAnime(page).execute();
@@ -296,7 +315,7 @@ public class MALApi {
         }
     }
 
-    public ArrayList<Manga> getTopRatedManga(int page) {
+    public IGFModel getTopRatedManga(int page) {
         Response<ArrayList<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Manga>> response = null;
         try {
             response = service.getTopRatedManga(page).execute();
@@ -307,7 +326,7 @@ public class MALApi {
         }
     }
 
-    public ArrayList<Anime> getJustAddedAnime(int page) {
+    public IGFModel getJustAddedAnime(int page) {
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "9");
         map.put("reverse", "1");
@@ -315,7 +334,7 @@ public class MALApi {
         return getBrowseAnime(checkNSFW(map));
     }
 
-    public ArrayList<Manga> getJustAddedManga(int page) {
+    public IGFModel getJustAddedManga(int page) {
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "9");
         map.put("reverse", "1");
@@ -323,7 +342,7 @@ public class MALApi {
         return getBrowseManga(checkNSFW(map));
     }
 
-    public ArrayList<Anime> getUpcomingAnime(int page) {
+    public IGFModel getUpcomingAnime(int page) {
         HashMap<String, String> map = new HashMap<>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         map.put("sort", "2");
@@ -333,7 +352,7 @@ public class MALApi {
         return getBrowseAnime(checkNSFW(map));
     }
 
-    public ArrayList<Manga> getUpcomingManga(int page) {
+    public IGFModel getUpcomingManga(int page) {
         HashMap<String, String> map = new HashMap<>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         map.put("sort", "2");
@@ -520,7 +539,7 @@ public class MALApi {
         }
     }
 
-    public ArrayList<Anime> getPopularSeasonAnime(int page) {
+    public IGFModel getPopularSeasonAnime(int page) {
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "7");
         map.put("reverse", "1");
@@ -529,7 +548,7 @@ public class MALApi {
         return getBrowseAnime(checkNSFW(map));
     }
 
-    public ArrayList<Manga> getPopularSeasonManga(int page) {
+    public IGFModel getPopularSeasonManga(int page) {
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "7");
         map.put("reverse", "1");
@@ -538,7 +557,7 @@ public class MALApi {
         return getBrowseManga(checkNSFW(map));
     }
 
-    public ArrayList<Anime> getPopularYearAnime(int page) {
+    public IGFModel getPopularYearAnime(int page) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy", Locale.getDefault());
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "7");
@@ -548,7 +567,7 @@ public class MALApi {
         return getBrowseAnime(checkNSFW(map));
     }
 
-    public ArrayList<Manga> getPopularYearManga(int page) {
+    public IGFModel getPopularYearManga(int page) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy", Locale.getDefault());
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "7");
@@ -558,7 +577,7 @@ public class MALApi {
         return getBrowseManga(checkNSFW(map));
     }
 
-    public ArrayList<Anime> getTopSeasonAnime(int page) {
+    public IGFModel getTopSeasonAnime(int page) {
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "3");
         map.put("reverse", "1");
@@ -567,7 +586,7 @@ public class MALApi {
         return getBrowseAnime(checkNSFW(map));
     }
 
-    public ArrayList<Manga> getTopSeasonManga(int page) {
+    public IGFModel getTopSeasonManga(int page) {
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "3");
         map.put("reverse", "1");
@@ -576,7 +595,7 @@ public class MALApi {
         return getBrowseManga(checkNSFW(map));
     }
 
-    public ArrayList<Anime> getTopYearAnime(int page) {
+    public IGFModel getTopYearAnime(int page) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy", Locale.getDefault());
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "3");
@@ -586,7 +605,7 @@ public class MALApi {
         return getBrowseAnime(checkNSFW(map));
     }
 
-    public ArrayList<Manga> getTopYearManga(int page) {
+    public IGFModel getTopYearManga(int page) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy", Locale.getDefault());
         HashMap<String, String> map = new HashMap<>();
         map.put("sort", "3");

@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import net.somethingdreadful.MAL.broadcasts.AutoSync;
+import net.somethingdreadful.MAL.cover.CoverFragment;
 import net.somethingdreadful.MAL.dialog.NumberPickerDialogFragment;
 
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener, Preference.OnPreferenceClickListener, NumberPickerDialogFragment.onUpdateClickListener {
@@ -74,10 +75,10 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     public boolean onPreferenceClick(Preference preference) {
         switch (preference.getKey()) {
             case "IGFcolumnsportrait":
-                makeNumberpicker(R.string.preference_list_columns_portrait, R.string.preference_list_columns_portrait,  PrefManager.getIGFColumns(true), IGF.getMaxColumns(true), 2);
+                makeNumberpicker(R.string.preference_list_columns_portrait, R.string.preference_list_columns_portrait,  PrefManager.getIGFColumns(true), CoverFragment.getMaxColumns(true), 2);
                 break;
             case "IGFcolumnslandscape":
-                makeNumberpicker(R.string.preference_list_columns_landscape, R.string.preference_list_columns_landscape, PrefManager.getIGFColumns(false), IGF.getMaxColumns(false), 2);
+                makeNumberpicker(R.string.preference_list_columns_landscape, R.string.preference_list_columns_landscape, PrefManager.getIGFColumns(false), CoverFragment.getMaxColumns(false), 2);
                 break;
             case "reset":
                 PrefManager.clear();

@@ -71,7 +71,7 @@ public class BrowseFragmentAL extends Fragment implements CompoundButton.OnCheck
     public void onSearchButton() {
         reloadEntries();
         activity.viewPager.setCurrentItem(typeSwitch.isChecked() ? 2 : 1);
-        activity.igf.getBrowse(query, true);
+        activity.coverFragment.getBrowse(query, true);
     }
 
     @Override

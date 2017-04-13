@@ -1,6 +1,7 @@
 package net.somethingdreadful.MAL.api.MALModels.AnimeManga;
 
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.UserList;
+import net.somethingdreadful.MAL.api.BaseModels.IGFModel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,17 +28,30 @@ public class AnimeList implements Serializable {
         UserList userList = new UserList();
         ArrayList<net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Anime> animeList = new ArrayList<>();
         if (MALArray != null)
-            animeList = convertBaseArray(MALArray.getAnime());
+            for (Anime anime : MALArray.getAnime()) {
+                animeList.add(anime.createBaseModel());
+            }
         userList.setAnimeList(animeList);
         return userList;
     }
 
-    public static ArrayList<net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Anime> convertBaseArray(ArrayList<Anime> MALArray) {
-        ArrayList<net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Anime> base = new ArrayList<>();
+    public static IGFModel convertBaseArray(ArrayList<Anime> MALArray) {
+        IGFModel igfModel = new IGFModel(0);
         if (MALArray != null)
             for (Anime anime : MALArray) {
-                base.add(anime.createBaseModel());
+                IGFModel.IGFItem igfItem = igfModel.new IGFItem();
+                igfItem.setId(anime.getId());
+                igfItem.setTitle(anime.getTitle());
+                igfItem.setImageUrl(anime.getImageUrl());
+                igfItem.setScoreRaw((int) Math.floor(anime.getMembersScore()));
+                igfItem.setProgress(IGFModel.coverText[7] + " " + (igfItem.getScoreRaw() > 0 ? igfItem.getScoreRaw() : "?"));
+                igfItem.setScore("★"+ (anime.getWatchedStatus() != null ? anime.getScore() : anime.getMembersScore()));
+                igfItem.setStatusRaw(anime.getStatus());
+                igfItem.setUserStatusRaw(anime.getWatchedStatus());
+                igfItem.setTypeRaw(anime.getType());
+                igfItem.setShortDetails(IGFModel.coverText[10] + " " + anime.getEpisodes() + " (" + igfItem.getTypeRaw() + ") " + igfItem.getScore());
+                igfModel.getTitles().add(igfItem);
             }
-        return base;
+        return igfModel;
     }
 }

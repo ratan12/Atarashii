@@ -1,22 +1,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="172dp">
+                xmlns:fresco="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="172dp">
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/NDimage"
         android:layout_width="match_parent"
         android:layout_height="172dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/atarashii_background" />
+        fresco:failureImage="@drawable/atarashii_background"
+        fresco:placeholderImage="@drawable/atarashii_background"/>
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/Image"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="40dp"
-        android:scaleType="fitStart"
-        android:src="@drawable/ic_person" />
+        fresco:roundAsCircle="true"
+        android:src="@drawable/ic_person"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -35,7 +36,7 @@
             android:text="@string/layout_card_loading"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
             android:textColor="#FFFFFF"
-            android:textSize="14sp" />
+            android:textSize="14sp"/>
 
         <TextView
             android:id="@+id/siteName"
@@ -47,6 +48,6 @@
             android:text="MyAnimeList"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
             android:textColor="#FFFFFF"
-            android:textSize="14sp" />
+            android:textSize="14sp"/>
     </RelativeLayout>
 </RelativeLayout>

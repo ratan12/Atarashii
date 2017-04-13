@@ -10,26 +10,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.MenuItem;
-import android.view.View;
 
-import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.adapters.IGFPagerAdapter;
 import net.somethingdreadful.MAL.api.APIHelper;
-import net.somethingdreadful.MAL.api.MALApi;
+import net.somethingdreadful.MAL.api.BaseModels.IGFModel;
+import net.somethingdreadful.MAL.cover.CoverFragment;
 import net.somethingdreadful.MAL.tasks.TaskJob;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ChartActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, IGF.IGFCallbackListener, NavigationView.OnNavigationItemSelectedListener {
-    private IGF af;
-    private IGF mf;
+public class ChartActivity extends AppCompatActivity implements CoverFragment.CoverListener, SwipeRefreshLayout.OnRefreshListener, NavigationView.OnNavigationItemSelectedListener {
+    private CoverFragment af;
+    private CoverFragment mf;
     private MenuItem drawerItem;
 
     @BindView(R.id.navigationView)
     NavigationView navigationView;
     @BindView(R.id.drawerLayout)
     DrawerLayout drawerLayout;
+    private TaskJob taskjob;
 
     @Override
     public void onCreate(Bundle state) {
@@ -52,43 +52,40 @@ public class ChartActivity extends AppCompatActivity implements SwipeRefreshLayo
         NfcHelper.disableBeam(this);
     }
 
-    private void getRecords(boolean clear, TaskJob task, int list) {
+    private void getRecords(boolean clear, TaskJob task) {
+        taskjob = task != null ? task : taskjob;
         if (af != null && mf != null) {
-            af.getRecords(clear, task, list);
-            mf.getRecords(clear, task, list);
+            af.getCharts(clear, taskjob);
+            mf.getCharts(clear, taskjob);
         }
     }
 
     @Override
     public void onRefresh() {
         if (APIHelper.isNetworkAvailable(this))
-            getRecords(false, TaskJob.FORCESYNC, af.list);
+            getRecords(false, TaskJob.FORCESYNC);
         else {
-            if (af != null && mf != null) {
-                af.toggleSwipeRefreshAnimation(false);
-                mf.toggleSwipeRefreshAnimation(false);
-            }
             Theme.Snackbar(this, R.string.toast_error_noConnectivity);
         }
     }
 
     @Override
-    public void onIGFReady(IGF igf) {
-        igf.setUsername(AccountService.getUsername());
-        if (igf.isAnime())
+    public void onCoverLoaded(CoverFragment igf) {
+        // TODO add notification and fail counter with customlist
+        if (igf.isAnime)
             af = igf;
         else
             mf = igf;
     }
 
     @Override
-    public void onRecordsLoadingFinished(TaskJob job) {
-
+    public void onCoverRequest(boolean isAnime) {
+        getRecords(false, null);
     }
 
     @Override
-    public void onItemClick(int id, MALApi.ListType listType, String username, View view, String coverImage) {
-        DetailView.createDV(this, view, id, listType, username, coverImage);
+    public void onCoverClicked(int position, int actionId, boolean isAnime, IGFModel.IGFItem item) {
+
     }
 
     @Override
@@ -100,8 +97,8 @@ public class ChartActivity extends AppCompatActivity implements SwipeRefreshLayo
         setTitle(item.getTitle());
 
         // disable swipeRefresh for other lists
-        af.setSwipeRefreshEnabled(false);
-        mf.setSwipeRefreshEnabled(false);
+        af.setLoading(true);
+        mf.setLoading(true);
 
         //Closing drawer on item click
         drawerLayout.closeDrawers();
@@ -109,28 +106,28 @@ public class ChartActivity extends AppCompatActivity implements SwipeRefreshLayo
         //Performing the action
         switch (item.getItemId()) {
             case R.id.nav_rated:
-                getRecords(true, TaskJob.GETTOPRATED, af.list);
+                getRecords(true, TaskJob.GETTOPRATED);
                 break;
             case R.id.nav_rated_season:
-                getRecords(true, TaskJob.GETTOPRATEDS, af.list);
+                getRecords(true, TaskJob.GETTOPRATEDS);
                 break;
             case R.id.nav_rated_year:
-                getRecords(true, TaskJob.GETTOPRATEDY, af.list);
+                getRecords(true, TaskJob.GETTOPRATEDY);
                 break;
             case R.id.nav_popular:
-                getRecords(true, TaskJob.GETMOSTPOPULAR, af.list);
+                getRecords(true, TaskJob.GETMOSTPOPULAR);
                 break;
             case R.id.nav_popular_season:
-                getRecords(true, TaskJob.GETMOSTPOPULARS, af.list);
+                getRecords(true, TaskJob.GETMOSTPOPULARS);
                 break;
             case R.id.nav_popular_year:
-                getRecords(true, TaskJob.GETMOSTPOPULARY, af.list);
+                getRecords(true, TaskJob.GETMOSTPOPULARY);
                 break;
             case R.id.nav_added:
-                getRecords(true, TaskJob.GETJUSTADDED, af.list);
+                getRecords(true, TaskJob.GETJUSTADDED);
                 break;
             case R.id.nav_upcoming:
-                getRecords(true, TaskJob.GETUPCOMING, af.list);
+                getRecords(true, TaskJob.GETUPCOMING);
                 break;
             case R.id.nav_return:
                 finish();

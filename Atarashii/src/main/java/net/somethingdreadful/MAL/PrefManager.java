@@ -45,8 +45,6 @@ public class PrefManager {
      * Remove the preferences.
      * <p/>
      * Reset all the preferences
-     *
-     * @see Home
      */
     public static void clear() {
         prefEditor.clear();
@@ -74,9 +72,17 @@ public class PrefManager {
      * Returns if we should use a Listview.
      *
      * @return boolean If true the app will use a Listview
-     * @see IGF
      */
     public static boolean getTraditionalListEnabled() {
+        return prefs.getBoolean("traditionalList", false);
+    }
+
+    /**
+     * Returns if we should use a Listview.
+     *
+     * @return boolean If true the app will use a Listview
+     */
+    public static boolean getListEnabled() {
         return prefs.getBoolean("traditionalList", false);
     }
 
@@ -84,7 +90,6 @@ public class PrefManager {
      * Returns if the app should use Volumes instead of Chapters.
      *
      * @return boolean If it is true the app will use Volumes
-     * @see IGF
      */
     public static boolean getUseSecondaryAmountsEnabled() {
         return prefs.getBoolean("displayVolumes", false);
@@ -331,8 +336,14 @@ public class PrefManager {
      */
     public static int getIGFColumns(boolean portrait) {
         int prefvalue = prefs.getInt(portrait ? "IGFcolumnsportrait" : "IGFcolumnslandscape", 0);
-        if (prefvalue == 0)
-            prefvalue = IGF.getColumns(portrait);
+        if (prefvalue == 0) {
+            int screen;
+            if (Theme.isPortrait() && portrait || !Theme.isPortrait() && !portrait)
+                screen = Theme.convert(Theme.context.getResources().getConfiguration().screenWidthDp);
+            else
+                screen = Theme.convert(Theme.context.getResources().getConfiguration().screenHeightDp);
+            prefvalue = (int) Math.ceil(screen / Theme.floatConvert(225));
+        }
         return prefvalue;
     }
 

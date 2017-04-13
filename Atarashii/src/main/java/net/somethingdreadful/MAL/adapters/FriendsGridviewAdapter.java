@@ -7,10 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import net.somethingdreadful.MAL.AppLog;
 import net.somethingdreadful.MAL.DateTools;
@@ -23,8 +22,6 @@ import org.apache.commons.lang3.text.WordUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class FriendsGridviewAdapter<T> extends ArrayAdapter<T> {
     private final Context context;
@@ -48,7 +45,7 @@ public class FriendsGridviewAdapter<T> extends ArrayAdapter<T> {
             viewHolder.username = (TextView) view.findViewById(R.id.userName);
             viewHolder.lastOnline = (TextView) view.findViewById(R.id.lastonline);
             viewHolder.lastOnlineLabel = (TextView) view.findViewById(R.id.lastonlineLabel);
-            viewHolder.avatar = (ImageView) view.findViewById(R.id.profileImg);
+            viewHolder.avatar = (SimpleDraweeView) view.findViewById(R.id.profileImg);
 
             if (Theme.darkTheme) {
                 viewHolder.username.setTextColor(ContextCompat.getColor(context, R.color.white));
@@ -77,11 +74,7 @@ public class FriendsGridviewAdapter<T> extends ArrayAdapter<T> {
             } else {
                 viewHolder.lastOnline.setText(context.getString(R.string.unknown));
             }
-            Glide.with(context).load(record.getImageUrl())
-                    .error(R.drawable.cover_error)
-                    .placeholder(R.drawable.cover_loading)
-                    .bitmapTransform(new CropCircleTransformation(context))
-                    .into(viewHolder.avatar);
+            viewHolder.avatar.setImageURI(record.getImageUrl());
         } catch (Exception e) {
             AppLog.log(Log.ERROR, "Atarashii", "FriendsActivity.ListViewAdapter(): " + e.getMessage());
             AppLog.logException(e);
@@ -101,6 +94,6 @@ public class FriendsGridviewAdapter<T> extends ArrayAdapter<T> {
         TextView username;
         TextView lastOnline;
         TextView lastOnlineLabel;
-        ImageView avatar;
+        SimpleDraweeView avatar;
     }
 }

@@ -6,7 +6,6 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -15,14 +14,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import net.somethingdreadful.MAL.AppLog;
 import net.somethingdreadful.MAL.Card;
@@ -51,7 +46,7 @@ public class ProfileDetailsMAL extends Fragment implements SwipeRefreshLayout.On
     @BindView(R.id.progressBar) ProgressBar progressBar;
     @BindView(R.id.network_Card) Card networkCard;
 
-    @BindView(R.id.Image) ImageView image;
+    @BindView(R.id.Image) SimpleDraweeView image;
     @BindView(R.id.birthdaysmall) TextView tv1;
     @BindView(R.id.locationsmall) TextView tv2;
     @BindView(R.id.commentspostssmall) TextView tv3;
@@ -260,7 +255,9 @@ public class ProfileDetailsMAL extends Fragment implements SwipeRefreshLayout.On
                 setText();
                 setcolor();
 
-                Glide.with(activity)
+                image.setImageURI(Uri.parse(activity.record.getImageUrl()));
+
+                /*Glide.with(activity)
                         .load(activity.record.getImageUrl())
                         .error(R.drawable.cover_error)
                         .placeholder(R.drawable.cover_loading)
@@ -277,7 +274,7 @@ public class ProfileDetailsMAL extends Fragment implements SwipeRefreshLayout.On
                                 imagecard.wrapImage(225, 320);
                                 image.setImageDrawable(drawable);
                             }
-                        });
+                        });*/
             }
         } catch (IllegalStateException e) {
             AppLog.log(Log.ERROR, "Atarashii", "ProfileDetailsMAL.refresh(): has been closed too fast");

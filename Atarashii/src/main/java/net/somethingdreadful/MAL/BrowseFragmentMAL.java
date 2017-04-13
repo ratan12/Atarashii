@@ -141,7 +141,7 @@ public class BrowseFragmentMAL extends Fragment implements AdapterView.OnItemSel
     public void onSearchButton() {
         reloadEntries();
         activity.viewPager.setCurrentItem(typeSwitch.isChecked() ? 2 : 1);
-        activity.igf.getBrowse(query, true);
+        activity.coverFragment.getBrowse(query, true);
     }
 
     @OnClick(R.id.genresButton)

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:id="@+id/details_card"
     android:layout_width="fill_parent"
     android:layout_height="72dp"
@@ -7,10 +8,13 @@
     android:background="@drawable/highlite"
     android:orientation="horizontal">
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/profileImg"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        fresco:failureImage="@drawable/cover_error"
+        fresco:placeholderImage="@drawable/cover_loading"
+        fresco:roundAsCircle="true"
         android:layout_margin="16dp"
         android:contentDescription="@string/layout_card_loading"
         android:gravity="center_vertical"

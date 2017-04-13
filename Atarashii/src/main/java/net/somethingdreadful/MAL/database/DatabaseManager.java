@@ -9,11 +9,13 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import net.somethingdreadful.MAL.AppLog;
+import net.somethingdreadful.MAL.PrefManager;
 import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Anime;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.GenericRecord;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Manga;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Schedule;
+import net.somethingdreadful.MAL.api.BaseModels.IGFModel;
 import net.somethingdreadful.MAL.api.BaseModels.Profile;
 
 import java.util.ArrayList;
@@ -352,7 +354,7 @@ public class DatabaseManager {
         return reg;
     }
 
-    public ArrayList<Anime> getAnimeList(String ListType, int sortType, int inv) {
+    public IGFModel getAnimeList(String ListType, int sortType, int inv) {
         Cursor cursor;
         Query query = Query.newQuery(db).selectFrom("*", DatabaseHelper.TABLE_ANIME);
         if (ListType.contains(GenericRecord.CUSTOMLIST)) {
@@ -370,10 +372,10 @@ public class DatabaseManager {
                     break;
             }
         }
-        return getAnimeList(cursor);
+        return getAnimeList(cursor, sortType);
     }
 
-    public ArrayList<Manga> getMangaList(String ListType, int sortType, int inv) {
+    public IGFModel getMangaList(String ListType, int sortType, int inv) {
         sortType = sortType == 5 ? -5 : sortType;
         Cursor cursor;
         Query query = Query.newQuery(db).selectFrom("*", DatabaseHelper.TABLE_MANGA);
@@ -392,7 +394,7 @@ public class DatabaseManager {
                     break;
             }
         }
-        return getMangaList(cursor);
+        return getMangaList(cursor, sortType);
     }
 
     /*
@@ -431,7 +433,32 @@ public class DatabaseManager {
         return result;
     }
 
-    private ArrayList<Manga> getMangaList(Cursor cursor) {
+    public IGFModel getAnimeList(Cursor cursor, int sortType) {
+        IGFModel igfModel = new IGFModel(sortType);
+        if (cursor.moveToFirst()) {
+            do
+                igfModel.AnimeFromCursor(cursor);
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+        AppLog.log(Log.INFO, "Atarashii", "DatabaseManager.getAnimeList(): got " + String.valueOf(cursor.getCount()));
+        return igfModel;
+    }
+
+    public IGFModel getMangaList(Cursor cursor, int sortType) {
+        IGFModel igfModel = new IGFModel(sortType);
+        boolean chapters = !PrefManager.getUseSecondaryAmountsEnabled();
+        if (cursor.moveToFirst()) {
+            do
+                igfModel.MangaFromCursor(cursor, chapters);
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+        AppLog.log(Log.INFO, "Atarashii", "DatabaseManager.getMangaList(): got " + String.valueOf(cursor.getCount()));
+        return igfModel;
+    }
+
+    public ArrayList<Manga> getMangaList(Cursor cursor) {
         ArrayList<Manga> result = new ArrayList<>();
         GenericRecord.setFromCursor(true);
         if (cursor.moveToFirst()) {
@@ -442,6 +469,7 @@ public class DatabaseManager {
         cursor.close();
         AppLog.log(Log.INFO, "Atarashii", "DatabaseManager.getMangaList(): got " + String.valueOf(cursor.getCount()));
         GenericRecord.setFromCursor(false);
+
         return result;
     }
 

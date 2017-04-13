@@ -6,12 +6,11 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
 
-import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.adapters.BrowsePagerAdapter;
-import net.somethingdreadful.MAL.api.MALApi;
-import net.somethingdreadful.MAL.tasks.TaskJob;
+import net.somethingdreadful.MAL.api.BaseModels.IGFModel;
+import net.somethingdreadful.MAL.cover.CoverAction;
+import net.somethingdreadful.MAL.cover.CoverFragment;
 
 import java.util.Arrays;
 
@@ -19,8 +18,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import lombok.Getter;
 
-public class BrowseActivity extends AppCompatActivity implements IGF.IGFCallbackListener {
-    public IGF igf;
+public class BrowseActivity extends AppCompatActivity implements CoverFragment.CoverListener {
+    public CoverFragment coverFragment;
     @Getter BrowsePagerAdapter browsePagerAdapter;
     @BindView(R.id.pager) ViewPager viewPager;
 
@@ -53,22 +52,6 @@ public class BrowseActivity extends AppCompatActivity implements IGF.IGFCallback
         dialog.show(fm, "fragment_" + tag);
     }
 
-    @Override
-    public void onIGFReady(IGF igf) {
-        igf.setUsername(AccountService.getUsername());
-        this.igf = igf;
-    }
-
-    @Override
-    public void onRecordsLoadingFinished(TaskJob job) {
-
-    }
-
-    @Override
-    public void onItemClick(int id, MALApi.ListType listType, String username, View view, String coverImage) {
-        DetailView.createDV(this, view, id, listType, username, coverImage);
-    }
-
     /**
      * Get the translation for the API.
      *
@@ -81,5 +64,19 @@ public class BrowseActivity extends AppCompatActivity implements IGF.IGFCallback
         String[] inputString = getResources().getStringArray(inputarray);
         String[] fixedString = getResources().getStringArray(fixedarray);
         return fixedString[Arrays.asList(inputString).indexOf(input)];
+    }
+
+    @Override
+    public void onCoverLoaded(CoverFragment coverFragment) {
+        this.coverFragment = coverFragment;
+    }
+
+    @Override
+    public void onCoverRequest(boolean isAnime) {
+    }
+
+    @Override
+    public void onCoverClicked(int position, int actionId, boolean isAnime, IGFModel.IGFItem item) {
+        new CoverAction(this, isAnime).openDetails(item);
     }
 }

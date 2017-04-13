@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -16,12 +17,11 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.facebook.drawee.view.DraweeView;
 
 import net.somethingdreadful.MAL.AppLog;
 import net.somethingdreadful.MAL.DetailView;
@@ -39,7 +39,6 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import lombok.Getter;
 
 public class DetailViewRecs extends Fragment implements NetworkTask.NetworkTaskListener {
@@ -185,10 +184,7 @@ public class DetailViewRecs extends Fragment implements NetworkTask.NetworkTaskL
                 holder.subTitle.setText(recommendation.getRecommendations().get(0).getUsername());
                 holder.content.setText(Html.fromHtml(recommendation.getRecommendations().get(0).getInformation()));
 
-                Glide.with(context)
-                        .load(image)
-                        .bitmapTransform(new CropCircleTransformation(context))
-                        .into(holder.imageView);
+                holder.imageView.setImageURI(Uri.parse(image));
 
             } catch (Exception e) {
                 AppLog.logTaskCrash("DetailViewRecs", e.getMessage(), e);
@@ -233,7 +229,7 @@ public class DetailViewRecs extends Fragment implements NetworkTask.NetworkTaskL
         public final TextView subTitle2;
         public final TextView subTitle3;
         public final TextView content;
-        public final ImageView imageView;
+        public final DraweeView imageView;
         public final RelativeLayout header;
 
         public recommendationAdapterHolder(View itemView) {
@@ -243,7 +239,7 @@ public class DetailViewRecs extends Fragment implements NetworkTask.NetworkTaskL
             subTitle2 = (TextView) itemView.findViewById(R.id.Cardsub2);
             subTitle3 = (TextView) itemView.findViewById(R.id.Cardsub3);
             content = (TextView) itemView.findViewById(R.id.content);
-            imageView = (ImageView) itemView.findViewById(R.id.coverImage);
+            imageView = (DraweeView) itemView.findViewById(R.id.coverImage);
             header = (RelativeLayout) itemView.findViewById(R.id.header);
 
             subTitle2.setVisibility(View.INVISIBLE);
