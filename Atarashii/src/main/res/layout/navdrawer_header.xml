@@ -7,7 +7,9 @@
         android:id="@+id/NDimage"
         android:layout_width="match_parent"
         android:layout_height="172dp"
+        fresco:failureImageScaleType="centerCrop"
         fresco:failureImage="@drawable/atarashii_background"
+        fresco:placeholderImageScaleType="centerCrop"
         fresco:placeholderImage="@drawable/atarashii_background"/>
 
     <com.facebook.drawee.view.SimpleDraweeView
