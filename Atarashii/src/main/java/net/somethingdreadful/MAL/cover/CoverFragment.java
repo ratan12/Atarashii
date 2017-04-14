@@ -57,7 +57,7 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
     // infinite scroll handler
     LinearLayoutManager recyclerManager;
     boolean pagesAvailable = true;
-    public boolean isLoading = false;
+    public boolean isLoading = true;
     int totalItemCount;
     int firstVisibleItem;
     int lastVisibleItem;
@@ -67,6 +67,7 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
         activity = getActivity();
+        listener = (CoverFragment.CoverListener) activity;
         View view = inflater.inflate(R.layout.igf_layout, container, false);
         ButterKnife.bind(this, view);
         setLoading(true);
@@ -88,7 +89,7 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
                 lastVisibleItem = recyclerManager.findLastVisibleItemPosition();
                 firstVisibleItem = recyclerManager.findFirstVisibleItemPosition();
                 visibleItemCount = lastVisibleItem - firstVisibleItem;
-                if (!isLoading && totalItemCount <= (lastVisibleItem + visibleItemCount * 2)) {
+                if (!isLoading && pagesAvailable && totalItemCount <= (lastVisibleItem + visibleItemCount * 2)) {
                     AppLog.log(Log.INFO, "Atarashii", "IGFTest.onCoverRequest(anime:" + isAnime + "): invoked");
                     isLoading = true;
                     firstLoadingItem = firstVisibleItem;
@@ -105,7 +106,6 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
         } else {
             IGFModel.coverText = getResources().getStringArray(R.array.igf_strings);
         }
-        listener = (CoverFragment.CoverListener) activity;
         if (PrefManager.getTraditionalListEnabled()) {
             Theme.setBackgroundColor(activity, view, Theme.darkTheme ? R.color.bg_dark_card : R.color.bg_light_card);
         } else {
@@ -113,6 +113,7 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
         }
 
         // Notify activity that the fragment has been created
+        AppLog.log(Log.INFO, "Atarashii", "IGFTest.onCoverLoaded(anime:" + isAnime + "): invoked");
         listener.onCoverLoaded(this);
         return view;
     }
@@ -250,7 +251,7 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
      * @param task Which list should be shown (top, popular, upcoming...)
      */
     public void getCharts(boolean clear, TaskJob task) {
-        Log.e("aa", "d"+clear+task);
+        Log.e("aa", "d" + clear + task);
         if (task == null)
             return;
         this.clear = clear;
@@ -286,6 +287,7 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
         if (task == null)
             return;
         clear = true;
+        pagesAvailable = false;
 
         ArrayList<String> args = new ArrayList<>();
         if (task == TaskJob.GETLIST || task == TaskJob.FORCESYNC || task == TaskJob.GETFRIENDLIST) {
@@ -349,7 +351,6 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
         setLoading(false);
         if (clear) {
             recyclerAdapter.getRecordList().clear();
-            pagesAvailable = true;
             page = 1;
         }
 
@@ -365,7 +366,7 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
             recyclerAdapter.setFastScrollText(igfModel.getFastScrollText());
 
             if (igfModel.getTitles() != null && igfModel.getTitles().size() != 0) {
-                pagesAvailable = igfModel.getTitles().size() > 0;
+                pagesAvailable = igfModel.getTitles().size() > 0 && job != TaskJob.GETLIST && job != TaskJob.FORCESYNC && job != TaskJob.GETFRIENDLIST;
             }
             if (job == TaskJob.GETFRIENDLIST)
                 sortUnsavedList(sortType, isInversed);
@@ -387,6 +388,7 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
 
     @Override
     public void onRefresh() {
+        AppLog.log(Log.INFO, "Atarashii", "IGFTest.onCoverRequest(anime:" + isAnime + "): invoked");
         listener.onCoverRequest(isAnime);
     }
 
