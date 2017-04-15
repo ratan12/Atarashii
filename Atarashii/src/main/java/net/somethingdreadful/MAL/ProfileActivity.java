@@ -195,14 +195,14 @@ public class ProfileActivity extends AppCompatActivity implements UserNetworkTas
         }
     }
 
-    private void showShareDialog(boolean type) {
+    private void showShareDialog(boolean isAnime) {
         if (record == null || record.getUsername() == null) {
             Theme.Snackbar(this, R.string.toast_info_hold_on);
         } else {
             ShareDialogFragment share = new ShareDialogFragment();
             Bundle args = new Bundle();
             args.putString("title", record.getUsername());
-            args.putBoolean("share", type);
+            args.putBoolean("share", isAnime);
             share.setArguments(args);
             share.show(getFragmentManager(), "fragment_share");
         }

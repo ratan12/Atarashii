@@ -1,7 +1,5 @@
 package net.somethingdreadful.MAL.api.MALModels;
 
-import net.somethingdreadful.MAL.api.MALApi;
-
 import java.io.Serializable;
 
 import lombok.Getter;
@@ -49,11 +47,8 @@ public class RecordStub implements Serializable {
         return anime_id != 0;
     }
 
-    public MALApi.ListType getType() {
-        if (anime_id > 0)
-            return MALApi.ListType.ANIME;
-        else
-            return MALApi.ListType.MANGA;
+    public boolean getType() {
+        return anime_id > 0;
     }
 
     public void setId(int id, boolean anime) {

@@ -13,10 +13,10 @@ import net.somethingdreadful.MAL.R;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Anime;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.GenericRecord;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Manga;
-import net.somethingdreadful.MAL.api.MALApi.ListType;
+
 
 public class StatusPickerDialogFragment extends DialogFragment implements OnCheckedChangeListener {
-    private ListType type;
+    private boolean isAnime;
     private String currentStatus;
 
     @Override
@@ -44,13 +44,9 @@ public class StatusPickerDialogFragment extends DialogFragment implements OnChec
     private View makeRatiobutton() {
         View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_status_picker, null);
         RadioGroup radio = (RadioGroup) view.findViewById(R.id.statusRadioGroup);
-        type = ((DetailView) getActivity()).type;
+        isAnime = ((DetailView) getActivity()).isAnime;
 
-        if (type == ListType.ANIME) {
-            currentStatus = ((DetailView) getActivity()).animeRecord.getWatchedStatus();
-        } else {
-            currentStatus = ((DetailView) getActivity()).mangaRecord.getReadStatus();
-        }
+        currentStatus = isAnime ? ((DetailView) getActivity()).animeRecord.getWatchedStatus() : ((DetailView) getActivity()).mangaRecord.getReadStatus();
 
         if ((Anime.STATUS_WATCHING.equals(currentStatus)) || (Manga.STATUS_READING.equals(currentStatus))) {
             radio.check(R.id.statusRadio_InProgress);
@@ -77,11 +73,7 @@ public class StatusPickerDialogFragment extends DialogFragment implements OnChec
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         switch (checkedId) {
             case R.id.statusRadio_InProgress:
-                if (type == ListType.ANIME) {
-                    currentStatus = Anime.STATUS_WATCHING;
-                } else {
-                    currentStatus = Manga.STATUS_READING;
-                }
+                currentStatus = isAnime ? Anime.STATUS_WATCHING : Manga.STATUS_READING;
                 break;
 
             case R.id.statusRadio_Completed:
@@ -95,13 +87,8 @@ public class StatusPickerDialogFragment extends DialogFragment implements OnChec
             case R.id.statusRadio_Dropped:
                 currentStatus = GenericRecord.STATUS_DROPPED;
                 break;
-
             case R.id.statusRadio_Planned:
-                if (type == ListType.ANIME) {
-                    currentStatus = Anime.STATUS_PLANTOWATCH;
-                } else {
-                    currentStatus = Manga.STATUS_PLANTOREAD;
-                }
+                currentStatus = isAnime ? Anime.STATUS_PLANTOWATCH : Manga.STATUS_PLANTOREAD;
                 break;
         }
     }

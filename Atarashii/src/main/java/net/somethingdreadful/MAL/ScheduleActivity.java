@@ -25,7 +25,6 @@ import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.api.APIHelper;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Anime;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Schedule;
-import net.somethingdreadful.MAL.api.MALApi;
 import net.somethingdreadful.MAL.tasks.ScheduleTask;
 
 import org.apache.commons.lang3.StringUtils;
@@ -415,7 +414,7 @@ public class ScheduleActivity extends AppCompatActivity implements Serializable,
             if (APIHelper.isNetworkAvailable(activity)) {
                 Intent startDetails = new Intent(activity, DetailView.class);
                 startDetails.putExtra("recordID", records.get(getAdapterPosition()).getId());
-                startDetails.putExtra("recordType", MALApi.ListType.ANIME);
+                startDetails.putExtra("recordType", true);
                 startActivity(startDetails);
             } else {
                 Theme.Snackbar(activity, R.string.toast_error_noConnectivity);

@@ -363,9 +363,9 @@ public class DatabaseManager {
         return getMangaList(cursor);
     }
 
-    private String regCustomList(String ListType) {
+    private String regCustomList(String type) {
         String reg = "";
-        int listNumber = Integer.parseInt(ListType.replace(GenericRecord.CUSTOMLIST, ""));
+        int listNumber = Integer.parseInt(type.replace(GenericRecord.CUSTOMLIST, ""));
         for (int i = 1; i < 16; i++) {
             if (i == listNumber)
                 reg = reg + "1";
@@ -375,13 +375,13 @@ public class DatabaseManager {
         return reg;
     }
 
-    public IGFModel getAnimeList(String ListType, int sortType, int inv) {
+    public IGFModel getAnimeList(String type, int sortType, int inv) {
         Cursor cursor;
         Query query = Query.newQuery(db).selectFrom("*", DatabaseHelper.TABLE_ANIME);
-        if (ListType.contains(GenericRecord.CUSTOMLIST)) {
-            cursor = sort(query.like("customList", regCustomList(ListType)), sortType, inv);
+        if (type.contains(GenericRecord.CUSTOMLIST)) {
+            cursor = sort(query.like("customList", regCustomList(type)), sortType, inv);
         } else {
-            switch (ListType) {
+            switch (type) {
                 case "": // All
                     cursor = sort(query.isNotNull("type"), sortType, inv);
                     break;
@@ -389,21 +389,21 @@ public class DatabaseManager {
                     cursor = sort(query.whereEqGr("rewatching", "1"), sortType, inv);
                     break;
                 default: // normal lists
-                    cursor = sort(query.where("watchedStatus", ListType), sortType, inv);
+                    cursor = sort(query.where("watchedStatus", type), sortType, inv);
                     break;
             }
         }
         return getAnimeList(cursor, sortType);
     }
 
-    public IGFModel getMangaList(String ListType, int sortType, int inv) {
+    public IGFModel getMangaList(String type, int sortType, int inv) {
         sortType = sortType == 5 ? -5 : sortType;
         Cursor cursor;
         Query query = Query.newQuery(db).selectFrom("*", DatabaseHelper.TABLE_MANGA);
-        if (ListType.contains(GenericRecord.CUSTOMLIST)) {
-            cursor = sort(query.like("customList", regCustomList(ListType)), sortType, inv);
+        if (type.contains(GenericRecord.CUSTOMLIST)) {
+            cursor = sort(query.like("customList", regCustomList(type)), sortType, inv);
         } else {
-            switch (ListType) {
+            switch (type) {
                 case "": // All
                     cursor = sort(query.isNotNull("type"), sortType, inv);
                     break;
@@ -411,7 +411,7 @@ public class DatabaseManager {
                     cursor = sort(query.whereEqGr("rereading", "1"), sortType, inv);
                     break;
                 default: // normal lists
-                    cursor = sort(query.where("readStatus", ListType), sortType, inv);
+                    cursor = sort(query.where("readStatus", type), sortType, inv);
                     break;
             }
         }

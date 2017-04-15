@@ -10,7 +10,6 @@ import android.os.Bundle;
 import net.somethingdreadful.MAL.DetailView;
 import net.somethingdreadful.MAL.R;
 import net.somethingdreadful.MAL.SearchActivity;
-import net.somethingdreadful.MAL.api.MALApi;
 
 
 public class SearchIdDialogFragment extends DialogFragment {
@@ -33,7 +32,7 @@ public class SearchIdDialogFragment extends DialogFragment {
             public void onClick(DialogInterface dialog, int which) {
                 Intent startDetails = new Intent(getActivity(), DetailView.class);
                 startDetails.putExtra("recordID", query);
-                startDetails.putExtra("recordType", MALApi.ListType.ANIME);
+                startDetails.putExtra("recordType", true);
                 startActivity(startDetails);
                 dismiss();
                 getActivity().finish();
@@ -51,7 +50,7 @@ public class SearchIdDialogFragment extends DialogFragment {
             public void onClick(DialogInterface dialog, int which) {
                 Intent startDetails = new Intent(getActivity(), DetailView.class);
                 startDetails.putExtra("recordID", query);
-                startDetails.putExtra("recordType", MALApi.ListType.MANGA);
+                startDetails.putExtra("recordType", false);
                 startActivity(startDetails);
                 dismiss();
                 getActivity().finish();

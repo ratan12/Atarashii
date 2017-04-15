@@ -29,7 +29,6 @@ import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.api.APIHelper;
 import net.somethingdreadful.MAL.api.BaseModels.History;
 import net.somethingdreadful.MAL.api.BaseModels.Profile;
-import net.somethingdreadful.MAL.api.MALApi;
 
 import java.util.ArrayList;
 
@@ -258,7 +257,7 @@ public class ProfileHistory extends Fragment implements SwipeRefreshLayout.OnRef
                     if (APIHelper.isNetworkAvailable(activity)) {
                         Intent startDetails = new Intent(activity, DetailView.class);
                         startDetails.putExtra("recordID", history.getSeries().getId());
-                        startDetails.putExtra("recordType", history.isAnime() ? MALApi.ListType.ANIME : MALApi.ListType.MANGA);
+                        startDetails.putExtra("recordType", history.isAnime());
                         startActivity(startDetails);
                     } else {
                         Theme.Snackbar(activity, R.string.toast_error_noConnectivity);

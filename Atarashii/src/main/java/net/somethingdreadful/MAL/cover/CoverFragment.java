@@ -25,7 +25,6 @@ import net.somethingdreadful.MAL.PrefManager;
 import net.somethingdreadful.MAL.R;
 import net.somethingdreadful.MAL.Theme;
 import net.somethingdreadful.MAL.api.BaseModels.IGFModel;
-import net.somethingdreadful.MAL.api.MALApi;
 import net.somethingdreadful.MAL.tasks.NetworkTask;
 import net.somethingdreadful.MAL.tasks.TaskJob;
 
@@ -236,7 +235,7 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
         ArrayList<String> args = new ArrayList<>();
         args.add(query);
 
-        NetworkTask networkTask = new NetworkTask(TaskJob.SEARCH, isAnime ? MALApi.ListType.ANIME : MALApi.ListType.MANGA, activity, data, this);
+        NetworkTask networkTask = new NetworkTask(TaskJob.SEARCH, isAnime, activity, data, this);
         networkTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, args.toArray(new String[args.size()]));
     }
 
@@ -260,7 +259,7 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
         Bundle data = new Bundle();
         data.putInt("page", page);
 
-        NetworkTask networkTask = new NetworkTask(task, isAnime ? MALApi.ListType.ANIME : MALApi.ListType.MANGA, activity, data, this);
+        NetworkTask networkTask = new NetworkTask(task, isAnime, activity, data, this);
         networkTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -273,7 +272,7 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
             page = 1;
         Bundle data = new Bundle();
         data.putInt("page", page);
-        NetworkTask networkTask = new NetworkTask(activity, isAnime ? MALApi.ListType.ANIME : MALApi.ListType.MANGA, query, this);
+        NetworkTask networkTask = new NetworkTask(activity, isAnime, query, this);
         networkTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -291,12 +290,12 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
 
         ArrayList<String> args = new ArrayList<>();
         if (task == TaskJob.GETLIST || task == TaskJob.FORCESYNC || task == TaskJob.GETFRIENDLIST) {
-            args.add(ContentManager.listSortFromInt(list, isAnime ? MALApi.ListType.ANIME : MALApi.ListType.MANGA));
+            args.add(ContentManager.listSortFromInt(list, isAnime));
             args.add(String.valueOf(sortType));
             args.add(String.valueOf(isInversed));
         }
 
-        NetworkTask networkTask = new NetworkTask(task, isAnime ? MALApi.ListType.ANIME : MALApi.ListType.MANGA, activity, new Bundle(), this);
+        NetworkTask networkTask = new NetworkTask(task, isAnime, activity, new Bundle(), this);
         networkTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, args.toArray(new String[args.size()]));
     }
 
@@ -307,7 +306,7 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
      */
     public void getProfileList(String username) {
         clear = true;
-        NetworkTask networkTask = new NetworkTask(TaskJob.GETFRIENDLIST, isAnime ? MALApi.ListType.ANIME : MALApi.ListType.MANGA, activity, new Bundle(), this);
+        NetworkTask networkTask = new NetworkTask(TaskJob.GETFRIENDLIST, isAnime, activity, new Bundle(), this);
         networkTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, username);
     }
 
@@ -347,7 +346,7 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
     }
 
     @Override
-    public void onNetworkTaskFinished(Object result, TaskJob job, MALApi.ListType type) {
+    public void onNetworkTaskFinished(Object result, TaskJob job, boolean isAnime) {
         setLoading(false);
         if (clear) {
             recyclerAdapter.getRecordList().clear();

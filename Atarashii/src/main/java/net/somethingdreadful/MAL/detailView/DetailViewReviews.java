@@ -30,7 +30,7 @@ import net.somethingdreadful.MAL.Theme;
 import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.api.APIHelper;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Reviews;
-import net.somethingdreadful.MAL.api.MALApi.ListType;
+
 import net.somethingdreadful.MAL.tasks.NetworkTask;
 import net.somethingdreadful.MAL.tasks.TaskJob;
 
@@ -119,7 +119,7 @@ public class DetailViewReviews extends Fragment implements NetworkTask.NetworkTa
      */
     @SuppressWarnings("unchecked") // Don't panic, we handle possible class cast exceptions
     @Override
-    public void onNetworkTaskFinished(Object result, TaskJob job, ListType type) {
+    public void onNetworkTaskFinished(Object result, TaskJob job, boolean isAnime) {
         getProgressBar().setVisibility(View.GONE);
         try {
             ArrayList<Reviews> records = (ArrayList<Reviews>) result;
@@ -161,7 +161,7 @@ public class DetailViewReviews extends Fragment implements NetworkTask.NetworkTa
             Bundle bundle = new Bundle();
             bundle.putInt("page", page);
             int id = activity.isAnime() ? activity.animeRecord.getId() : activity.mangaRecord.getId();
-            new NetworkTask(TaskJob.REVIEWS, activity.type, activity, bundle, activity.reviews).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, String.valueOf(id));
+            new NetworkTask(TaskJob.REVIEWS, activity.isAnime, activity, bundle, activity.reviews).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, String.valueOf(id));
         } else {
             Theme.Snackbar(activity, R.string.toast_error_noConnectivity);
         }

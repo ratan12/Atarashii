@@ -28,7 +28,7 @@ import net.somethingdreadful.MAL.DetailView;
 import net.somethingdreadful.MAL.R;
 import net.somethingdreadful.MAL.Theme;
 import net.somethingdreadful.MAL.api.APIHelper;
-import net.somethingdreadful.MAL.api.MALApi.ListType;
+
 import net.somethingdreadful.MAL.api.MALModels.Recommendations;
 import net.somethingdreadful.MAL.tasks.NetworkTask;
 import net.somethingdreadful.MAL.tasks.TaskJob;
@@ -111,7 +111,7 @@ public class DetailViewRecs extends Fragment implements NetworkTask.NetworkTaskL
      */
     @SuppressWarnings("unchecked") // Don't panic, we handle possible class cast exceptions
     @Override
-    public void onNetworkTaskFinished(Object result, TaskJob job, ListType type) {
+    public void onNetworkTaskFinished(Object result, TaskJob job, boolean isAnime) {
         getProgressBar().setVisibility(View.GONE);
         try {
             ArrayList<Recommendations> records = (ArrayList<Recommendations>) result;
@@ -145,7 +145,7 @@ public class DetailViewRecs extends Fragment implements NetworkTask.NetworkTaskL
             Bundle bundle = new Bundle();
             bundle.putInt("page", 1);
             int id = activity.isAnime() ? activity.animeRecord.getId() : activity.mangaRecord.getId();
-            new NetworkTask(TaskJob.RECOMMENDATION, activity.type, activity, bundle, activity.recommendations).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, String.valueOf(id));
+            new NetworkTask(TaskJob.RECOMMENDATION, activity.isAnime, activity, bundle, activity.recommendations).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, String.valueOf(id));
         } else {
             Theme.Snackbar(activity, R.string.toast_error_noConnectivity);
         }
@@ -257,7 +257,7 @@ public class DetailViewRecs extends Fragment implements NetworkTask.NetworkTaskL
             if (APIHelper.isNetworkAvailable(activity)) {
                 Intent startDetails = new Intent(activity, DetailView.class);
                 startDetails.putExtra("recordID", record.get(getAdapterPosition()).getItem().getId());
-                startDetails.putExtra("recordType", activity.type);
+                startDetails.putExtra("recordType", activity.isAnime);
                 startActivity(startDetails);
             } else {
                 Theme.Snackbar(activity, R.string.toast_error_noConnectivity);

@@ -24,7 +24,6 @@ import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.adapters.DetailViewRelationsAdapter;
 import net.somethingdreadful.MAL.api.APIHelper;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.GenericRecord;
-import net.somethingdreadful.MAL.api.MALApi;
 
 import java.io.Serializable;
 import java.util.regex.Matcher;
@@ -225,7 +224,7 @@ public class DetailViewDetails extends Fragment implements Serializable {
      */
     @SuppressLint("SetTextI18n")
     public void setText() {
-        GenericRecord record = (activity.type.equals(MALApi.ListType.ANIME) ? activity.animeRecord : activity.mangaRecord);
+        GenericRecord record = (activity.isAnime ? activity.animeRecord : activity.mangaRecord);
         if (record.getSynopsis() == null)
             return;
 
@@ -235,7 +234,7 @@ public class DetailViewDetails extends Fragment implements Serializable {
         synopsis.setText(record.getSynopsis());
         synopsis.setMovementMethod(LinkMovementMethod.getInstance());
         genres.setText("\u200F" + TextUtils.join(", ", record.getGenresString(activity)));
-        if (activity.type.equals(MALApi.ListType.ANIME)) {
+        if (activity.isAnime) {
             type.setText(activity.animeRecord.getType());
             episodes.setText(activity.nullCheck(activity.animeRecord.getEpisodes()));
             if (activity.animeRecord.getDuration() == 0)
@@ -300,7 +299,7 @@ public class DetailViewDetails extends Fragment implements Serializable {
         title.clear();
         music.clear();
 
-        if (activity.type.equals(MALApi.ListType.ANIME)) {
+        if (activity.isAnime) {
             relation.addRelations(activity.animeRecord.getMangaAdaptations(), getString(R.string.card_content_adaptions));
             relation.addRelations(activity.animeRecord.getParentStory(), getString(R.string.card_content_parentstory));
             relation.addRelations(activity.animeRecord.getPrequels(), getString(R.string.card_content_prequel));

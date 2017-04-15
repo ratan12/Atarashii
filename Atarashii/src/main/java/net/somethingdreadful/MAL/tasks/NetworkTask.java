@@ -14,7 +14,6 @@ import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.api.APIHelper;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Anime;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Manga;
-import net.somethingdreadful.MAL.api.MALApi;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +21,7 @@ import java.util.HashMap;
 
 public class NetworkTask extends AsyncTask<String, Void, Object> {
     private TaskJob job;
-    private MALApi.ListType type;
+    private boolean isAnime;
     private Activity activity = null;
     private Context context;
     private Bundle data;
@@ -33,29 +32,29 @@ public class NetworkTask extends AsyncTask<String, Void, Object> {
             TaskJob.GETJUSTADDED, TaskJob.GETUPCOMING, TaskJob.SEARCH, TaskJob.REVIEWS};
 
 
-    public NetworkTask(TaskJob job, MALApi.ListType type, Activity activity, Bundle data, NetworkTaskListener callback) {
-        if (job == null || type == null || activity == null)
+    public NetworkTask(TaskJob job, boolean isAnime, Activity activity, Bundle data, NetworkTaskListener callback) {
+        if (job == null || activity == null)
             throw new IllegalArgumentException("job, type and context must not be null");
         this.job = job;
-        this.type = type;
+        this.isAnime = isAnime;
         this.activity = activity;
         this.data = data;
         this.callback = callback;
     }
 
-    public NetworkTask(Activity activity, MALApi.ListType type, HashMap<String, String> Qdata, NetworkTaskListener callback) {
+    public NetworkTask(Activity activity, boolean isAnime, HashMap<String, String> Qdata, NetworkTaskListener callback) {
         this.job = TaskJob.BROWSE;
-        this.type = type;
+        this.isAnime = isAnime;
         this.activity = activity;
         this.Qdata = Qdata;
         this.callback = callback;
     }
 
-    public NetworkTask(MALApi.ListType type, Context context, NetworkTaskListener callback) {
-        if (type == null || context == null)
+    public NetworkTask(boolean isAnime, Context context, NetworkTaskListener callback) {
+        if (context == null)
             throw new IllegalArgumentException("job, type and context must not be null");
         this.job = TaskJob.FORCESYNC;
-        this.type = type;
+        this.isAnime = isAnime;
         this.context = context;
         this.data = new Bundle();
         this.callback = callback;
@@ -66,7 +65,7 @@ public class NetworkTask extends AsyncTask<String, Void, Object> {
     }
 
     private boolean isAnimeTask() {
-        return type.equals(MALApi.ListType.ANIME);
+        return isAnime;
     }
 
     private boolean isArrayList() {
@@ -170,7 +169,7 @@ public class NetworkTask extends AsyncTask<String, Void, Object> {
                                 // Check if the record is on the animelist.
                                 // after that load details if synopsis == null or else return the DB record
                                 if (record != null && (record.getSynopsis() == null || params[0].equals("true")) && record.getWatchedStatus() != null) {
-                                    AppLog.log(Log.INFO, "Atarashii", String.format("NetworkTask.doInBackground(): TaskJob = %s & %sID = %s", job, type, record.getId()));
+                                    AppLog.log(Log.INFO, "Atarashii", String.format("NetworkTask.doInBackground(): TaskJob = %s & %sID = %s", job, isAnime, record.getId()));
                                     taskResult = cManager.updateWithDetails(record.getId(), record);
                                 } else {
                                     taskResult = record;
@@ -192,7 +191,7 @@ public class NetworkTask extends AsyncTask<String, Void, Object> {
                                 // Check if the record is on the mangalist
                                 // load details if synopsis == null or else return the DB record
                                 if (record != null && (record.getSynopsis() == null || params[0].equals("true")) && record.getReadStatus() != null) {
-                                    AppLog.log(Log.INFO, "Atarashii", String.format("NetworkTask.doInBackground(): TaskJob = %s & %sID = %s", job, type, record.getId()));
+                                    AppLog.log(Log.INFO, "Atarashii", String.format("NetworkTask.doInBackground(): TaskJob = %s & %sID = %s", job, isAnime, record.getId()));
                                     taskResult = cManager.updateWithDetails(record.getId(), record);
                                 } else {
                                     taskResult = record;
@@ -217,7 +216,7 @@ public class NetworkTask extends AsyncTask<String, Void, Object> {
                         taskResult = isAnimeTask() ? cManager.getAnimeRecs(Integer.parseInt(params[0])) : cManager.getMangaRecs(Integer.parseInt(params[0]));
                     break;
                 default:
-                    AppLog.log(Log.ERROR, "Atarashii", "NetworkTask.doInBackground(): " + String.format("%s-task invalid job identifier %s", type.toString(), job.name()));
+                    AppLog.log(Log.ERROR, "Atarashii", "NetworkTask.doInBackground(): " + String.format("%s-task invalid job identifier %s", isAnime, job.name()));
             }
             /* if result is still null at this point there was no error but the API returned an empty result
              * (e. g. an empty anime-/mangalist), so create an empty list to let the callback know that
@@ -226,7 +225,7 @@ public class NetworkTask extends AsyncTask<String, Void, Object> {
             if (taskResult == null)
                 return isArrayList() ? new ArrayList<>() : null;
         } catch (Exception e) {
-            AppLog.logTaskCrash("NetworkTask", "doInBackground(): " + String.format("%s-task error on job %s", type.toString(), job.name()), e);
+            AppLog.logTaskCrash("NetworkTask", "doInBackground(): " + String.format("%s-task error on job %s", isAnime, job.name()), e);
             return isArrayList() && !job.equals(TaskJob.FORCESYNC) && !job.equals(TaskJob.GETLIST) ? new ArrayList<>() : null;
         }
         return taskResult;
@@ -236,14 +235,14 @@ public class NetworkTask extends AsyncTask<String, Void, Object> {
     protected void onPostExecute(Object result) {
         if (callback != null) {
             if (result != null)
-                callback.onNetworkTaskFinished(taskResult, job, type);
+                callback.onNetworkTaskFinished(taskResult, job, isAnime);
             else
                 callback.onNetworkTaskError(job);
         }
     }
 
     public interface NetworkTaskListener {
-        void onNetworkTaskFinished(Object result, TaskJob job, MALApi.ListType type);
+        void onNetworkTaskFinished(Object result, TaskJob job, boolean isAnime);
 
         void onNetworkTaskError(TaskJob job);
     }

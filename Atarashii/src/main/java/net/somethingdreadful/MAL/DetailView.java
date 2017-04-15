@@ -33,8 +33,6 @@ import net.somethingdreadful.MAL.api.APIHelper;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Anime;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.GenericRecord;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Manga;
-import net.somethingdreadful.MAL.api.MALApi;
-import net.somethingdreadful.MAL.api.MALApi.ListType;
 import net.somethingdreadful.MAL.detailView.DetailViewDetails;
 import net.somethingdreadful.MAL.detailView.DetailViewPersonal;
 import net.somethingdreadful.MAL.detailView.DetailViewRecs;
@@ -50,14 +48,15 @@ import net.somethingdreadful.MAL.tasks.WriteDetailTask;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import lombok.Getter;
 
+import static java.lang.Boolean.valueOf;
+
 public class DetailView extends AppCompatActivity implements Serializable, NetworkTask.NetworkTaskListener, SwipeRefreshLayout.OnRefreshListener, NumberPickerDialogFragment.onUpdateClickListener, ListDialogFragment.onUpdateClickListener, ViewPager.OnPageChangeListener, ChooseDialogFragment.onClickListener, InputDialogFragment.onClickListener, DatePickerDialogFragment.onDateSetListener {
-    public ListType type;
+    public boolean isAnime;
     public Anime animeRecord;
     public Manga mangaRecord;
     private DetailViewDetails details;
@@ -86,7 +85,7 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
 
         viewPager.addOnPageChangeListener(this);
         context = getApplicationContext();
-        type = (ListType) getIntent().getSerializableExtra("recordType");
+        isAnime = getIntent().getBooleanExtra("recordType", true);
         recordID = getIntent().getIntExtra("recordID", -1);
 
         if (state != null) {
@@ -120,7 +119,7 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
      */
     private void setText() {
         try {
-            collapsingToolbarLayout.setTitle(type == ListType.ANIME ? animeRecord.getTitle() : mangaRecord.getTitle());
+            collapsingToolbarLayout.setTitle(isAnime ? animeRecord.getTitle() : mangaRecord.getTitle());
             if (!coverImageLoaded)
                 setToolbarImages();
             PageAdapter.hidePersonal(!isAdded());
@@ -168,7 +167,7 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
      * Checks if this record is in our list
      */
     public boolean isAdded() {
-        return !isEmpty() && (ListType.ANIME.equals(type) ? animeRecord.getWatchedStatus() != null : mangaRecord.getReadStatus() != null);
+        return !isEmpty() && (isAnime ? animeRecord.getWatchedStatus() != null : mangaRecord.getReadStatus() != null);
     }
 
     /**
@@ -257,7 +256,7 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
     }
 
     public boolean isAnime() {
-        return type.equals(MALApi.ListType.ANIME);
+        return isAnime;
     }
 
     /**
@@ -282,7 +281,7 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
      */
     private void addToList() {
         if (!isEmpty()) {
-            if (type.equals(ListType.ANIME)) {
+            if (isAnime) {
                 animeRecord.setCreateFlag();
                 // If the anime hasn't aired mark is planned
                 if (!animeRecord.getStatus().equalsIgnoreCase("not yet aired"))
@@ -316,9 +315,9 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
         String shareText = PrefManager.getCustomShareText();
         shareText = shareText.replace("$title;", toolbar.getTitle());
         if (AccountService.isMAL())
-            shareText = shareText.replace("$link;", "https://myanimelist.net/" + type.toString().toLowerCase(Locale.US) + "/" + String.valueOf(recordID));
+            shareText = shareText.replace("$link;", "https://myanimelist.net/" + (isAnime?"anime":"manga") + "/" + String.valueOf(recordID));
         else
-            shareText = shareText.replace("$link;", "http://anilist.co/" + type.toString().toLowerCase(Locale.US) + "/" + String.valueOf(recordID));
+            shareText = shareText.replace("$link;", "http://anilist.co/" + (isAnime?"anime":"manga") + "/" + String.valueOf(recordID));
         shareText = shareText + getResources().getString(R.string.customShareText_fromAtarashii);
         return shareText;
     }
@@ -330,7 +329,7 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
      * This will cause a nullpointerexception.
      */
     public boolean isDone() {
-        return (!isEmpty()) && (type.equals(ListType.ANIME) ? animeRecord.getSynopsis() != null : mangaRecord.getSynopsis() != null);
+        return (!isEmpty()) && (isAnime ? animeRecord.getSynopsis() != null : mangaRecord.getSynopsis() != null);
     }
 
     /**
@@ -343,11 +342,11 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
         setRefreshing(true);
         Bundle data = new Bundle();
         data.putInt("recordID", recordID);
-        new NetworkTask(TaskJob.GETDETAILS, type, this, data, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, String.valueOf(forceUpdate));
+        new NetworkTask(TaskJob.GETDETAILS, isAnime, this, data, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, String.valueOf(forceUpdate));
     }
 
     public void onStatusDialogDismissed(String currentStatus) {
-        if (type.equals(ListType.ANIME)) {
+        if (isAnime) {
             animeRecord.setWatchedStatus(currentStatus);
         } else {
             mangaRecord.setReadStatus(currentStatus);
@@ -402,7 +401,7 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
                 if (APIHelper.isNetworkAvailable(context)) {
                     Intent forumActivity = new Intent(this, ForumActivity.class);
                     forumActivity.putExtra("id", recordID);
-                    forumActivity.putExtra("listType", type);
+                    forumActivity.putExtra("boolean", isAnime);
                     startActivity(forumActivity);
                 } else {
                     Theme.Snackbar(this, R.string.toast_error_noConnectivity);
@@ -411,15 +410,15 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
             case R.id.action_ViewMALPage:
                 Uri malurl;
                 if (AccountService.isMAL())
-                    malurl = Uri.parse("https://myanimelist.net/" + type.toString().toLowerCase(Locale.US) + "/" + recordID + "/");
+                    malurl = Uri.parse("https://myanimelist.net/" + (isAnime?"anime":"manga") + "/" + recordID + "/");
                 else
-                    malurl = Uri.parse("http://anilist.co/" + type.toString().toLowerCase(Locale.US) + "/" + recordID + "/");
+                    malurl = Uri.parse("http://anilist.co/" + (isAnime?"anime":"manga") + "/" + recordID + "/");
                 startActivity(new Intent(Intent.ACTION_VIEW, malurl));
                 break;
             case R.id.action_copy:
                 if (animeRecord != null || mangaRecord != null) {
                     android.content.ClipboardManager clipBoard = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                    android.content.ClipData clipData = android.content.ClipData.newPlainText("Atarashii", type == ListType.ANIME ? animeRecord.getTitle() : mangaRecord.getTitle());
+                    android.content.ClipData clipData = android.content.ClipData.newPlainText("Atarashii", isAnime ? animeRecord.getTitle() : mangaRecord.getTitle());
                     clipBoard.setPrimaryClip(clipData);
                     Theme.Snackbar(this, R.string.toast_info_Copied);
                 } else {
@@ -436,16 +435,16 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
         if (animeRecord == null && mangaRecord == null)
             return; // nothing to do
         try {
-            if (type.equals(ListType.ANIME)) {
+            if (isAnime) {
                 if (animeRecord.isDirty() && !animeRecord.getDeleteFlag())
-                    new WriteDetailTask(type, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, animeRecord);
+                    new WriteDetailTask(isAnime, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, animeRecord);
                 else if (animeRecord.getDeleteFlag())
-                    new WriteDetailTask(type, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, animeRecord);
-            } else if (type.equals(ListType.MANGA)) {
+                    new WriteDetailTask(isAnime, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, animeRecord);
+            } else {
                 if (mangaRecord.isDirty() && !mangaRecord.getDeleteFlag())
-                    new WriteDetailTask(type, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mangaRecord);
+                    new WriteDetailTask(isAnime, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mangaRecord);
                 else if (mangaRecord.getDeleteFlag())
-                    new WriteDetailTask(type, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mangaRecord);
+                    new WriteDetailTask(isAnime, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mangaRecord);
             }
         } catch (Exception e) {
             AppLog.log(Log.ERROR, "Atarashii", "DetailView.onPause(): " + e.getMessage());
@@ -469,7 +468,7 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
         String[] splitmessage = message.split(":", 2);
         if (splitmessage.length == 2) {
             try {
-                type = ListType.valueOf(splitmessage[0].toUpperCase(Locale.US));
+                isAnime = valueOf(splitmessage[0]);
                 recordID = Integer.parseInt(splitmessage[1]);
                 getRecord(false);
             } catch (NumberFormatException e) {
@@ -487,7 +486,7 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
                 AppLog.log(Log.INFO, "Atarashii", "DetailView.setupBeam(): NFC not available");
             } else {
                 // Register NFC callback
-                String message_str = type.toString() + ":" + String.valueOf(recordID);
+                String message_str = isAnime?"anime":"manga" + ":" + String.valueOf(recordID);
                 NdefMessage message = new NdefMessage(new NdefRecord[]{
                         new NdefRecord(
                                 NdefRecord.TNF_MIME_MEDIA,
@@ -505,12 +504,14 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
 
     @SuppressWarnings("unchecked") // Don't panic, we handle possible class cast exceptions
     @Override
-    public void onNetworkTaskFinished(Object result, TaskJob job, ListType type) {
+    public void onNetworkTaskFinished(Object result, TaskJob job, boolean isAnime) {
         try {
-            if (type == ListType.ANIME)
+            if (isAnime)
                 animeRecord = (Anime) result;
             else
                 mangaRecord = (Manga) result;
+            coverImage.setImageURI(((GenericRecord) result).getImageUrl());
+            bannerImage.setImageURI(((GenericRecord) result).getImageUrl());
             setRefreshing(false);
 
             setText();
@@ -526,7 +527,7 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
      */
     public void setToolbarImages() {
         try {
-            GenericRecord record = (type == ListType.ANIME ? animeRecord : mangaRecord);
+            GenericRecord record = (isAnime ? animeRecord : mangaRecord);
             if (record.getBannerUrl() != null && !record.getBannerUrl().equals("")) {
                 bannerImage.setImageURI(record.getBannerUrl());
             } else {
@@ -590,7 +591,7 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
      */
     @Override
     public void onPositiveButtonClicked() {
-        if (type.equals(ListType.ANIME))
+        if (isAnime)
             animeRecord.setDeleteFlag();
         else
             mangaRecord.setDeleteFlag();
@@ -636,7 +637,7 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
         String dayString = String.valueOf(day);
         if (dayString.length() == 1)
             dayString = "0" + dayString;
-        if (type.equals(ListType.ANIME)) {
+        if (isAnime) {
             if (startDate)
                 animeRecord.setWatchingStart(String.valueOf(year) + "-" + monthString + "-" + dayString);
             else
@@ -650,10 +651,10 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
         setText();
     }
 
-    public static void createDV(Activity activity, View view, int id, ListType listType, String username) {
+    public static void createDV(Activity activity, View view, int id, boolean isAnime, String username) {
         Intent startDetails = new Intent(activity, DetailView.class);
         startDetails.putExtra("recordID", id);
-        startDetails.putExtra("recordType", listType);
+        startDetails.putExtra("recordType", isAnime);
         startDetails.putExtra("username", username);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -664,10 +665,10 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
         }
     }
 
-    public static void createDV(Activity activity, View view, int id, ListType listType, String username, String coverImage) {
+    public static void createDV(Activity activity, View view, int id, boolean isAnime, String username, String coverImage) {
         Intent startDetails = new Intent(activity, DetailView.class);
         startDetails.putExtra("recordID", id);
-        startDetails.putExtra("recordType", listType);
+        startDetails.putExtra("recordType", isAnime);
         startDetails.putExtra("username", username);
         startDetails.putExtra("coverImage", coverImage);
 

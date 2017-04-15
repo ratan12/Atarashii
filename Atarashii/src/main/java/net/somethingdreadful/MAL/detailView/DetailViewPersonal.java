@@ -16,7 +16,6 @@ import net.somethingdreadful.MAL.PrefManager;
 import net.somethingdreadful.MAL.R;
 import net.somethingdreadful.MAL.Theme;
 import net.somethingdreadful.MAL.account.AccountService;
-import net.somethingdreadful.MAL.api.MALApi;
 import net.somethingdreadful.MAL.dialog.CustomListDialogFragment;
 import net.somethingdreadful.MAL.dialog.DatePickerDialogFragment;
 import net.somethingdreadful.MAL.dialog.InputDialogFragment;
@@ -76,7 +75,7 @@ public class DetailViewPersonal extends Fragment implements Serializable, View.O
     }
 
     private void setCard() {
-        if (activity.type != null && activity.type.equals(MALApi.ListType.ANIME)) {
+        if (activity.isAnime) {
             TextView progress1 = (TextView) view.findViewById(R.id.progress1Label);
             progress1.setText(getString(R.string.card_content_episodes));
             RelativeLayout progress2 = (RelativeLayout) view.findViewById(R.id.progress2);

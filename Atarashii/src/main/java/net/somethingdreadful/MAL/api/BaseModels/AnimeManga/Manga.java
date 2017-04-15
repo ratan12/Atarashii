@@ -10,7 +10,6 @@ import net.somethingdreadful.MAL.DateTools;
 import net.somethingdreadful.MAL.PrefManager;
 import net.somethingdreadful.MAL.R;
 import net.somethingdreadful.MAL.account.AccountService;
-import net.somethingdreadful.MAL.api.MALApi;
 import net.somethingdreadful.MAL.api.MALModels.RecordStub;
 
 import java.io.Serializable;
@@ -252,7 +251,7 @@ public class Manga extends GenericRecord implements Serializable {
     }
 
     public void setReadStatus(int id) {
-        setReadStatus(ContentManager.listSortFromInt(id, MALApi.ListType.MANGA));
+        setReadStatus(ContentManager.listSortFromInt(id, false));
     }
 
     public int getStatusInt(String[] fixedStatus) {

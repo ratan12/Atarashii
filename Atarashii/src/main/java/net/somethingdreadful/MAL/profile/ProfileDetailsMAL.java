@@ -153,10 +153,10 @@ public class ProfileDetailsMAL extends Fragment implements SwipeRefreshLayout.On
         }
     }
 
-    private void setColor(boolean type) {
+    private void setColor(boolean isAnime) {
         int Hue;
         TextView textview;
-        if (type) {
+        if (isAnime) {
             textview = (TextView) view.findViewById(R.id.atimedayssmall); //anime
             Hue = (int) (activity.record.getAnimeStats().getTimeDays() * 2.5);
         } else {

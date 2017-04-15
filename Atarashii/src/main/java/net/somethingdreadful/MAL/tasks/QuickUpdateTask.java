@@ -15,7 +15,6 @@ import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Anime;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.GenericRecord;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Manga;
 import net.somethingdreadful.MAL.api.BaseModels.IGFModel;
-import net.somethingdreadful.MAL.api.MALApi;
 import net.somethingdreadful.MAL.broadcasts.RecordStatusUpdatedReceiver;
 
 public class QuickUpdateTask extends AsyncTask<GenericRecord, Void, Boolean> {
@@ -93,7 +92,7 @@ public class QuickUpdateTask extends AsyncTask<GenericRecord, Void, Boolean> {
         // send broadcast for list updates
         Intent i = new Intent();
         i.setAction(RecordStatusUpdatedReceiver.RECV_IDENT);
-        i.putExtra("type", isAnime ? MALApi.ListType.ANIME : MALApi.ListType.MANGA);
+        i.putExtra("type", isAnime ? "ANIME" : "MANGA");
         LocalBroadcastManager.getInstance(activity).sendBroadcast(i);
     }
 }

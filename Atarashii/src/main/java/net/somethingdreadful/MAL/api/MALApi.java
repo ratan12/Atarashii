@@ -614,9 +614,4 @@ public class MALApi {
         map.put("page", String.valueOf(page));
         return getBrowseManga(checkNSFW(map));
     }
-
-    public enum ListType {
-        ANIME,
-        MANGA
-    }
 }

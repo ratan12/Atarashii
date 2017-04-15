@@ -12,7 +12,6 @@ import net.somethingdreadful.MAL.Theme;
 import net.somethingdreadful.MAL.api.APIHelper;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.GenericRecord;
 import net.somethingdreadful.MAL.api.BaseModels.IGFModel;
-import net.somethingdreadful.MAL.api.MALApi;
 import net.somethingdreadful.MAL.tasks.QuickUpdateTask;
 
 import java.util.ArrayList;
@@ -55,7 +54,7 @@ public class CoverAction {
     }
 
     public void addCoverItem(IGFModel.IGFItem item) {
-        item.setStatus(ContentManager.listSortFromInt(PrefManager.getAddList(), isAnime ? MALApi.ListType.ANIME : MALApi.ListType.MANGA));
+        item.setStatus(ContentManager.listSortFromInt(PrefManager.getAddList(), isAnime));
         new QuickUpdateTask(isAnime, activity, item).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -63,7 +62,7 @@ public class CoverAction {
         if (APIHelper.isNetworkAvailable(activity)) {
             Intent startDetails = new Intent(activity, DetailView.class);
             startDetails.putExtra("recordID", item.getId());
-            startDetails.putExtra("recordType", isAnime ? MALApi.ListType.ANIME : MALApi.ListType.MANGA);
+            startDetails.putExtra("recordType", isAnime);
             activity.startActivity(startDetails);
         } else {
             Theme.Snackbar(activity, R.string.toast_error_noConnectivity);

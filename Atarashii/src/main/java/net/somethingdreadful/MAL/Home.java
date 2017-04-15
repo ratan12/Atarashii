@@ -27,7 +27,6 @@ import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.adapters.IGFPagerAdapter;
 import net.somethingdreadful.MAL.api.APIHelper;
 import net.somethingdreadful.MAL.api.BaseModels.IGFModel;
-import net.somethingdreadful.MAL.api.MALApi;
 import net.somethingdreadful.MAL.broadcasts.RecordStatusUpdatedReceiver;
 import net.somethingdreadful.MAL.cover.CoverAction;
 import net.somethingdreadful.MAL.cover.CoverFragment;
@@ -59,7 +58,7 @@ public class Home extends AppCompatActivity implements ChooseDialogFragment.onCl
     @BindView(R.id.searchView) SearchView searchView;
 
     List<Integer> arrayMenuSort = Arrays.asList(R.id.sort_title, R.id.sort_score, R.id.sort_type, R.id.sort_status, R.id.sort_progress);
-    List<Integer> arrayMenuListType = Arrays.asList(R.id.listType_all, R.id.listType_inprogress, R.id.listType_completed, R.id.listType_onhold,
+    List<Integer> arrayMenuboolean = Arrays.asList(R.id.listType_all, R.id.listType_inprogress, R.id.listType_completed, R.id.listType_onhold,
             R.id.listType_dropped, R.id.listType_planned, R.id.listType_rewatching);
     List<Integer> ArrayMenuCustom = Arrays.asList(R.id.customList1, R.id.customList2, R.id.customList3, R.id.customList4, R.id.customList5,
             R.id.customList6, R.id.customList7, R.id.customList8, R.id.customList9, R.id.customList10, R.id.customList11, R.id.customList12,
@@ -163,7 +162,7 @@ public class Home extends AppCompatActivity implements ChooseDialogFragment.onCl
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (af != null)
-            setChecked(menu.findItem(arrayMenuListType.get(personalList)));
+            setChecked(menu.findItem(arrayMenuboolean.get(personalList)));
         menu.findItem(R.id.sort_title).setChecked(true);
         myListChanged();
         return true;
@@ -172,12 +171,12 @@ public class Home extends AppCompatActivity implements ChooseDialogFragment.onCl
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (af != null && mf != null) {
-            if (arrayMenuListType.contains(item.getItemId())) {
-                getPersonalList(TaskJob.GETLIST, arrayMenuListType.indexOf(item.getItemId()), item);
+            if (arrayMenuboolean.contains(item.getItemId())) {
+                getPersonalList(TaskJob.GETLIST, arrayMenuboolean.indexOf(item.getItemId()), item);
             } else if (arrayMenuSort.contains(item.getItemId())) {
                 sortRecords(arrayMenuSort.indexOf(item.getItemId()) + 1, item);
             } else if (ArrayMenuCustom.contains(item.getItemId())) {
-                getPersonalList(TaskJob.GETLIST, ArrayMenuCustom.indexOf(item.getItemId()) + arrayMenuListType.size(), item);
+                getPersonalList(TaskJob.GETLIST, ArrayMenuCustom.indexOf(item.getItemId()) + arrayMenuboolean.size(), item);
             } else if (item.getItemId() == R.id.forceSync) {
                 getPersonalList(TaskJob.FORCESYNC, personalList, null);
             } else if (item.getItemId() == R.id.action_search) {
@@ -425,7 +424,7 @@ public class Home extends AppCompatActivity implements ChooseDialogFragment.onCl
     }
 
     @Override
-    public void onRecordStatusUpdated(MALApi.ListType type) {
+    public void onRecordStatusUpdated(boolean isAnime) {
         getPersonalList(TaskJob.GETLIST, personalList, null);
     }
 

@@ -5,7 +5,6 @@ import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
 
 import net.somethingdreadful.MAL.cover.CoverFragment;
-import net.somethingdreadful.MAL.api.MALApi;
 
 public class IGFPagerAdapter extends FragmentPagerAdapter {
 
@@ -28,6 +27,6 @@ public class IGFPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return (position == 0? MALApi.ListType.ANIME :  MALApi.ListType.MANGA).toString();
+        return position == 0? "ANIME" :  "MANGA";
     }
 }

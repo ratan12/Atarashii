@@ -16,7 +16,6 @@ import net.somethingdreadful.MAL.PrefManager;
 import net.somethingdreadful.MAL.R;
 import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.api.APIHelper;
-import net.somethingdreadful.MAL.api.MALApi;
 import net.somethingdreadful.MAL.tasks.NetworkTask;
 import net.somethingdreadful.MAL.tasks.TaskJob;
 
@@ -38,11 +37,11 @@ public class AutoSync extends BroadcastReceiver implements NetworkTask.NetworkTa
             PendingIntent contentIntent = PendingIntent.getActivity(context, 1, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
             if (!networkChange(intent) || !PrefManager.getAutosyncDone()) {
                 ArrayList<String> args = new ArrayList<>();
-                args.add(ContentManager.listSortFromInt(0, MALApi.ListType.ANIME));
+                args.add(ContentManager.listSortFromInt(0, true));
                 args.add(String.valueOf(1));
                 args.add(String.valueOf(false));
-                new NetworkTask(MALApi.ListType.ANIME, context, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, args.toArray(new String[args.size()]));
-                new NetworkTask(MALApi.ListType.MANGA, context, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, args.toArray(new String[args.size()]));
+                new NetworkTask(true, context, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, args.toArray(new String[args.size()]));
+                new NetworkTask(false, context, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, args.toArray(new String[args.size()]));
 
                 NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                         .setOngoing(true)
@@ -60,7 +59,7 @@ public class AutoSync extends BroadcastReceiver implements NetworkTask.NetworkTa
     }
 
     @Override
-    public void onNetworkTaskFinished(Object result, TaskJob job, MALApi.ListType type) {
+    public void onNetworkTaskFinished(Object result, TaskJob job, boolean isAnime) {
         nm.cancel(R.id.notification_sync);
         PrefManager.setAutosyncDone(true);
     }

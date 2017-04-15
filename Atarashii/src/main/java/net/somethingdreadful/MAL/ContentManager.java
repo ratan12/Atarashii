@@ -49,7 +49,7 @@ public class ContentManager {
         dbMan = new DatabaseManager(activity);
     }
 
-    public static String listSortFromInt(int i, MALApi.ListType type) {
+    public static String listSortFromInt(int i, boolean isAnime) {
         if (6 < i) // custom lists
             return GenericRecord.CUSTOMLIST + (i - 6);
 
@@ -57,7 +57,7 @@ public class ContentManager {
             case 0:
                 return "";
             case 1:
-                return type.equals(MALApi.ListType.ANIME) ? Anime.STATUS_WATCHING : Manga.STATUS_READING;
+                return isAnime ? Anime.STATUS_WATCHING : Manga.STATUS_READING;
             case 2:
                 return Anime.STATUS_COMPLETED;
             case 3:
@@ -65,11 +65,11 @@ public class ContentManager {
             case 4:
                 return Anime.STATUS_DROPPED;
             case 5:
-                return type.equals(MALApi.ListType.ANIME) ? Anime.STATUS_PLANTOWATCH : Manga.STATUS_PLANTOREAD;
+                return isAnime ? Anime.STATUS_PLANTOWATCH : Manga.STATUS_PLANTOREAD;
             case 6:
-                return type.equals(MALApi.ListType.ANIME) ? Anime.STATUS_REWATCHING : Manga.STATUS_REREADING;
+                return isAnime ? Anime.STATUS_REWATCHING : Manga.STATUS_REREADING;
             default:
-                return type.equals(MALApi.ListType.ANIME) ? Anime.STATUS_WATCHING : Manga.STATUS_READING;
+                return isAnime ? Anime.STATUS_WATCHING : Manga.STATUS_READING;
         }
     }
 
