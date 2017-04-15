@@ -418,12 +418,8 @@ public class Home extends AppCompatActivity implements ChooseDialogFragment.onCl
     }
 
     @Override
-    public void onNegInputButtonClicked(int id) {/*
-        Glide.with(this)
-                .load(R.drawable.atarashii_background)
-                .placeholder(R.drawable.atarashii_background)
-                .error(R.drawable.atarashii_background)
-                .into((ImageView) findViewById(R.id.NDimage));*/
+    public void onNegInputButtonClicked(int id) {
+        ((SimpleDraweeView) findViewById(R.id.NDimage)).setActualImageResource(R.drawable.atarashii_background);
         PrefManager.setNavigationBackground(null);
         PrefManager.commitChanges();
     }
