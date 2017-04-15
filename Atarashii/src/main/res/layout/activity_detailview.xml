@@ -2,9 +2,9 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:fresco="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBar"
@@ -20,25 +20,27 @@
             app:expandedTitleTextAppearance="@style/TextAppearance.Design.CollapsingToolbar.Expanded.Shadow"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <com.facebook.drawee.view.DraweeView
+            <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/bannerImage"
                 android:layout_width="match_parent"
                 android:layout_height="256dp"
                 android:fitsSystemWindows="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/atarashii_background"
-                app:layout_collapseMode="parallax"
+                fresco:overlayImage="@color/bg_dark_material"
                 android:tint="@color/bg_dark_material"
                 android:tintMode="src_atop"
+                app:layout_collapseMode="parallax"
                 fresco:failureImage="@drawable/atarashii_background"
-                android:foreground="@color/bg_dark_material"/>
+                fresco:failureImageScaleType="centerCrop"
+                fresco:placeholderImageScaleType="centerCrop"
+                fresco:placeholderImage="@drawable/atarashii_background"/>
 
-            <com.facebook.drawee.view.DraweeView
+            <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/coverImage"
                 android:layout_width="match_parent"
                 android:layout_height="256dp"
-                app:layout_collapseMode="parallax"
+                fresco:actualImageScaleType="fitCenter"
                 android:transitionName="coverImage"
+                app:layout_collapseMode="parallax"
                 fresco:placeholderImage="@drawable/cover_loading"/>
 
             <android.support.v7.widget.Toolbar
