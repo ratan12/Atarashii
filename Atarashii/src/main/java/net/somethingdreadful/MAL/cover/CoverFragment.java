@@ -364,10 +364,7 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
             }
             recyclerAdapter.notifyDataSetChanged();
             recyclerAdapter.setFastScrollText(igfModel.getFastScrollText());
-
-            if (igfModel.getTitles() != null && igfModel.getTitles().size() != 0) {
-                pagesAvailable = igfModel.getTitles().size() > 0 && job != TaskJob.GETLIST && job != TaskJob.FORCESYNC && job != TaskJob.GETFRIENDLIST;
-            }
+            pagesAvailable = igfModel.getTitles() != null && igfModel.getTitles().size() != 0 && job != TaskJob.GETLIST && job != TaskJob.FORCESYNC && job != TaskJob.GETFRIENDLIST;
             if (job == TaskJob.GETFRIENDLIST)
                 sortUnsavedList(sortType, isInversed);
         } catch (Exception e) {
