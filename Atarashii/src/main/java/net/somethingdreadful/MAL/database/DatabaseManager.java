@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.lapism.searchview.SearchItem;
 
 import net.somethingdreadful.MAL.AppLog;
 import net.somethingdreadful.MAL.PrefManager;
@@ -19,6 +20,7 @@ import net.somethingdreadful.MAL.api.BaseModels.IGFModel;
 import net.somethingdreadful.MAL.api.BaseModels.Profile;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseManager {
     private final SQLiteDatabase db;
@@ -276,6 +278,25 @@ public class DatabaseManager {
         cv.put("createFlag", record.getCreateFlag());
         cv.put("deleteFlag", record.getDeleteFlag());
         return cv;
+    }
+
+    public List<SearchItem> getSuggestions() {
+        List<SearchItem> result = new ArrayList<>();
+        result.addAll(getSuggestions(Query.newQuery(db).selectFrom("title", DatabaseHelper.TABLE_ANIME).run()));
+        result.addAll(getSuggestions(Query.newQuery(db).selectFrom("title", DatabaseHelper.TABLE_MANGA).run()));
+        return result;
+    }
+
+    private List<SearchItem> getSuggestions(Cursor cursor) {
+        List<SearchItem> result = new ArrayList<>();
+        AppLog.log(Log.INFO, "Atarashii", "DatabaseManager.getSuggestions(): got " + String.valueOf(cursor.getCount()));
+        if (cursor.moveToFirst()) {
+            do
+                result.add(new SearchItem(cursor.getString(cursor.getColumnIndex("title"))));
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+        return result;
     }
 
     public Anime getAnime(int id) {

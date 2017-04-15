@@ -1,26 +1,27 @@
 package net.somethingdreadful.MAL;
 
-import android.app.SearchManager;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.lapism.searchview.SearchView;
 
 import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.adapters.IGFPagerAdapter;
@@ -42,7 +43,7 @@ import butterknife.ButterKnife;
 
 import static net.somethingdreadful.MAL.Theme.context;
 
-public class Home extends AppCompatActivity implements ChooseDialogFragment.onClickListener, CoverFragment.CoverListener, View.OnClickListener, ViewPager.OnPageChangeListener, NavigationView.OnNavigationItemSelectedListener, InputDialogFragment.onClickListener, RecordStatusUpdatedReceiver.RecordStatusUpdatedListener {
+public class Home extends AppCompatActivity implements ChooseDialogFragment.onClickListener, CoverFragment.CoverListener, View.OnClickListener, ViewPager.OnPageChangeListener, NavigationView.OnNavigationItemSelectedListener, InputDialogFragment.onClickListener, RecordStatusUpdatedReceiver.RecordStatusUpdatedListener, SearchView.OnQueryTextListener {
     private CoverFragment af;
     private CoverFragment mf;
     private Menu menu;
@@ -53,7 +54,9 @@ public class Home extends AppCompatActivity implements ChooseDialogFragment.onCl
     @BindView(R.id.navigationView) NavigationView navigationView;
     @BindView(R.id.drawerLayout) DrawerLayout drawerLayout;
     @BindView(R.id.tabs) TabLayout tabs;
+    @BindView(R.id.tabsContainer) AppBarLayout appBarLayout;
     @BindView(R.id.pager) ViewPager viewPager;
+    @BindView(R.id.searchView) SearchView searchView;
 
     List<Integer> arrayMenuSort = Arrays.asList(R.id.sort_title, R.id.sort_score, R.id.sort_type, R.id.sort_status, R.id.sort_progress);
     List<Integer> arrayMenuListType = Arrays.asList(R.id.listType_all, R.id.listType_inprogress, R.id.listType_completed, R.id.listType_onhold,
@@ -83,6 +86,9 @@ public class Home extends AppCompatActivity implements ChooseDialogFragment.onCl
             if (PrefManager.getHideHomeTabs())
                 tabs.setVisibility(View.GONE);
             viewPager.addOnPageChangeListener(this);
+            searchView.setVersion(SearchView.VERSION_MENU_ITEM);
+            searchView.setOnQueryTextListener(this);
+            searchView.setArrowOnly(true);
 
             //Initializing NavigationView
             navigationView.setNavigationItemSelectedListener(this);
@@ -118,12 +124,6 @@ public class Home extends AppCompatActivity implements ChooseDialogFragment.onCl
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(AccountService.isMAL() ? R.menu.activity_home_mal : R.menu.activity_home_al, menu);
         this.menu = menu;
-
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        ComponentName cn = new ComponentName(this, SearchActivity.class);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(cn));
 
         if (!AccountService.isMAL())
             setCustomList(PrefManager.getCustomAnimeList());
@@ -180,6 +180,10 @@ public class Home extends AppCompatActivity implements ChooseDialogFragment.onCl
                 getPersonalList(TaskJob.GETLIST, ArrayMenuCustom.indexOf(item.getItemId()) + arrayMenuListType.size(), item);
             } else if (item.getItemId() == R.id.forceSync) {
                 getPersonalList(TaskJob.FORCESYNC, personalList, null);
+            } else if (item.getItemId() == R.id.action_search) {
+                searchView.open(true, item);
+                appBarLayout.setExpanded(true, true);
+                return true;
             } else if (item.getItemId() == R.id.menu_inverse) {
                 item.setChecked(!item.isChecked());
                 af.inverse(item.isChecked());
@@ -236,13 +240,8 @@ public class Home extends AppCompatActivity implements ChooseDialogFragment.onCl
     }
 
     private void myListChanged() {
-        if (menu != null) {
-            //TODO enable before Atarashii 3 release
-            //if (af != null && mf != null)
-            //   menu.findItem(R.id.menu_details).setChecked(myList && af.getDetails());
-            //menu.findItem(R.id.menu_inverse).setVisible(myList || (!AccountService.isMAL() && af.taskjob == TaskJob.GETMOSTPOPULAR));
+        if (menu != null)
             menu.findItem(R.id.action_search).setVisible(networkAvailable);
-        }
     }
 
     private void showLogoutDialog() {
@@ -297,12 +296,17 @@ public class Home extends AppCompatActivity implements ChooseDialogFragment.onCl
 
     @Override
     public void onCoverClicked(int position, int actionId, boolean isAnime, IGFModel.IGFItem item) {
-        if (actionId == 1)
-            new CoverAction(this, isAnime).comProgress(item);
-        else if (actionId == 2)
-            new CoverAction(this, isAnime).subProgress(item);
-        else if (actionId == 3)
-            new CoverAction(this, isAnime).addProgress(item);
+        switch (actionId) {
+            case 1:
+                new CoverAction(this, isAnime).comProgress(item);
+                break;
+            case 2:
+                new CoverAction(this, isAnime).subProgress(item);
+                break;
+            case 3:
+                new CoverAction(this, isAnime).addProgress(item);
+                break;
+        }
     }
 
     @Override
@@ -353,7 +357,7 @@ public class Home extends AppCompatActivity implements ChooseDialogFragment.onCl
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.nav_list)
             item.setChecked(!item.isChecked());
         drawerLayout.closeDrawers();
@@ -407,12 +411,8 @@ public class Home extends AppCompatActivity implements ChooseDialogFragment.onCl
     }
 
     @Override
-    public void onPosInputButtonClicked(String text, int id) {/*
-        Glide.with(this)
-                .load(text)
-                .placeholder(R.drawable.atarashii_background)
-                .error(R.drawable.atarashii_background)
-                .into((ImageView) findViewById(R.id.NDimage));*/
+    public void onPosInputButtonClicked(String text, int id) {
+        ((SimpleDraweeView) findViewById(R.id.NDimage)).setImageURI(text);
         PrefManager.setNavigationBackground(text);
         PrefManager.commitChanges();
     }
@@ -431,5 +431,19 @@ public class Home extends AppCompatActivity implements ChooseDialogFragment.onCl
     @Override
     public void onRecordStatusUpdated(MALApi.ListType type) {
         getPersonalList(TaskJob.GETLIST, personalList, null);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        searchView.close(true);
+        Intent Search = new Intent(this, SearchActivity.class);
+        Search.putExtra("query", query);
+        startActivity(Search);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
     }
 }

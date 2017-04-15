@@ -75,9 +75,6 @@
             android:label="@string/title_activity_forum"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize">
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH"/>
             </intent-filter>
@@ -86,12 +83,6 @@
             android:name=".SearchActivity"
             android:label="Search"
             android:launchMode="singleTask">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH"/>
-            </intent-filter>
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
         </activity>
 
         <provider
