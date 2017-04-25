@@ -141,6 +141,8 @@ public class IGFModel implements Serializable {
     }
 
     private static String createProgress(String recordStatus, int progress, int maxProgress) {
+        if (coverText == null)
+            return "";
         switch (recordStatus) {
             case "watching":
                 return coverText[0] + " " + progress + "/" + maxProgress;
