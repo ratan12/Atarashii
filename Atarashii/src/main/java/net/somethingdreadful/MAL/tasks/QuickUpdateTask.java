@@ -92,7 +92,7 @@ public class QuickUpdateTask extends AsyncTask<GenericRecord, Void, Boolean> {
         // send broadcast for list updates
         Intent i = new Intent();
         i.setAction(RecordStatusUpdatedReceiver.RECV_IDENT);
-        i.putExtra("type", isAnime ? "ANIME" : "MANGA");
+        i.putExtra("type", isAnime);
         LocalBroadcastManager.getInstance(activity).sendBroadcast(i);
     }
 }
