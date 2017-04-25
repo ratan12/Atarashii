@@ -41,6 +41,7 @@
     <string name="toast_error_Friends">Sync error while getting friendlist!</string>
     <string name="toast_error_nothingFound">No anime or manga results found.</string>
     <string name="toast_error_convert">The comment could not be converted!</string>
+    <string name="toast_error_layout">Atarashii can\'t get the input info!</string>
     <string name="toast_info_SyncMessage">Syncing everything. This could take a few seconds.</string>
     <string name="toast_info_password">Username and password combination doesn\'t match!</string>
     <string name="toast_info_Copied">Copied the title successfully to the clipboard!</string>
@@ -63,6 +64,7 @@
     <string name="dialog_title_share">Share</string>
     <string name="dialog_title_share_via">Share via</string>
     <string name="dialog_title_Verifying">Verifying</string>
+    <string name="dialog_title_records">Records</string>
     <string name="dialog_title_rating">Rating</string>
     <string name="dialog_title_watched_update">I\'ve watched</string>
     <string name="dialog_title_read_update">I\'ve read</string>
@@ -73,6 +75,7 @@
     <string name="dialog_title_update_navigation">Update background</string>
     <string name="dialog_hint_tags">Separate your tags with a comma</string>
     <string name="dialog_hint_comment">Enter you comment</string>
+    <string name="dialog_message_records">Loading records...</string>
     <string name="dialog_message_view">Which list do you want to view?</string>
     <string name="dialog_message_logout">Are you sure you wish to logout? This will erase all stored data and images.</string>
     <string name="dialog_message_id_search">Please press on the Anime or Manga button to search. Remember that Anime and Manga IDs aren\'t the same!</string>
@@ -82,8 +85,10 @@
     <string name="dialog_message_update_navigation">Enter the Image URL below.</string>
     <string name="dialog_message_last_post">Last post by</string>
     <string name="dialog_message_edit_comment">Are you sure that your comment should be updated?</string>
+    <string name="dialog_message_socialmedia">To use Atarashii with a socialmedia account you must set a password.</string>
     <string name="dialog_message_add_comment">Do you really want to add a new comment?</string>
     <string name="dialog_label_cancel">Cancel</string>
+    <string name="dialog_label_password">Set password</string>
     <string name="dialog_label_update">Update</string>
     <string name="dialog_label_anime">Anime</string>
     <string name="dialog_label_manga">Manga</string>
@@ -141,14 +146,18 @@
     <string name="previous">Previous</string>
 
     <!-- FirstTimeInit (Contents) Strings -->
-    <string name="init_hint_choose">Welcome to Atarashii!\nPlease choose your preferred site.</string>
+    <string name="init_hint_choose">Please choose your preferred site.</string>
+    <string name="init_hint_website">Website?</string>
     <string name="init_hint_myanimelist">MyAnimeList</string>
     <string name="init_hint_anilist">AniList</string>
-    <string name="form_hint_user">MAL Username</string>
-    <string name="form_hint_pass">MAL Password</string>
-    <string name="form_hint_info">Enter your MyAnimeList credentials below:</string>
+    <string name="form_hint_user">Username</string>
+    <string name="form_hint_pass">Password</string>
+    <string name="form_hint_info">Enter your credentials above and press done.</string>
+    <string name="form_hint_register">Register</string>
+    <string name="form_hint_socialmedia">Social media login?</string>
     <string name="form_action_create">Create an Account</string>
     <string name="form_action_connect">Login</string>
+    <string name="app_welcome" >Welcome to Atarashii, this application is a listmanager for tracking your watched anime and read manga.</string>
 
     <!-- IGF (MyList Cover) Strings -->
     <string name="cover_Watching">I\'ve watched:</string>

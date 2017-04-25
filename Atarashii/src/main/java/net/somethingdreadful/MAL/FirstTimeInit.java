@@ -1,185 +1,143 @@
 package net.somethingdreadful.MAL;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.inputmethod.InputMethodManager;
-import android.webkit.CookieManager;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.ViewFlipper;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 
-import net.somethingdreadful.MAL.account.AccountService;
-import net.somethingdreadful.MAL.api.ALApi;
+import com.github.paolorotolo.appintro.AppIntro;
+import com.github.paolorotolo.appintro.AppIntroFragment;
+
 import net.somethingdreadful.MAL.api.APIHelper;
+import net.somethingdreadful.MAL.api.BaseModels.IGFModel;
 import net.somethingdreadful.MAL.tasks.AuthenticationCheckTask;
+import net.somethingdreadful.MAL.tasks.NetworkTask;
+import net.somethingdreadful.MAL.tasks.TaskJob;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import java.util.ArrayList;
 
-public class FirstTimeInit extends AppCompatActivity implements AuthenticationCheckTask.AuthenticationCheckListener, OnClickListener {
-    private String MalUser;
-    private String MalPass;
-    private Context context;
+public class FirstTimeInit extends AppIntro implements AuthenticationCheckTask.AuthenticationCheckListener, NetworkTask.NetworkTaskListener {
+    public boolean isMAL = true;
+    public String username;
+    public String password;
     private ProgressDialog dialog;
-    private boolean loaded = false;
+    private int loadedRecords = 0;
+    public FirstTimeInitLogin firstTimeInitLogin;
 
-    @BindView(R.id.edittext_malUser) EditText malUser;
-    @BindView(R.id.edittext_malPass) EditText malPass;
-    @BindView(R.id.viewFlipper) ViewFlipper viewFlipper;
-    @BindView(R.id.button_connectToMal) Button connectButton;
-    @BindView(R.id.registerButton) Button registerButton;
-    @BindView(R.id.webview) WebView webview;
-    @BindView(R.id.myanimelist) TextView myanimelist;
-    @BindView(R.id.anilist) TextView anilist;
-
-    @SuppressLint("SetJavaScriptEnabled")
     @Override
-    public void onCreate(Bundle state) {
-        super.onCreate(state);
-        setContentView(R.layout.activity_firstrun);
-        Theme.setActionBar(this);
-        ButterKnife.bind(this);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        firstTimeInitLogin = FirstTimeInitLogin.newInstance(this);
 
-        context = getApplicationContext();
+        addSlide(AppIntroFragment.newInstance(getString(R.string.app_name), getString(R.string.app_welcome), R.drawable.icon, getResources().getColor(R.color.primary)));
+        addSlide(FirstTimeInitChoose.newInstance(this));
+        addSlide(firstTimeInitLogin);
 
-        if (getIntent().getBooleanExtra("updatePassword", false))
-            Theme.Snackbar(this, R.string.toast_info_password);
-        connectButton.setOnClickListener(this);
-        registerButton.setOnClickListener(this);
-        myanimelist.setOnClickListener(this);
-        anilist.setOnClickListener(this);
-
-        CookieManager.getInstance().removeAllCookie();
-        webview.getSettings().setJavaScriptEnabled(true);
-        webview.getSettings().setDomStorageEnabled(true);
-        webview.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                String code = ALApi.getCode(url);
-                if (code != null) {
-                    MalUser = code;
-                    tryConnection();
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
-        if (APIHelper.isNetworkAvailable(this)) {
-            webview.loadUrl(ALApi.getAnilistURL());
-            loaded = true;
-        }
-
-        PrefManager.deleteAccount();
-        NfcHelper.disableBeam(this);
+        setBarColor(getResources().getColor(R.color.accent));
+        setSeparatorColor(getResources().getColor(android.R.color.black));
+        showSkipButton(false);
     }
 
-    private void tryConnection() {
+    @Override
+    public void onSkipPressed(Fragment currentFragment) {
+        super.onSkipPressed(currentFragment);
+    }
+
+    @Override
+    public void onDonePressed(Fragment currentFragment) {
+        super.onDonePressed(currentFragment);
         if (APIHelper.isNetworkAvailable(this)) {
-            dialog = new ProgressDialog(this);
-            dialog.setIndeterminate(true);
-            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            dialog.setTitle(getString(R.string.dialog_title_Verifying));
-            dialog.setMessage(getString(R.string.dialog_message_Verifying));
-            dialog.show();
-            if (MalPass != null)
-                new AuthenticationCheckTask(this, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, MalUser, MalPass);
-            else
-                new AuthenticationCheckTask(this, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, MalUser);
+            // Get username and password from the inputviews
+            if (firstTimeInitLogin.input1 != null && firstTimeInitLogin.input2 != null) {
+                username = firstTimeInitLogin.input1.getText().toString();
+                password = firstTimeInitLogin.input2.getText().toString();
+
+                // Create loading dialog
+                dialog = new ProgressDialog(this);
+                dialog.setIndeterminate(true);
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.setTitle(getString(R.string.dialog_title_Verifying));
+                dialog.setMessage(getString(R.string.dialog_message_Verifying));
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.show();
+
+                // Make auth check request
+                if (isMAL)
+                    new AuthenticationCheckTask(this, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, username, password);
+                else
+                    new AuthenticationCheckTask(this, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, username);
+            } else {
+                dialog.dismiss();
+                Theme.Snackbar(this, R.string.toast_error_layout);
+            }
         } else {
+            dialog.dismiss();
             Theme.Snackbar(this, R.string.toast_error_noConnectivity);
         }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
+    public void onSlideChanged(@Nullable Fragment oldFragment, @Nullable Fragment newFragment) {
+        super.onSlideChanged(oldFragment, newFragment);
     }
 
     @Override
-    public void onAuthenticationCheckFinished(boolean result) {
-        try {
-            if (result) {
-                // load account before requesting the information
-                AccountService.getAccount();
-                AppLog.setCrashData("Site", AccountService.accountType.toString());
-                PrefManager.setForceSync(true);
-                PrefManager.commitChanges();
-                dialog.dismiss();
-                Intent goHome = new Intent(context, Home.class);
-                startActivity(goHome);
-                finish();
-            } else {
-                dialog.dismiss();
-                if (APIHelper.isNetworkAvailable(this)) {
-                    Theme.Snackbar(this, R.string.toast_error_VerifyProblem);
-                    webview.loadUrl(ALApi.getAnilistURL());
-                } else {
-                    Theme.Snackbar(this, R.string.toast_error_noConnectivity);
-                }
-            }
-        } catch (Exception e) {
-            AppLog.logTaskCrash("FirstTimeInit", "onAuthenticationCheckFinished()", e);
+    public void onAuthenticationCheckFinished(boolean isValid) {
+        if (isValid) {
+            // Load anime and Manga records
+            IGFModel.coverText = getResources().getStringArray(R.array.igf_strings);
+            loadedRecords = 0;
+            LoadRecords(true);
+            LoadRecords(false);
+
+            // Change dialog text
+            dialog.setTitle(getString(R.string.dialog_title_records) + " (" + loadedRecords + "/2)");
+            dialog.setMessage(getString(R.string.dialog_message_records));
+        } else {
+            dialog.dismiss();
             Theme.Snackbar(this, R.string.toast_error_VerifyProblem);
         }
     }
 
     @Override
-    public void onBackPressed() {
-        if (viewFlipper.getDisplayedChild() == 1 || viewFlipper.getDisplayedChild() == 2)
-            viewFlipper.setDisplayedChild(0);
-        else
-            finish();
+    public void onNetworkTaskFinished(Object result, TaskJob job, boolean isAnime) {
+        checkRecords();
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.button_connectToMal:
-                MalUser = malUser.getText().toString().trim();
-                MalPass = malPass.getText().toString().trim();
+    public void onNetworkTaskError(TaskJob job) {
+        checkRecords();
+    }
 
-                // hide keyboard
-                v.clearFocus();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-
-                // verify account
-                tryConnection();
-                break;
-            case R.id.registerButton:
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://myanimelist.net/register.php"));
-                startActivity(browserIntent);
-                break;
-            case R.id.myanimelist:
-                viewFlipper.setDisplayedChild(1);
-                break;
-            case R.id.anilist:
-                if (APIHelper.isNetworkAvailable(this)) {
-                    if (!loaded)
-                        webview.loadUrl(ALApi.getAnilistURL());
-                    viewFlipper.setDisplayedChild(2);
-                } else
-                    Theme.Snackbar(this, R.string.toast_error_noConnectivity);
-                break;
+    /**
+     * Check if both records are loadedRecords and launch the main activity
+     */
+    private void checkRecords() {
+        loadedRecords++;
+        dialog.setTitle(getString(R.string.dialog_title_records) + " (" + loadedRecords + "/2)");
+        if (loadedRecords == 2) {
+            dialog.dismiss();
+            Intent goHome = new Intent(this, Home.class);
+            startActivity(goHome);
+            finish();
         }
+    }
+
+    /**
+     * Create List loading request
+     *
+     * @param isAnime Boolean if the animelist or mangalist should be loadedRecords
+     */
+    private void LoadRecords(boolean isAnime) {
+        ArrayList<String> args = new ArrayList<>();
+        args.add(ContentManager.listSortFromInt(0, isAnime));
+        args.add(String.valueOf(1));
+        args.add(String.valueOf(false));
+
+        NetworkTask networkTask = new NetworkTask(TaskJob.FORCESYNC, isAnime, this, new Bundle(), this);
+        networkTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, args.toArray(new String[args.size()]));
     }
 }
 

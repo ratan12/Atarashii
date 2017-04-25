@@ -86,6 +86,7 @@ dependencies {
     compile 'com.facebook.fresco:fresco:1.2.0'
     provided 'org.glassfish:javax.annotation:10.0-b28'
     compile 'com.jakewharton:butterknife:8.5.1'
+    compile 'com.github.paolorotolo:appintro:4.1.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
     provided 'org.projectlombok:lombok:1.16.14'
     ProductionCompile('com.crashlytics.sdk.android:crashlytics:2.6.6@aar') { transitive = true; }
