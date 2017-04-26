@@ -6,7 +6,6 @@
     <string name="title_activity_firstRun">First Run Setup</string>
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_about">About</string>
-    <string name="title_activity_detail_view">DetailView</string>
     <string name="title_activity_profile">User profile</string>
     <string name="title_activity_forum">Forum</string>
     <string name="title_activity_charts">Charts</string>
@@ -31,9 +30,6 @@
     <string name="toast_error_reviews">There are no reviews available.</string>
     <string name="toast_error_maintenance">API unavailable, maintenance in progress!</string>
     <string name="toast_error_UserRecord">Userprofile is empty!</string>
-    <string name="toast_error_Search">Error while searching! Please try again later.</string>
-    <string name="toast_error_Anime_Sync">Sync error while getting animelist!</string>
-    <string name="toast_error_Manga_Sync">Sync error while getting mangalist!</string>
     <string name="toast_error_Records">Error while getting records. Please try again later.</string>
     <string name="toast_error_DetailsError">Atarashii can\'t load the details!</string>
     <string name="toast_error_keys">Atarashii can\'t get the Auth keys from AL!</string>
@@ -47,9 +43,7 @@
     <string name="toast_info_Copied">Copied the title successfully to the clipboard!</string>
     <string name="toast_info_hold_on">Hold on a second, we are still loading information!</string>
     <string name="toast_info_comment_added">It could take 5 minutes until it is visible</string>
-    <string name="toast_info_disabled">This feature is currently disabled :(</string>
     <string name="toast_info_disabled_youtube">Comments with Youtube videos aren\'t supported :(</string>
-    <string name="toast_info_backup_list">The backup is not compatible with this site!</string>
     <string name="toast_info_comment">The comment is short!</string>
     <string name="toast_info_no_customlist">Please sync the lists after upgrading!</string>
 
@@ -138,7 +132,6 @@
     <string name="unknown">unknown</string>
 
     <!-- BackupActivity Strings -->
-    <string name="creation_date">Creation date</string>
 
     <!-- ForumActivity Strings -->
     <string name="Page_number">Page number</string>
@@ -155,8 +148,6 @@
     <string name="form_hint_info">Enter your credentials above and press done.</string>
     <string name="form_hint_register">Register</string>
     <string name="form_hint_socialmedia">Social media login?</string>
-    <string name="form_action_create">Create an Account</string>
-    <string name="form_action_connect">Login</string>
     <string name="app_welcome" >Welcome to Atarashii, this application is a listmanager for tracking your watched anime and read manga.</string>
 
     <!-- IGF (MyList Cover) Strings -->
@@ -170,12 +161,8 @@
     <string name="cover_Dropped">Dropped</string>
     <string name="cover_PlanningToWatch">Planning to watch</string>
     <string name="cover_PlanningToRead">Planning to read</string>
-    <string name="action_PlusOneWatched">+1 Watched</string>
-    <string name="action_PlusOneRead">+1 Read</string>
-    <string name="action_MarkAsComplete">Mark Completed</string>
     <string name="label_Chapters">Chapters:</string>
     <string name="label_Volumes">Volumes:</string>
-    <string name="label_Number">Number:</string>
     <string name="cover_Episodes">Episodes:</string>
     <string name="cover_Members">Members:</string>
 
@@ -198,7 +185,6 @@
     <string name="drawer_close" translatable="false">Close navigation drawer</string>
 
     <!-- Tab names Strings -->
-    <string name="tab_name_general">General</string>
     <string name="tab_name_personal">Personal</string>
     <string name="tab_name_reviews">Reviews</string>
     <string name="tab_name_recommendations">Recommendations</string>
@@ -221,7 +207,6 @@
     <string name="card_name_synopsis">Synopsis</string>
     <string name="card_name_stats">Statistics</string>
     <string name="card_name_info">Information</string>
-    <string name="card_name_personal">Personal</string>
     <string name="card_name_relations">Relations</string>
     <string name="card_name_music">Music</string>
     <string name="card_name_titles">Alternative Titles</string>
@@ -370,7 +355,6 @@
     <string name="preference_adultcontent">Enable NSFW content (MAL)</string>
     <string name="preference_hidetabs">Hide Anime and Manga tabs</string>
     <string name="preference_autoDate">Update the dates automatically</string>
-    <string name="preference_backuplength">The amount of backups.</string>
     <string name="preference_synchronisation">Auto-synchronisation</string>
     <string name="preference_Theme">Dark Theme</string>
     <string name="preference_list_columns_portrait">Portrait list columns</string>
