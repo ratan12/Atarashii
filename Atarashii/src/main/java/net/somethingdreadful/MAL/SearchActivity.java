@@ -67,7 +67,7 @@ public class SearchActivity extends AppCompatActivity implements CoverFragment.C
 
     @Override
     public void onCoverLoaded(final CoverFragment coverFragment) {
-        if (coverFragment.isAnime)
+        if (coverFragment.getIsAnime())
             af = coverFragment;
         else
             mf = coverFragment;

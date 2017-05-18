@@ -165,6 +165,7 @@
     <string name="label_Volumes">Volumes:</string>
     <string name="cover_Episodes">Episodes:</string>
     <string name="cover_Members">Members:</string>
+    <string name="coverdialog_dismiss">Dismiss</string>
 
     <!-- Navigation drawer (item & action) Strings -->
     <string name="nav_item_my_profile">My Profile</string>

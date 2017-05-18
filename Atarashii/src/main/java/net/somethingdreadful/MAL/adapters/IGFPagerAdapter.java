@@ -17,7 +17,7 @@ public class IGFPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int i) {
-        return new CoverFragment().setType(i == 0);
+        return new CoverFragment(null).setType(i == 0);
     }
 
     @Override

@@ -19,7 +19,7 @@ public class BrowsePagerAdapter extends FragmentPagerAdapter {
         fragments = new Fragments(activity);
 
         fragments.add(AccountService.isMAL() ? new BrowseFragmentMAL() : new BrowseFragmentAL(), R.string.title_activity_browse);
-        fragments.add(new CoverFragment().setType(true), "ANIME");
+        fragments.add(new CoverFragment(null).setType(true), "ANIME");
     }
 
     public void isManga(boolean manga) {

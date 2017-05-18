@@ -9,6 +9,7 @@
         android:id="@+id/coverImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        fresco:overlayImage="@drawable/highlite"
         fresco:failureImage="@drawable/cover_error"
         fresco:placeholderImage="@drawable/cover_loading"/>
 

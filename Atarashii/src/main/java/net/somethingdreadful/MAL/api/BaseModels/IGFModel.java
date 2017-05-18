@@ -95,6 +95,9 @@ public class IGFModel implements Serializable {
         @Getter
         @Setter
         private int progressRaw;
+        @Getter
+        @Setter
+        private int progressRawMax;
 
         public void setImageUrl(String imageUrl) {
             this.imageUrl = imageUrl;
@@ -106,18 +109,24 @@ public class IGFModel implements Serializable {
         public void setShortDetails(String type) {
             this.shortDetails = type;
         }
+
+        public IGFItem refreshDetails() {
+            setProgress(createProgress(getUserStatusRaw(), getProgressRaw(), getProgressRawMax()));
+            setShortDetails(getProgress() + " (" + getTypeRaw() + ") " + getScore());
+            return this;
+        }
     }
 
     public void AnimeFromCursor(Cursor cursor) {
         List<String> columnNames = Arrays.asList(cursor.getColumnNames());
 
         IGFItem igfTitle = createModel(cursor, columnNames);
-        int maxEpisodes = cursor.getInt(columnNames.indexOf("episodes"));
+        igfTitle.setProgressRawMax(cursor.getInt(columnNames.indexOf("episodes")));
         igfTitle.setUserStatusRaw(cursor.getString(columnNames.indexOf("watchedStatus")));
         igfTitle.setProgressRaw(cursor.getInt(columnNames.indexOf("watchedEpisodes")));
         igfTitle.setStatusRaw(cursor.getString(columnNames.indexOf("status")));
         igfTitle.setTypeRaw(cursor.getString(columnNames.indexOf("type")));
-        igfTitle.setProgress(createProgress(igfTitle.getUserStatusRaw(), igfTitle.getProgressRaw(), maxEpisodes));
+        igfTitle.setProgress(createProgress(igfTitle.getUserStatusRaw(), igfTitle.getProgressRaw(), igfTitle.getProgressRawMax()));
         igfTitle.setStatus(coverText[8] + " " + igfTitle.getStatusRaw() + " (" + igfTitle.getTypeRaw() + ")");
         igfTitle.setShortDetails(igfTitle.getProgress() + " (" + igfTitle.getTypeRaw() + ") " + igfTitle.getScore());
         this.titles.add(igfTitle);
@@ -143,11 +152,12 @@ public class IGFModel implements Serializable {
     private static String createProgress(String recordStatus, int progress, int maxProgress) {
         if (coverText == null)
             return "";
+        String maxProgressString = maxProgress == 0 ? "?" : String.valueOf(maxProgress);
         switch (recordStatus) {
             case "watching":
-                return coverText[0] + " " + progress + "/" + maxProgress;
+                return coverText[0] + " " + progress + "/" + maxProgressString;
             case "reading":
-                return coverText[1] + " " + progress + "/" + maxProgress;
+                return coverText[1] + " " + progress + "/" + maxProgressString;
             case "completed":
                 return coverText[2];
             case "on-hold":

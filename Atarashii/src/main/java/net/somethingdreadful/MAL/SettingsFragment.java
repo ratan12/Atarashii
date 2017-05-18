@@ -75,10 +75,10 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     public boolean onPreferenceClick(Preference preference) {
         switch (preference.getKey()) {
             case "IGFcolumnsportrait":
-                makeNumberpicker(R.string.preference_list_columns_portrait, R.string.preference_list_columns_portrait,  PrefManager.getIGFColumns(true), CoverFragment.getMaxColumns(true), 2);
+                makeNumberpicker(R.string.preference_list_columns_portrait, R.string.preference_list_columns_portrait,  PrefManager.getIGFColumns(true), CoverFragment.Companion.getMaxColumns(true), 2);
                 break;
             case "IGFcolumnslandscape":
-                makeNumberpicker(R.string.preference_list_columns_landscape, R.string.preference_list_columns_landscape, PrefManager.getIGFColumns(false), CoverFragment.getMaxColumns(false), 2);
+                makeNumberpicker(R.string.preference_list_columns_landscape, R.string.preference_list_columns_landscape, PrefManager.getIGFColumns(false), CoverFragment.Companion.getMaxColumns(false), 2);
                 break;
             case "reset":
                 PrefManager.clear();

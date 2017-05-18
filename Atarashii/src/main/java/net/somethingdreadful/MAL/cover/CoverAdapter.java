@@ -1,6 +1,5 @@
 package net.somethingdreadful.MAL.cover;
 
-import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
@@ -44,15 +43,15 @@ class CoverAdapter extends RecyclerView.Adapter<CoverAdapter.itemHolder> impleme
     private Drawable action3Drawable;
     private int coverHeight;
     private boolean list = false;
-    private Activity activity;
+    private CoverFragment coverFragment;
     private boolean isAnime;
     private CoverFragment.CoverListener listener;
     @Setter @Getter ArrayList<IGFModel.IGFItem> recordList = new ArrayList<>();
     @Setter @Getter private ArrayList<String> fastScrollText;
 
-    CoverAdapter(Activity activity, boolean isAnime, int coverHeight, CoverFragment.CoverListener listener, ArrayList<Integer> actionIcons) {
+    CoverAdapter(CoverFragment coverFragment, boolean isAnime, int coverHeight, CoverFragment.CoverListener listener, ArrayList<Integer> actionIcons) {
         list = PrefManager.getTraditionalListEnabled();
-        Resources res = activity.getResources();
+        Resources res = coverFragment.getResources();
 
         if (list) {
             action1Drawable = VectorDrawableCompat.create(res, actionIcons.get(0), null);
@@ -66,7 +65,7 @@ class CoverAdapter extends RecyclerView.Adapter<CoverAdapter.itemHolder> impleme
             resource = R.layout.record_igf_grid;
         }
 
-        this.activity = activity;
+        this.coverFragment = coverFragment;
         this.isAnime = isAnime;
         this.listener = listener;
         this.coverHeight = coverHeight;
@@ -84,7 +83,7 @@ class CoverAdapter extends RecyclerView.Adapter<CoverAdapter.itemHolder> impleme
         itemView.mainPanel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new CoverAction(activity, isAnime).openDetails(recordList.get(itemView.getAdapterPosition()));
+                new CoverAction(coverFragment.getActivity(), isAnime).openDetails(recordList.get(itemView.getAdapterPosition()));
             }
         });
         itemView.action1.setOnClickListener(new View.OnClickListener() {
@@ -106,6 +105,14 @@ class CoverAdapter extends RecyclerView.Adapter<CoverAdapter.itemHolder> impleme
             public void onClick(View view) {
                 int position = itemView.getAdapterPosition();
                 listener.onCoverClicked(position, 3, isAnime, recordList.get(position));
+            }
+        });
+        itemView.mainPanel.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                int position = itemView.getAdapterPosition();
+                QuickActionsDialog.newInstance(coverFragment.getActivity(), isAnime, coverFragment, recordList.get(position));
+                return true;
             }
         });
         return itemView;

@@ -552,6 +552,8 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
     }
 
     public void setPersonal(DetailViewPersonal personal) {
+        if (getIntent().getExtras().containsKey("personal"))
+            viewPager.setCurrentItem(1);
         this.personal = personal;
     }
 

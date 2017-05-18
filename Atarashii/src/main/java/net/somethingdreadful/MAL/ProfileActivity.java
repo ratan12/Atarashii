@@ -134,24 +134,24 @@ public class ProfileActivity extends AppCompatActivity implements UserNetworkTas
                 filterRecords(6, item);
                 break;
             case R.id.sort_title:
-                sortRecords(1, item, animeList.isInversed);
+                sortRecords(1, item, animeList.getIsInversed());
                 break;
             case R.id.sort_score:
-                sortRecords(2, item, animeList.isInversed);
+                sortRecords(2, item, animeList.getIsInversed());
                 break;
             case R.id.sort_type:
-                sortRecords(3, item, animeList.isInversed);
+                sortRecords(3, item, animeList.getIsInversed());
                 break;
             case R.id.sort_status:
-                sortRecords(4, item, animeList.isInversed);
+                sortRecords(4, item, animeList.getIsInversed());
                 break;
             case R.id.sort_progress:
-                sortRecords(5, item, animeList.isInversed);
+                sortRecords(5, item, animeList.getIsInversed());
                 break;
             case R.id.menu_inverse:
-                if (!animeList.isLoading && !mangaList.isLoading) {
+                if (!animeList.getIsLoading() && !mangaList.getIsLoading()) {
                     item.setChecked(!item.isChecked());
-                    sortRecords(animeList.sortType, null, item.isChecked());
+                    sortRecords(animeList.getSortType(), null, item.isChecked());
                 } else {
                     Theme.Snackbar(this, R.string.toast_info_hold_on);
                 }
@@ -333,7 +333,7 @@ public class ProfileActivity extends AppCompatActivity implements UserNetworkTas
     @Override
     public void onCoverLoaded(CoverFragment coverFragment) {
         try {
-            if (coverFragment.isAnime) {
+            if (coverFragment.getIsAnime()) {
                 animeList = coverFragment;
                 if (record != null)
                     animeList.getProfileList(record.getUsername());

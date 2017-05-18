@@ -48,6 +48,10 @@ public class CoverAction {
         new QuickUpdateTask(isAnime, activity, item).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    public void update(IGFModel.IGFItem item) {
+        new QuickUpdateTask(isAnime, activity, item).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
     public void comProgress(IGFModel.IGFItem item) {
         item.setStatus(GenericRecord.STATUS_COMPLETED);
         new QuickUpdateTask(isAnime, activity, item).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -63,6 +67,18 @@ public class CoverAction {
             Intent startDetails = new Intent(activity, DetailView.class);
             startDetails.putExtra("recordID", item.getId());
             startDetails.putExtra("recordType", isAnime);
+            activity.startActivity(startDetails);
+        } else {
+            Theme.Snackbar(activity, R.string.toast_error_noConnectivity);
+        }
+    }
+
+    public void openPersonalDetails(IGFModel.IGFItem item) {
+        if (APIHelper.isNetworkAvailable(activity)) {
+            Intent startDetails = new Intent(activity, DetailView.class);
+            startDetails.putExtra("recordID", item.getId());
+            startDetails.putExtra("recordType", isAnime);
+            startDetails.putExtra("personal", true);
             activity.startActivity(startDetails);
         } else {
             Theme.Snackbar(activity, R.string.toast_error_noConnectivity);

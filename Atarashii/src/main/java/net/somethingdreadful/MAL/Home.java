@@ -263,7 +263,7 @@ public class Home extends AppCompatActivity implements ChooseDialogFragment.onCl
     @Override
     public void onCoverLoaded(CoverFragment igf) {
         // TODO add notification and fail counter with customlist
-        if (igf.isAnime)
+        if (igf.getIsAnime())
             af = igf;
         else
             mf = igf;
