@@ -73,7 +73,7 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
 
         int recyclerViewColumns = getColumns();
         swipeRefresh.setOnRefreshListener(this);
-        recyclerAdapter = new CoverAdapter(activity, isAnime, coverHeight, listener, CoverAction.getpersonalIcons());
+        recyclerAdapter = new CoverAdapter(this, isAnime, coverHeight, listener, CoverAction.getpersonalIcons());
         recyclerManager = new GridLayoutManager(activity, recyclerViewColumns);
         recyclerView.setLayoutManager(recyclerManager);
         recyclerView.setAdapter(recyclerAdapter);
