@@ -18,7 +18,7 @@ public class SearchIdDialogFragment extends DialogFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        query = Integer.parseInt(((SearchActivity) activity).query);
+        query = Integer.parseInt(((SearchActivity) activity).getQuery());
     }
 
     @Override

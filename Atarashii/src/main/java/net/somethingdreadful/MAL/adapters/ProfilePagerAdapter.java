@@ -26,8 +26,8 @@ public class ProfilePagerAdapter extends FragmentPagerAdapter {
             fragments.add(new ProfileFriends(), R.string.tab_name_friends);
             if (APIHelper.isNetworkAvailable(activity)) {
                 fragments.add(new ProfileHistory(), R.string.tab_name_history);
-                fragments.add(new CoverFragment(null).setType(true), "ANIME");
-                fragments.add(new CoverFragment(null).setType(false),"MANGA");
+                fragments.add(new CoverFragment().setType(true), "ANIME");
+                fragments.add(new CoverFragment().setType(false),"MANGA");
             }
         } else {
             fragments.add(new ProfileDetailsAL(), R.string.tab_name_details);
@@ -35,8 +35,8 @@ public class ProfilePagerAdapter extends FragmentPagerAdapter {
             if (APIHelper.isNetworkAvailable(activity)) {
                 fragments.add(new ProfileFriends().setId(1), R.string.tab_name_followers);
                 fragments.add(new ProfileHistory(), R.string.layout_card_title_activity);
-                fragments.add(new CoverFragment(null).setType(true), "ANIME");
-                fragments.add(new CoverFragment(null).setType(false), "MANGA");
+                fragments.add(new CoverFragment().setType(true), "ANIME");
+                fragments.add(new CoverFragment().setType(false), "MANGA");
             }
         }
     }

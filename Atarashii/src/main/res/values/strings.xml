@@ -161,6 +161,7 @@
     <string name="cover_Dropped">Dropped</string>
     <string name="cover_PlanningToWatch">Planning to watch</string>
     <string name="cover_PlanningToRead">Planning to read</string>
+    <string name="action_MarkAsComplete">Mark Completed</string>
     <string name="label_Chapters">Chapters:</string>
     <string name="label_Volumes">Volumes:</string>
     <string name="cover_Episodes">Episodes:</string>

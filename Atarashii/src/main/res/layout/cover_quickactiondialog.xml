@@ -2,6 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainLayout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
@@ -32,58 +33,194 @@
         android:paddingRight="32dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@android:color/white"
-        android:textSize="14sp"/>
+        android:textSize="16sp"/>
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/fab_progress"
-        android:layout_marginBottom="8dp"
-        android:layout_below="@+id/coverdialog_progress"
-        android:layout_width="200dp"
+        android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/coverdialog_progress"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/cover_button">
-    </RelativeLayout>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline1"
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            fresco:layout_constraintGuide_percent="0.25"
+            tools:layout_editor_absoluteX="80dp"
+            tools:layout_editor_absoluteY="25dp"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            fresco:layout_constraintGuide_percent="0.5"
+            tools:layout_editor_absoluteX="160dp"
+            tools:layout_editor_absoluteY="25dp"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline3"
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            fresco:layout_constraintGuide_percent="0.75"
+            tools:layout_editor_absoluteX="240dp"
+            tools:layout_editor_absoluteY="25dp"/>
+
+        <ImageView
+            android:id="@+id/fab_negfive"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:padding="8dp"
+            fresco:layout_constraintBottom_toBottomOf="parent"
+            fresco:layout_constraintLeft_toLeftOf="parent"
+            fresco:layout_constraintRight_toLeftOf="@id/guideline1"
+            fresco:layout_constraintTop_toTopOf="parent"
+            fresco:srcCompat="@drawable/ic_exposure_neg_5_48px"
+            android:layout_marginLeft="14dp"
+            fresco:layout_constraintHorizontal_bias="0.0"
+            fresco:layout_constraintVertical_bias="0.0"
+            android:foreground="@drawable/highlite"/>
+
+        <ImageView
+            android:id="@+id/fab_negone"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:padding="8dp"
+            fresco:layout_constraintBottom_toBottomOf="parent"
+            fresco:layout_constraintLeft_toRightOf="@id/guideline1"
+            fresco:layout_constraintRight_toLeftOf="@id/guideline2"
+            fresco:layout_constraintTop_toTopOf="parent"
+            fresco:srcCompat="@drawable/ic_exposure_neg_1_white_48px"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp"
+            android:foreground="@drawable/highlite"/>
+
+        <ImageView
+            android:id="@+id/fab_plusone"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:padding="8dp"
+            fresco:layout_constraintBottom_toBottomOf="parent"
+            fresco:layout_constraintLeft_toRightOf="@id/guideline2"
+            fresco:layout_constraintRight_toLeftOf="@id/guideline3"
+            fresco:layout_constraintTop_toTopOf="parent"
+            fresco:srcCompat="@drawable/ic_exposure_plus_1_white_48px"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp"
+            android:foreground="@drawable/highlite"/>
+
+        <ImageView
+            android:id="@+id/fab_plusfive"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:padding="8dp"
+            fresco:layout_constraintBottom_toBottomOf="parent"
+            fresco:layout_constraintLeft_toRightOf="@id/guideline3"
+            fresco:layout_constraintRight_toRightOf="parent"
+            fresco:layout_constraintTop_toTopOf="parent"
+            fresco:srcCompat="@drawable/ic_exposure_plus_5_48px"
+            fresco:layout_constraintHorizontal_bias="1.0"
+            android:layout_marginRight="14dp"
+            fresco:layout_constraintVertical_bias="0.0"
+            android:foreground="@drawable/highlite"/>
+    </android.support.constraint.ConstraintLayout>
 
     <RelativeLayout
         android:id="@+id/fab_markdone"
-        android:layout_below="@+id/coverdialog_progress"
-        android:layout_width="200dp"
+        android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:layout_below="@+id/fab_progress"
         android:layout_marginBottom="8dp"
         android:background="@drawable/cover_button">
-    </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/fab_copytitle"
-        android:layout_below="@+id/fab_markdone"
-        android:layout_width="200dp"
-        android:layout_marginBottom="8dp"
-        android:layout_height="48dp"
-        android:background="@drawable/cover_button">
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/fab_dismiss"
-        android:layout_width="200dp"
-        android:layout_height="48dp"
-        android:layout_below="@+id/fab_copytitle"
-        android:background="@drawable/cover_button"
-        android:foreground="@drawable/highlite">
-
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/dismissIcon"
+        <ImageView
+            android:id="@+id/completedIcon"
             android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_height="48dp"
             android:layout_marginBottom="6dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="6dp"
-            fresco:actualImageResource="@drawable/ic_close_grey_48px"
-            fresco:placeholderImageScaleType="fitCenter"
-            fresco:roundAsCircle="true"
-            fresco:roundingBorderColor="@color/primaryDark"/>
+            android:padding="8dp"
+            fresco:srcCompat="@drawable/ic_done_white_48px"/>
 
         <TextView
-            android:id="@+id/igf_title"
+            android:id="@+id/igf_done"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:layout_toEndOf="@+id/completedIcon"
+            android:layout_toRightOf="@+id/completedIcon"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/action_MarkAsComplete"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/fab_copytitle"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@+id/fab_markdone"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/cover_button">
+
+        <ImageView
+            android:id="@+id/copyIcon"
+            android:layout_width="36dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="6dp"
+            android:padding="8dp"
+            fresco:srcCompat="@drawable/ic_content_copy_white_48px"/>
+
+        <TextView
+            android:id="@+id/igf_copy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:layout_toEndOf="@+id/copyIcon"
+            android:layout_toRightOf="@+id/copyIcon"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/action_Copy"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/fab_dismiss"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@+id/fab_copytitle"
+        android:background="@drawable/cover_button">
+
+        <ImageView
+            android:id="@+id/dismissIcon"
+            android:layout_width="36dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="6dp"
+            android:padding="8dp"
+            fresco:srcCompat="@drawable/ic_close_white_48px"/>
+
+        <TextView
+            android:id="@+id/igf_dismiss"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"

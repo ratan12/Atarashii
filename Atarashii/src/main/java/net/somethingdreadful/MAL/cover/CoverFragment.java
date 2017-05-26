@@ -39,7 +39,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import lombok.Setter;
 
-public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskListener, SwipeRefreshLayout.OnRefreshListener {
+public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskListener, SwipeRefreshLayout.OnRefreshListener, QuickActionsDialog.QuickActionsListener {
     Activity activity;
     @BindView(R.id.recyclerView) FastScrollRecyclerView recyclerView;
     @BindView(R.id.swiperefresh) SwipeRefreshLayout swipeRefresh;
@@ -78,6 +78,9 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
         recyclerView.setLayoutManager(recyclerManager);
         recyclerView.setAdapter(recyclerAdapter);
         recyclerView.setHasFixedSize(true);
+        recyclerView.setItemViewCacheSize(20);
+        recyclerView.setDrawingCacheEnabled(true);
+        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         recyclerView.addItemDecoration(new SpacesItemDecoration(recyclerViewColumns));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -442,6 +445,11 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
             AppLog.logException(e);
         }
         return records;
+    }
+
+    @Override
+    public void onDismiss() {
+
     }
 
     public interface CoverListener {

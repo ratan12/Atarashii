@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +14,6 @@ import android.widget.TextView;
 
 import net.somethingdreadful.MAL.R;
 import net.somethingdreadful.MAL.Theme;
-import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.api.BaseModels.IGFModel;
 
 import butterknife.BindView;
@@ -58,7 +55,7 @@ public class QuickActionsDialog extends DialogFragment {
         super.onPause();
     }
 
-    @OnClick({R.id.constraintLayout, R.id.mainLayout, R.id.fab_dismiss})
+    @OnClick({R.id.mainLayout, R.id.fab_dismiss})
     void dismissClick() {
         quickActionsListener.onDismiss();
         dismiss();
@@ -96,10 +93,6 @@ public class QuickActionsDialog extends DialogFragment {
         updateProgress(-5);
     }
 
-    @OnClick(R.id.fab_edit)
-    void editInDetailView() {
-        new CoverAction(activity, isAnime).openPersonalDetails(igfItem);
-    }
 
     @OnClick(R.id.fab_copytitle)
     void copyTitle() {
@@ -116,15 +109,6 @@ public class QuickActionsDialog extends DialogFragment {
         dismiss();
     }
 
-    @OnClick(R.id.fab_website)
-    void viewOnWebsite() {
-        Uri malurl;
-        if (AccountService.isMAL())
-            malurl = Uri.parse("https://myanimelist.net/" + (isAnime ? "anime" : "manga") + "/" + igfItem.getId() + "/");
-        else
-            malurl = Uri.parse("http://anilist.co/" + (isAnime ? "anime" : "manga") + "/" + igfItem.getId() + "/");
-        startActivity(new Intent(Intent.ACTION_VIEW, malurl));
-    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

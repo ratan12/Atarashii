@@ -72,7 +72,7 @@ public class ChartActivity extends AppCompatActivity implements CoverFragment.Co
     @Override
     public void onCoverLoaded(CoverFragment igf) {
         // TODO add notification and fail counter with customlist
-        if (igf.getIsAnime())
+        if (igf.isAnime)
             af = igf;
         else
             mf = igf;
