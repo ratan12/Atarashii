@@ -77,7 +77,7 @@ public class ProfileDetailsMAL extends Fragment implements SwipeRefreshLayout.On
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
         view = inflater.inflate(R.layout.fragment_profile_mal, container, false);
 
-        Card.fastInit(view, R.id.details_card, R.layout.card_profile_details);
+        Card.Companion.fastInit(view, R.id.details_card, R.layout.card_profile_details);
         imagecard = ((Card) view.findViewById(R.id.name_card));
         animecard = (Card) view.findViewById(R.id.Anime_card);
         mangacard = (Card) view.findViewById(R.id.Manga_card);
@@ -106,7 +106,7 @@ public class ProfileDetailsMAL extends Fragment implements SwipeRefreshLayout.On
         if (activity.record == null)
             toggle(1);
 
-        NfcHelper.disableBeam(activity);
+        NfcHelper.INSTANCE.disableBeam(activity);
         return view;
     }
 
@@ -127,7 +127,7 @@ public class ProfileDetailsMAL extends Fragment implements SwipeRefreshLayout.On
             animecard.setVisibility(View.GONE);
 
         Card namecard = (Card) view.findViewById(R.id.name_card);
-        namecard.Header.setText(WordUtils.capitalize(activity.record.getUsername()));
+        namecard.getHeader().setText(WordUtils.capitalize(activity.record.getUsername()));
     }
 
     private void setcolor() {
@@ -212,13 +212,13 @@ public class ProfileDetailsMAL extends Fragment implements SwipeRefreshLayout.On
         tv3.setText(String.valueOf(activity.record.getDetails().getComments()));
         tv4.setText(String.valueOf(activity.record.getDetails().getForumPosts()));
         if (activity.record.getDetails().getLastOnline() != null) {
-            String lastOnline = DateTools.parseDate(activity.record.getDetails().getLastOnline(), true);
+            String lastOnline = DateTools.INSTANCE.parseDate(activity.record.getDetails().getLastOnline(), true);
             tv5.setText(lastOnline.equals("") ? activity.record.getDetails().getLastOnline() : lastOnline);
         } else
             tv5.setText("-");
         tv6.setText(getStringFromResourceArray(R.array.gender, activity.record.getDetails().getGenderInt()));
         if (activity.record.getDetails().getJoinDate() != null) {
-            String joinDate = DateTools.parseDate(activity.record.getDetails().getJoinDate(), false);
+            String joinDate = DateTools.INSTANCE.parseDate(activity.record.getDetails().getJoinDate(), false);
             tv7.setText(joinDate.equals("") ? activity.record.getDetails().getJoinDate() : joinDate);
         } else
             tv7.setText("-");

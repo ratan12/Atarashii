@@ -300,8 +300,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             // Delete database and remove account
             DatabaseHelper.deleteDatabase(context);
-            AccountService.create(context);
-            AccountService.deleteAccount();
+            AccountService.Companion.create(context);
+            AccountService.Companion.deleteAccount();
 
             // Restart application
             context.startActivity(new Intent(context, FirstTimeInit.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));

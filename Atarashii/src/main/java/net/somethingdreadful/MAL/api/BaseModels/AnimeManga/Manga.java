@@ -29,7 +29,7 @@ public class Manga extends GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private int chapters;
+    public int chapters;
 
     /**
      * Total number of volumes of the manga.
@@ -38,7 +38,7 @@ public class Manga extends GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private int volumes;
+    public int volumes;
 
     /**
      * A list of anime adaptations of this manga (or conversely, anime from which this manga is adapted)
@@ -46,7 +46,7 @@ public class Manga extends GenericRecord implements Serializable {
     @Setter
     @Getter
     @SerializedName("anime_adaptations")
-    private ArrayList<RecordStub> animeAdaptations;
+    public ArrayList<RecordStub> animeAdaptations;
 
     /**
      * A list of related manga
@@ -54,7 +54,7 @@ public class Manga extends GenericRecord implements Serializable {
     @Setter
     @Getter
     @SerializedName("related_manga")
-    private ArrayList<RecordStub> relatedManga;
+    public ArrayList<RecordStub> relatedManga;
 
     /**
      * User's read status of the manga
@@ -63,35 +63,35 @@ public class Manga extends GenericRecord implements Serializable {
      */
     @Getter
     @SerializedName("read_status")
-    private String readStatus;
+    public String readStatus;
 
     /**
      * Number of chapters already read by the user
      */
     @Getter
     @SerializedName("chapters_read")
-    private int chaptersRead;
+    public int chaptersRead;
 
     /**
      * Number of volumes already read by the user.
      */
     @Getter
     @SerializedName("volumes_read")
-    private int volumesRead;
+    public int volumesRead;
 
     /**
      * The date the user started reading the title
      */
     @Getter
     @SerializedName("reading_start")
-    private String readingStart;
+    public String readingStart;
 
     /**
      * The date the user finished reading the title
      */
     @Getter
     @SerializedName("reading_end")
-    private String readingEnd;
+    public String readingEnd;
 
     /**
      * Set if the user is rerereading the manga
@@ -103,14 +103,14 @@ public class Manga extends GenericRecord implements Serializable {
      */
     @Getter
     @SerializedName("reread_count")
-    private int rereadCount;
+    public int rereadCount;
 
     /**
      * How much value the user thinks there is in rereading the series.
      */
     @Getter
     @SerializedName("reread_value")
-    private int rereadValue;
+    public int rereadValue;
 
     public void setAllDirty() {
         addDirtyField("readStatus");
@@ -210,7 +210,7 @@ public class Manga extends GenericRecord implements Serializable {
 
             // Automatically set the end date on completed if it is empty
             if ((getReadingEnd() == null || getReadingEnd().equals("") || getReadingEnd().equals("0-00-00")) && PrefManager.getAutoDateSetter()) {
-                setReadingEnd(DateTools.getCurrentDate());
+                setReadingEnd(DateTools.INSTANCE.getCurrentDate());
             }
         }
 
@@ -226,7 +226,7 @@ public class Manga extends GenericRecord implements Serializable {
 
         // Automatically set the start date on start if it is empty
         if ((getReadingStart() == null || getReadingStart().equals("") || getReadingStart().equals("0-00-00")) && PrefManager.getAutoDateSetter() && started) {
-            setReadingStart(DateTools.getCurrentDate());
+            setReadingStart(DateTools.INSTANCE.getCurrentDate());
         }
     }
 
@@ -236,7 +236,7 @@ public class Manga extends GenericRecord implements Serializable {
     public String getStatusString(Activity activity) {
         int array;
         String[] fixedArray;
-        if (AccountService.isMAL()) {
+        if (AccountService.Companion.isMAL()) {
             array = R.array.mangaStatus_MAL;
             fixedArray = activity.getResources().getStringArray(R.array.mangaFixedStatus_MAL);
         } else {

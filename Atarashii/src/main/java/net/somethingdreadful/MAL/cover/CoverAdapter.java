@@ -3,6 +3,7 @@ package net.somethingdreadful.MAL.cover;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -14,10 +15,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.DraweeView;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
-import net.somethingdreadful.MAL.AppLog;
 import net.somethingdreadful.MAL.PrefManager;
 import net.somethingdreadful.MAL.R;
 import net.somethingdreadful.MAL.Theme;
@@ -31,6 +34,7 @@ import butterknife.ButterKnife;
 import lombok.Getter;
 import lombok.Setter;
 
+import static net.somethingdreadful.MAL.R.drawable.cover_error;
 import static net.somethingdreadful.MAL.R.id.coverImage;
 import static net.somethingdreadful.MAL.R.id.igf_action1;
 import static net.somethingdreadful.MAL.R.id.igf_action2;
@@ -38,6 +42,8 @@ import static net.somethingdreadful.MAL.R.id.igf_action3;
 
 class CoverAdapter extends RecyclerView.Adapter<CoverAdapter.itemHolder> implements FastScrollRecyclerView.SectionedAdapter {
     private int resource;
+    private Drawable coverLoading;
+    private Drawable coverError;
     private Drawable action1Drawable;
     private Drawable action2Drawable;
     private Drawable action3Drawable;
@@ -49,7 +55,7 @@ class CoverAdapter extends RecyclerView.Adapter<CoverAdapter.itemHolder> impleme
     @Setter @Getter ArrayList<IGFModel.IGFItem> recordList = new ArrayList<>();
     @Setter @Getter private ArrayList<String> fastScrollText;
 
-    CoverAdapter(CoverFragment coverFragment, boolean isAnime, int coverHeight, CoverFragment.CoverListener listener, ArrayList<Integer> actionIcons) {
+    CoverAdapter(CoverFragment coverFragment, boolean isAnime, CoverFragment.CoverListener listener, ArrayList<Integer> actionIcons) {
         list = PrefManager.getTraditionalListEnabled();
         Resources res = coverFragment.getResources();
 
@@ -64,11 +70,19 @@ class CoverAdapter extends RecyclerView.Adapter<CoverAdapter.itemHolder> impleme
             action3Drawable = VectorDrawableCompat.create(res, actionIcons.get(5), null);
             resource = R.layout.record_igf_grid;
         }
-
+        coverLoading = res.getDrawable(R.drawable.cover_loading);
+        coverError = res.getDrawable(cover_error);
         this.coverFragment = coverFragment;
         this.isAnime = isAnime;
         this.listener = listener;
-        this.coverHeight = coverHeight;
+        this.coverHeight = PrefManager.getCoverHeight();
+    }
+
+
+    @Override
+    public void onViewRecycled(itemHolder holder) {
+        if (holder.cover.getController() != null)
+            holder.cover.getController().onDetach();
     }
 
     void addRecords(ArrayList<IGFModel.IGFItem> recordList) {
@@ -86,20 +100,22 @@ class CoverAdapter extends RecyclerView.Adapter<CoverAdapter.itemHolder> impleme
                 new CoverAction(coverFragment.getActivity(), isAnime).openDetails(recordList.get(itemView.getAdapterPosition()));
             }
         });
-        itemView.action1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int position = itemView.getAdapterPosition();
-                listener.onCoverClicked(position, 1, isAnime, recordList.get(position));
-            }
-        });
-        itemView.action2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int position = itemView.getAdapterPosition();
-                listener.onCoverClicked(position, 2, isAnime, recordList.get(position));
-            }
-        });
+        if (list) {
+            itemView.action1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = itemView.getAdapterPosition();
+                    listener.onCoverClicked(position, 1, isAnime, recordList.get(position));
+                }
+            });
+            itemView.action2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = itemView.getAdapterPosition();
+                    listener.onCoverClicked(position, 2, isAnime, recordList.get(position));
+                }
+            });
+        }
         itemView.action3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -120,8 +136,7 @@ class CoverAdapter extends RecyclerView.Adapter<CoverAdapter.itemHolder> impleme
 
     @Override
     public void onBindViewHolder(itemHolder holder, final int position) {
-        try {
-            final IGFModel.IGFItem record = recordList.get(position);
+            IGFModel.IGFItem record = recordList.get(position);
             holder.title.setText(record.getTitle());
             if (list) {
                 holder.text1.setText(record.getProgress());
@@ -135,17 +150,11 @@ class CoverAdapter extends RecyclerView.Adapter<CoverAdapter.itemHolder> impleme
                 holder.text1.setText(record.getShortDetails());
             }
 
-            holder.cover.setController(Fresco.newDraweeControllerBuilder()
+            DraweeController controller = Fresco.newDraweeControllerBuilder()
                     .setFirstAvailableImageRequests(record.getImageUrlArray())
                     .setOldController(holder.cover.getController())
-                    .build());
-        } catch (Exception e) {
-            AppLog.logTaskCrash("ScheduleActivity", e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public void onViewDetachedFromWindow(itemHolder holder) {
+                    .build();
+            holder.cover.setController(controller);
     }
 
     @Override
@@ -165,22 +174,31 @@ class CoverAdapter extends RecyclerView.Adapter<CoverAdapter.itemHolder> impleme
     class itemHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.igf_title) TextView title;
         @BindView(R.id.igf_text1) TextView text1;
-        @BindView(R.id.igf_text2) TextView text2;
-        @BindView(R.id.igf_text3) TextView text3;
+        @Nullable @BindView(R.id.igf_text2) TextView text2;
+        @Nullable @BindView(R.id.igf_text3) TextView text3;
         @BindView(coverImage) DraweeView cover;
         @BindView(R.id.mainPanel) RelativeLayout mainPanel;
-        @BindView(igf_action1) ImageView action1;
-        @BindView(igf_action2) ImageView action2;
+        @Nullable @BindView(igf_action1) ImageView action1;
+        @Nullable @BindView(igf_action2) ImageView action2;
         @BindView(igf_action3) ImageView action3;
 
         itemHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            action1.setImageDrawable(action1Drawable);
-            action2.setImageDrawable(action2Drawable);
             action3.setImageDrawable(action3Drawable);
-            if (!PrefManager.getTraditionalListEnabled())
+            if (!list) {
                 itemView.getLayoutParams().height = coverHeight;
+            } else {
+                action1.setImageDrawable(action1Drawable);
+                action2.setImageDrawable(action2Drawable);
+            }
+
+            GenericDraweeHierarchyBuilder builder = new GenericDraweeHierarchyBuilder(itemView.getResources());
+            GenericDraweeHierarchy hierarchy = builder
+                    .setPlaceholderImage(coverLoading)
+                    .setFailureImage(coverError)
+                    .build();
+            cover.setHierarchy(hierarchy);
         }
     }
 }

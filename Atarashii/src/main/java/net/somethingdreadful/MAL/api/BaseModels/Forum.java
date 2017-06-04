@@ -15,63 +15,63 @@ public class Forum implements Serializable {
      */
     @Setter
     @Getter
-    private int id = 0;
+    public int id = 0;
 
     /**
      * The forum board/topic name.
      */
     @Setter
     @Getter
-    private String name;
+    public String name;
 
     /**
      * The username of the topic creator
      */
     @Setter
     @Getter
-    private String username;
+    public String username;
 
     /**
      * The number of replies of a topic
      */
     @Setter
     @Getter
-    private int replies = 0;
+    public int replies = 0;
 
     /**
      * The description of a board
      */
     @Setter
     @Getter
-    private String description;
+    public String description;
 
     /**
      * The info of the last reply inside a topic
      */
     @Setter
     @Getter
-    private Forum reply;
+    public Forum reply;
 
     /**
      * The children of a forumboard
      */
     @Setter
     @Getter
-    private ArrayList<Forum> children;
+    public ArrayList<Forum> children;
 
     /**
      * The comment content in an post
      */
     @Setter
     @Getter
-    private String comment;
+    public String comment;
 
     /**
      * The creation time of this post
      */
     @Setter
     @Getter
-    private String time;
+    public String time;
 
     /**
      * The max amount of pages
@@ -80,12 +80,12 @@ public class Forum implements Serializable {
      */
     @Setter
     @Getter
-    private int maxPages;
+    public int maxPages;
 
     /**
      * The userprofile for the user details in topics
      */
     @Setter
     @Getter
-    private Profile profile;
+    public Profile profile;
 }

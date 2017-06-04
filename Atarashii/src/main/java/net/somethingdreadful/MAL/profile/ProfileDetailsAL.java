@@ -46,7 +46,7 @@ public class ProfileDetailsAL extends Fragment implements SwipeRefreshLayout.OnR
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
         view = inflater.inflate(R.layout.fragment_profile_al, container, false);
 
-        Card.fastInit(view, R.id.about, R.layout.card_profile_about);
+        Card.Companion.fastInit(view, R.id.about, R.layout.card_profile_about);
         imagecard = (Card) view.findViewById(R.id.name_card);
         imagecard.setContent(R.layout.card_image);
         forumHTMLUnit = new ForumHTMLUnit(activity, null);
@@ -64,7 +64,7 @@ public class ProfileDetailsAL extends Fragment implements SwipeRefreshLayout.OnR
             toggle(1);
         else
             refresh();
-        NfcHelper.disableBeam(activity);
+        NfcHelper.INSTANCE.disableBeam(activity);
         return view;
     }
 
@@ -91,7 +91,7 @@ public class ProfileDetailsAL extends Fragment implements SwipeRefreshLayout.OnR
             } else {
                 Profile profile = activity.record;
                 Card namecard = (Card) view.findViewById(R.id.name_card);
-                namecard.Header.setText(WordUtils.capitalize(profile.getUsername()));
+                namecard.getHeader().setText(WordUtils.capitalize(profile.getUsername()));
                 if (profile.getAbout() == null || profile.getAbout().equals("")) {
                     about.setText(getString(R.string.unknown));
                 } else {

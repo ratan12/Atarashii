@@ -17,22 +17,22 @@ public class Profile implements Serializable {
     /**
      * List of developers.
      */
-    private static final String[] developersMAL = {"ratan12", "motoko"};
-    private static final String[] developersAL = {"ratan12", "motokoaoyama"};
+    public static final String[] developersMAL = {"ratan12", "motoko"};
+    public static final String[] developersAL = {"ratan12", "motokoaoyama"};
 
     /**
      * The username of the requested profile.
      */
     @Getter
     @Setter
-    private String username;
+    public String username;
 
     /**
      * The profile image of the user
      */
     @Getter
     @Setter
-    private String imageUrl;
+    public String imageUrl;
 
     /**
      * The names of the custom anime list
@@ -41,7 +41,7 @@ public class Profile implements Serializable {
      */
     @Getter
     @Setter
-    private ArrayList<String> customAnime;
+    public ArrayList<String> customAnime;
 
 
     /**
@@ -51,7 +51,7 @@ public class Profile implements Serializable {
      */
     @Getter
     @Setter
-    private ArrayList<String> customManga;
+    public ArrayList<String> customManga;
 
 
     /**
@@ -61,7 +61,7 @@ public class Profile implements Serializable {
      */
     @Getter
     @Setter
-    private String imageUrlBanner;
+    public String imageUrlBanner;
 
     /**
      * The number of notifications
@@ -70,21 +70,21 @@ public class Profile implements Serializable {
      */
     @Getter
     @Setter
-    private int notifications;
+    public int notifications;
 
     /**
      * A MangaStats object containing Stats of the user
      */
     @Getter
     @Setter
-    private net.somethingdreadful.MAL.api.MALModels.Profile.MangaStats mangaStats;
+    public net.somethingdreadful.MAL.api.MALModels.Profile.MangaStats mangaStats;
 
     /**
      * A MangaStats object containing Stats of the user
      */
     @Getter
     @Setter
-    private net.somethingdreadful.MAL.api.MALModels.Profile.AnimeStats animeStats;
+    public net.somethingdreadful.MAL.api.MALModels.Profile.AnimeStats animeStats;
 
     /**
      * A ProfileDetails object containing general information on the user
@@ -93,7 +93,7 @@ public class Profile implements Serializable {
      */
     @Getter
     @Setter
-    private net.somethingdreadful.MAL.api.MALModels.Profile.Details details;
+    public net.somethingdreadful.MAL.api.MALModels.Profile.Details details;
 
     /**
      * The score type that the users is using for displaying info.
@@ -102,7 +102,7 @@ public class Profile implements Serializable {
      */
     @Getter
     @Setter
-    private int scoreType;
+    public int scoreType;
 
     /**
      * Text about the users.
@@ -111,19 +111,19 @@ public class Profile implements Serializable {
      */
     @Getter
     @Setter
-    private String about;
+    public String about;
 
     /**
      * Activity
      */
     @Getter
     @Setter
-    ArrayList<History> activity;
+    public ArrayList<History> activity;
 
     public static boolean isDeveloper(String username) {
         if (username == null)
             return false;
-        String[] developers = AccountService.isMAL() ? developersMAL : developersAL;
+        String[] developers = AccountService.Companion.isMAL() ? developersMAL : developersAL;
         return Arrays.asList(developers).contains(username.toLowerCase(Locale.US));
     }
 

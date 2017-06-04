@@ -54,7 +54,7 @@ public class History implements Serializable {
     }
 
     public void setCreatedAt(String createdAt) {
-        this.createdAt = DateTools.parseDate(createdAt, true);
+        this.createdAt = DateTools.INSTANCE.parseDate(createdAt, true);
     }
 
     public GenericRecord getSeries() {

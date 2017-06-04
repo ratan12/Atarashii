@@ -26,7 +26,7 @@ public class Anime extends GenericRecord implements Serializable {
      */
     @Getter
     @Setter
-    private int duration;
+    public int duration;
 
     /**
      * Total number of episodes of the anime.
@@ -35,7 +35,7 @@ public class Anime extends GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private int episodes;
+    public int episodes;
 
     /**
      * The video ID on youtube.
@@ -44,7 +44,7 @@ public class Anime extends GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private String youtubeId;
+    public String youtubeId;
 
     /**
      * The video URL on youtube.
@@ -63,21 +63,21 @@ public class Anime extends GenericRecord implements Serializable {
      */
     @Getter
     @Setter
-    private net.somethingdreadful.MAL.api.ALModels.AnimeManga.Anime.Airing airing;
+    public net.somethingdreadful.MAL.api.ALModels.AnimeManga.Anime.Airing airing;
 
     /**
      * Opening themes of the record
      */
     @Setter
     @Getter
-    private ArrayList<String> openingTheme;
+    public ArrayList<String> openingTheme;
 
     /**
      * Ending themes of the record
      */
     @Setter
     @Getter
-    private ArrayList<String> endingTheme;
+    public ArrayList<String> endingTheme;
 
     /**
      * A list of producers for the anime
@@ -86,7 +86,7 @@ public class Anime extends GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private ArrayList<String> producers;
+    public ArrayList<String> producers;
 
     /**
      * A list of characters.
@@ -95,7 +95,7 @@ public class Anime extends GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private ArrayList<RecordStub> characterAnime;
+    public ArrayList<RecordStub> characterAnime;
 
     /**
      * A list of manga adaptations of this anime (or conversely, manga from which this anime is adapted).
@@ -104,7 +104,7 @@ public class Anime extends GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private ArrayList<RecordStub> mangaAdaptations;
+    public ArrayList<RecordStub> mangaAdaptations;
 
     /**
      * A list of anime prequels of this anime.
@@ -113,7 +113,7 @@ public class Anime extends GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private ArrayList<RecordStub> prequels;
+    public ArrayList<RecordStub> prequels;
 
     /**
      * A list of anime sequels of this anime.
@@ -122,7 +122,7 @@ public class Anime extends GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private ArrayList<RecordStub> sequels;
+    public ArrayList<RecordStub> sequels;
 
     /**
      * A list of anime side stories of this anime.
@@ -131,7 +131,7 @@ public class Anime extends GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private ArrayList<RecordStub> sideStories;
+    public ArrayList<RecordStub> sideStories;
 
     /**
      * Parent story of this anime.
@@ -140,7 +140,7 @@ public class Anime extends GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private RecordStub parentStory;
+    public RecordStub parentStory;
 
     /**
      * A list of spin-offs of this anime.
@@ -149,7 +149,7 @@ public class Anime extends GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private ArrayList<RecordStub> spinOffs;
+    public ArrayList<RecordStub> spinOffs;
 
     /**
      * A list of summaries of this anime.
@@ -158,7 +158,7 @@ public class Anime extends GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private ArrayList<RecordStub> summaries;
+    public ArrayList<RecordStub> summaries;
 
     /**
      * A list of other related animes.
@@ -167,7 +167,7 @@ public class Anime extends GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private ArrayList<RecordStub> other;
+    public ArrayList<RecordStub> other;
 
     /**
      * Personal watched status of the anime
@@ -177,7 +177,7 @@ public class Anime extends GenericRecord implements Serializable {
      * Website: MyanimeList
      */
     @Getter
-    private String watchedStatus;
+    public String watchedStatus;
 
     /**
      * Number of episodes watched by the user
@@ -185,7 +185,7 @@ public class Anime extends GenericRecord implements Serializable {
      * Website: MyanimeList
      */
     @Getter
-    private int watchedEpisodes;
+    public int watchedEpisodes;
 
     /**
      * The date the user started watching the show
@@ -193,7 +193,7 @@ public class Anime extends GenericRecord implements Serializable {
      * Website: MyanimeList
      */
     @Getter
-    private String watchingStart;
+    public String watchingStart;
 
     /**
      * The date the user finished watching the show
@@ -201,7 +201,7 @@ public class Anime extends GenericRecord implements Serializable {
      * Website: MyanimeList
      */
     @Getter
-    private String watchingEnd;
+    public String watchingEnd;
 
     /**
      * Storage type for the series
@@ -209,7 +209,7 @@ public class Anime extends GenericRecord implements Serializable {
      * Website: MyanimeList
      */
     @Getter
-    private int storage;
+    public int storage;
 
     /**
      * The value for the storage chosen
@@ -219,14 +219,14 @@ public class Anime extends GenericRecord implements Serializable {
      * Website: MyanimeList
      */
     @Getter
-    private float storageValue;
+    public float storageValue;
 
     /**
      * Set if the user is rewatching the anime
      * <p/>
      * Website: MyanimeList
      */
-    private boolean rewatching;
+    public boolean rewatching;
 
     /**
      * The number of times the user has re-watched the title. (Does not include the first time.)
@@ -234,7 +234,7 @@ public class Anime extends GenericRecord implements Serializable {
      * Website: MyanimeList
      */
     @Getter
-    private int rewatchCount;
+    public int rewatchCount;
 
     /**
      * How much value the user thinks there is in rewatching the series.
@@ -242,7 +242,7 @@ public class Anime extends GenericRecord implements Serializable {
      * Website: MyanimeList
      */
     @Getter
-    private int rewatchValue;
+    public int rewatchValue;
 
     /**
      * External links.
@@ -251,10 +251,10 @@ public class Anime extends GenericRecord implements Serializable {
     public externalLinks externalLinks;
 
     @Getter public static class externalLinks implements Serializable {
-        @Setter String officialSite;
-        @Setter String animeDB;
-        @Setter String animeNewsNetwork;
-        @Setter String wikipedia;
+        @Setter public String officialSite;
+        @Setter public String animeDB;
+        @Setter public String animeNewsNetwork;
+        @Setter public String wikipedia;
     }
 
     public void setWatchedStatus(String watchedStatus) {
@@ -344,7 +344,7 @@ public class Anime extends GenericRecord implements Serializable {
 
             // Automatically set the end date on completed if it is empty
             if ((getWatchingEnd() == null || getWatchingEnd().equals("") || getWatchingEnd().equals("0-00-00")) && PrefManager.getAutoDateSetter()) {
-                setWatchingEnd(DateTools.getCurrentDate());
+                setWatchingEnd(DateTools.INSTANCE.getCurrentDate());
             }
         }
 
@@ -360,7 +360,7 @@ public class Anime extends GenericRecord implements Serializable {
 
         // Automatically set the start date on start if it is empty
         if ((getWatchingStart() == null || getWatchingStart().equals("") || getWatchingStart().equals("0-00-00")) && PrefManager.getAutoDateSetter() && started) {
-            setWatchingStart(DateTools.getCurrentDate());
+            setWatchingStart(DateTools.INSTANCE.getCurrentDate());
         }
     }
 
@@ -381,7 +381,7 @@ public class Anime extends GenericRecord implements Serializable {
     public String getStatusString(Activity activity) {
         int array;
         String[] fixedArray;
-        if (AccountService.isMAL()) {
+        if (AccountService.Companion.isMAL()) {
             array = R.array.animeStatus_MAL;
             fixedArray = activity.getResources().getStringArray(R.array.animeFixedStatus_MAL);
         } else {

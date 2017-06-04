@@ -119,7 +119,7 @@ public class DetailViewPersonal extends Fragment implements Serializable, View.O
         setCard(R.id.capacityPanel, true);
         setCard(R.id.rewatchPriorityPanel, true);
         setCard(R.id.countPanel, false);
-        if (!AccountService.isMAL()) {
+        if (!AccountService.Companion.isMAL()) {
             cardOther.setVisibility(View.GONE);
             customListPanel.setOnClickListener(this);
         } else {
@@ -128,7 +128,7 @@ public class DetailViewPersonal extends Fragment implements Serializable, View.O
     }
 
     private void setCard(int id, boolean ALOnly) {
-        if (ALOnly && !AccountService.isMAL())
+        if (ALOnly && !AccountService.Companion.isMAL())
             view.findViewById(id).setVisibility(View.GONE);
         else
             view.findViewById(id).setOnClickListener(this);
@@ -146,7 +146,7 @@ public class DetailViewPersonal extends Fragment implements Serializable, View.O
     public void setText() {
         if (activity.isAdded()) {
             if (activity.isAnime()) {
-                if (!AccountService.isMAL()) { // after upgrading the record = null
+                if (!AccountService.Companion.isMAL()) { // after upgrading the record = null
                     String customlists = activity.animeRecord.getCustomList();
                     if (customlists != null) {
                         String[] listnames = PrefManager.getCustomAnimeList();
@@ -157,7 +157,7 @@ public class DetailViewPersonal extends Fragment implements Serializable, View.O
                 }
                 status.setText(activity.animeRecord.getUserStatusString(activity));
             } else {
-                if (!AccountService.isMAL()) { // after upgrading the record = null
+                if (!AccountService.Companion.isMAL()) { // after upgrading the record = null
                     String customlists = activity.mangaRecord.getCustomList();
                     if (customlists != null) {
                         String[] listnames = PrefManager.getCustomMangaList();

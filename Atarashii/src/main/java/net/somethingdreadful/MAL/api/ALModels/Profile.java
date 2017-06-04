@@ -18,7 +18,7 @@ public class Profile implements Serializable {
     @Getter
     @Setter
     @SerializedName("display_name")
-    private String displayName;
+    public String displayName;
 
     /**
      * Watched animeTime in minutes
@@ -26,7 +26,7 @@ public class Profile implements Serializable {
     @Getter
     @Setter
     @SerializedName("anime_time")
-    private int animeTime;
+    public int animeTime;
 
     /**
      * Read mangaChapters
@@ -34,14 +34,14 @@ public class Profile implements Serializable {
     @Getter
     @Setter
     @SerializedName("manga_chap")
-    private int mangaChapters;
+    public int mangaChapters;
 
     /**
      * Info about the user available in the profile
      */
     @Getter
     @Setter
-    private String about;
+    public String about;
 
     /**
      * TODO: Add UI support
@@ -49,26 +49,26 @@ public class Profile implements Serializable {
     @Getter
     @Setter
     @SerializedName("list_order")
-    private int listOrder;
+    public int listOrder;
     @Getter
     @Setter
     @SerializedName("adult_content")
-    private boolean adultContent;
+    public boolean adultContent;
     @Getter
     @Setter
-    private boolean following;
+    public boolean following;
     @Getter
     @Setter
     @SerializedName("image_url_lge")
-    private String imageUrl;
+    public String imageUrl;
     @Getter
     @Setter
     @SerializedName("image_url_med")
-    private String imageUrlMed;
+    public String imageUrlMed;
     @Getter
     @Setter
     @SerializedName("image_url_banner")
-    private String imageUrlBanner;
+    public String imageUrlBanner;
 
     /**
      * The title titleLanguage the users prefers like romanji, english or japanese
@@ -76,19 +76,19 @@ public class Profile implements Serializable {
     @Getter
     @Setter
     @SerializedName("title_language")
-    private String titleLanguage;
+    public String titleLanguage;
     @Getter
     @Setter
     @SerializedName("score_type")
-    private int scoreType = -1;
+    public int scoreType = -1;
     @Getter
     @Setter
     @SerializedName("custom_list_anime")
-    private ArrayList<String> customAnime;
+    public ArrayList<String> customAnime;
     @Getter
     @Setter
     @SerializedName("custom_list_manga")
-    private ArrayList<String> customManga;
+    public ArrayList<String> customManga;
 
     /**
      * TODO: Add UI support
@@ -96,7 +96,7 @@ public class Profile implements Serializable {
     @Getter
     @Setter
     @SerializedName("advanced_rating")
-    private boolean advancedRating;
+    public boolean advancedRating;
 
     /**
      * TODO: Add UI support
@@ -104,10 +104,10 @@ public class Profile implements Serializable {
     @Getter
     @Setter
     @SerializedName("advanced_rating_names")
-    private ArrayList<String> advancedRatingNames;
+    public ArrayList<String> advancedRatingNames;
     @Getter
     @Setter
-    private int notifications;
+    public int notifications;
 
     public net.somethingdreadful.MAL.api.BaseModels.Profile createBaseModel() {
         net.somethingdreadful.MAL.api.BaseModels.Profile model = new net.somethingdreadful.MAL.api.BaseModels.Profile();

@@ -58,8 +58,8 @@ public class ALApi {
     }
 
     private void setupRESTService() {
-        if (accesToken == null && AccountService.getAccount() != null)
-            accesToken = AccountService.getAccesToken();
+        if (accesToken == null && AccountService.Companion.getAccount() != null)
+            accesToken = AccountService.Companion.getAccesToken();
         service = APIHelper.createClient(anilistURL, ALInterface.class, "Bearer " + accesToken);
     }
 
@@ -157,17 +157,17 @@ public class ALApi {
     public void getAccesToken() {
         retrofit2.Response<OAuth> response = null;
         try {
-            response = service.getAccesToken("refresh_token", BuildConfig.ANILIST_CLIENT_ID, BuildConfig.ANILIST_CLIENT_SECRET, AccountService.getRefreshToken()).execute();
+            response = service.getAccesToken("refresh_token", BuildConfig.ANILIST_CLIENT_ID, BuildConfig.ANILIST_CLIENT_SECRET, AccountService.Companion.getRefreshToken()).execute();
             OAuth auth = response.body();
             if (auth == null) { // Try a second time
-                response = service.getAccesToken("refresh_token", BuildConfig.ANILIST_CLIENT_ID, BuildConfig.ANILIST_CLIENT_SECRET, AccountService.getRefreshToken()).execute();
+                response = service.getAccesToken("refresh_token", BuildConfig.ANILIST_CLIENT_ID, BuildConfig.ANILIST_CLIENT_SECRET, AccountService.Companion.getRefreshToken()).execute();
                 auth = response.body();
             }
             if (auth == null) { // shutdown app
-                AccountService.deleteAccount();
+                AccountService.Companion.deleteAccount();
                 System.exit(0);
             } else {
-                accesToken = AccountService.setAccesToken(auth.access_token, Long.parseLong(auth.expires_in));
+                accesToken = AccountService.Companion.setAccesToken(auth.access_token, Long.parseLong(auth.expires_in));
                 setupRESTService();
             }
         } catch (Exception e) {

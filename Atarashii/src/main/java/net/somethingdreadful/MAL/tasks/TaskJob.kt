@@ -1,6 +1,6 @@
-package net.somethingdreadful.MAL.tasks;
+package net.somethingdreadful.MAL.tasks
 
-public enum TaskJob {
+enum class TaskJob {
     GETLIST,
     GETFRIENDLIST,
     BROWSE,

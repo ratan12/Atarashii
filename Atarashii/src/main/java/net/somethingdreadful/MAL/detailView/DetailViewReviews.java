@@ -203,7 +203,7 @@ public class DetailViewReviews extends Fragment implements NetworkTask.NetworkTa
                 title = review.getUser().getUsername();
                 holder.title.setText(WordUtils.capitalize(title));
                 holder.subTitle.setText(review.getDate());
-                holder.subTitle2.setText(rating + " " + review.getRating() + (!AccountService.isMAL() ? "/100" : ""));
+                holder.subTitle2.setText(rating + " " + review.getRating() + (!AccountService.Companion.isMAL() ? "/100" : ""));
                 holder.subTitle3.setText(activity.isAnime() ? review.getEpisodesSeen(episeen) : review.getChaptersRead(chapseen));
                 holder.content.setText(Html.fromHtml(review.getShortReview()));
                 holder.imageView.setImageURI(Uri.parse(image));
@@ -243,7 +243,7 @@ public class DetailViewReviews extends Fragment implements NetworkTask.NetworkTa
             // don't do anything if there is nothing in the list
             if (firstVisibleItem == 0 && visibleItemCount == 0 && totalItemCount == 0)
                 return;
-            if (totalItemCount - firstVisibleItem <= (visibleItemCount * 2) && !loading && hasmorepages && AccountService.isMAL()) {
+            if (totalItemCount - firstVisibleItem <= (visibleItemCount * 2) && !loading && hasmorepages && AccountService.Companion.isMAL()) {
                 loading = true;
                 page++;
                 getRecords(page);

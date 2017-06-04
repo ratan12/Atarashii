@@ -10,24 +10,24 @@ import lombok.Setter;
 public class ListStats implements Serializable {
     @Setter
     @SerializedName("plan_to_watch")
-    private int planToWatch = 0;
+    public int planToWatch = 0;
     @Setter
     @SerializedName("plan_to_read")
-    private int planToRead = 0;
+    public int planToRead = 0;
     @Setter
-    private int watching = 0;
+    public int watching = 0;
     @Setter
-    private int reading = 0;
+    public int reading = 0;
     @Getter
     @Setter
-    private int completed;
+    public int completed;
     @Getter
     @Setter
     @SerializedName("on_hold")
-    private int onHold;
+    public int onHold;
     @Getter
     @Setter
-    private int dropped;
+    public int dropped;
 
     public int getPlanned() {
         return planToWatch > 0 ? planToWatch : planToRead;

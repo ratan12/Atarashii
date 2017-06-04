@@ -19,50 +19,50 @@ public class Schedule implements Serializable {
      * The list of monday releases.
      */
     @Getter
-    private ArrayList<Anime> monday = new ArrayList<>();
+    public ArrayList<Anime> monday = new ArrayList<>();
 
     /**
      * The list of tuesday releases.
      */
     @Getter
-    private ArrayList<Anime> tuesday = new ArrayList<>();
+    public ArrayList<Anime> tuesday = new ArrayList<>();
 
     /**
      * The list of wednesday releases.
      */
     @Getter
-    private ArrayList<Anime> wednesday = new ArrayList<>();
+    public ArrayList<Anime> wednesday = new ArrayList<>();
 
     /**
      * The list of thursday releases.
      */
     @Getter
-    private ArrayList<Anime> thursday = new ArrayList<>();
+    public ArrayList<Anime> thursday = new ArrayList<>();
 
     /**
      * The list of friday releases.
      */
     @Getter
-    private ArrayList<Anime> friday = new ArrayList<>();
+    public ArrayList<Anime> friday = new ArrayList<>();
 
     /**
      * The list of saturday releases.
      */
     @Getter
-    private ArrayList<Anime> saturday = new ArrayList<>();
+    public ArrayList<Anime> saturday = new ArrayList<>();
 
     /**
      * The list of sunday releases.
      */
     @Getter
-    private ArrayList<Anime> sunday = new ArrayList<>();
+    public ArrayList<Anime> sunday = new ArrayList<>();
 
     /**
      * Sort the records using their name.
      *
      * @param records The records which should be sorted
      */
-    private void sort(ArrayList<Anime> records) {
+    public void sort(ArrayList<Anime> records) {
         Collections.sort(records != null && records.size() > 0 ? records : new ArrayList<Anime>(), new Comparator<Anime>() {
             @Override
             public int compare(Anime GR1, Anime GR2) {
@@ -130,7 +130,7 @@ public class Schedule implements Serializable {
         result.setAverageScoreCount(cursor.getString(columnNames.indexOf("averageScoreCount")));
         result.getAiring().setTime(cursor.getString(columnNames.indexOf("broadcast")));
         if (result.getAiring().getTime() != null)
-            result.getAiring().setNormaltime(DateTools.parseDate(result.getAiring().getTime(), true));
+            result.getAiring().setNormaltime(DateTools.INSTANCE.parseDate(result.getAiring().getTime(), true));
         return result;
     }
 }

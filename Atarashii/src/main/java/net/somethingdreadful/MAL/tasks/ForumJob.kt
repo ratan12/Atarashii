@@ -1,5 +1,5 @@
-package net.somethingdreadful.MAL.tasks;
+package net.somethingdreadful.MAL.tasks
 
-public enum ForumJob {
+enum class ForumJob {
     MENU, CATEGORY, SUBCATEGORY, TOPIC, SEARCH, ADDCOMMENT, UPDATECOMMENT
 }

@@ -66,7 +66,7 @@ public class ProfileHistory extends Fragment implements SwipeRefreshLayout.OnRef
         if (activity.record != null)
             refresh();
 
-        NfcHelper.disableBeam(activity);
+        NfcHelper.INSTANCE.disableBeam(activity);
         return view;
     }
 
@@ -203,7 +203,7 @@ public class ProfileHistory extends Fragment implements SwipeRefreshLayout.OnRef
             // don't do anything if there is nothing in the list
             if (firstVisibleItem == 0 && visibleItemCount == 0 && totalItemCount == 0)
                 return;
-            if (totalItemCount - firstVisibleItem <= (visibleItemCount * 2) && !loading && hasmorepages && !AccountService.isMAL()) {
+            if (totalItemCount - firstVisibleItem <= (visibleItemCount * 2) && !loading && hasmorepages && !AccountService.Companion.isMAL()) {
                 loading = true;
                 page++;
                 activity.getActivity(page);

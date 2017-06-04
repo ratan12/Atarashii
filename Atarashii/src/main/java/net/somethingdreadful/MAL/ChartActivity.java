@@ -49,7 +49,7 @@ public class ChartActivity extends AppCompatActivity implements CoverFragment.Co
         drawerToggle.syncState();
         drawerLayout.openDrawer(ViewCompat.getLayoutDirection(drawerLayout) == ViewCompat.LAYOUT_DIRECTION_RTL ? Gravity.RIGHT : Gravity.LEFT);
 
-        NfcHelper.disableBeam(this);
+        NfcHelper.INSTANCE.disableBeam(this);
     }
 
     private void getRecords(boolean clear, TaskJob task) {

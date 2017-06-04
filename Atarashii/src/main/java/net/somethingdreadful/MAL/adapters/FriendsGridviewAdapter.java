@@ -67,9 +67,9 @@ public class FriendsGridviewAdapter<T> extends ArrayAdapter<T> {
             else
                 viewHolder.username.setTextColor(ContextCompat.getColor(context, Theme.darkTheme ? R.color.text_dark : R.color.bg_dark_card));
 
-            if (record.getDetails() != null && record.getDetails().getLastOnline() != null && AccountService.isMAL()) {
+            if (record.getDetails() != null && record.getDetails().getLastOnline() != null && AccountService.Companion.isMAL()) {
                 String last_online = record.getDetails().getLastOnline();
-                last_online = DateTools.parseDate(last_online, true);
+                last_online = DateTools.INSTANCE.parseDate(last_online, true);
                 viewHolder.lastOnline.setText(last_online.equals("") ? record.getDetails().getLastOnline() : last_online);
             } else {
                 viewHolder.lastOnline.setText(context.getString(R.string.unknown));

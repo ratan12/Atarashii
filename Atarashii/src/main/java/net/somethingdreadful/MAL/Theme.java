@@ -39,11 +39,11 @@ public class Theme extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        net.somethingdreadful.MAL.account.AccountService.create(getApplicationContext());
+        net.somethingdreadful.MAL.account.AccountService.Companion.create(getApplicationContext());
         net.somethingdreadful.MAL.PrefManager.create(getApplicationContext());
         context = getApplicationContext();
 
-        Fresco.initialize(this, ImagePipelineConfig.newBuilder(this).setDownsampleEnabled(true).build());
+        Fresco.initialize(this, ImagePipelineConfig.newBuilder(this).build());
         initFabric(context);
 
         Locale locale = net.somethingdreadful.MAL.PrefManager.getLocale();
@@ -175,10 +175,10 @@ public class Theme extends Application {
     public static void setNavDrawer(NavigationView navigationView, Activity activity, View.OnClickListener listener) {
         try {
             View view = navigationView.getHeaderView(0);
-            String username = net.somethingdreadful.MAL.account.AccountService.getUsername();
+            String username = net.somethingdreadful.MAL.account.AccountService.Companion.getUsername();
             SimpleDraweeView image = (SimpleDraweeView) view.findViewById(R.id.Image);
             SimpleDraweeView image2 = (SimpleDraweeView) view.findViewById(R.id.NDimage);
-            ((TextView) view.findViewById(R.id.siteName)).setText(activity.getString(net.somethingdreadful.MAL.account.AccountService.isMAL() ? R.string.init_hint_myanimelist : R.string.init_hint_anilist));
+            ((TextView) view.findViewById(R.id.siteName)).setText(activity.getString(net.somethingdreadful.MAL.account.AccountService.Companion.isMAL() ? R.string.init_hint_myanimelist : R.string.init_hint_anilist));
             ((TextView) view.findViewById(R.id.name)).setText(username);
 
             // Apply dark theme if an user enabled it in the settings.
@@ -286,7 +286,7 @@ public class Theme extends Application {
     public static String getDisplayScore(float score) {
         switch (net.somethingdreadful.MAL.PrefManager.getScoreType()) {
             case 0:
-                int score1 = (int) (net.somethingdreadful.MAL.account.AccountService.isMAL() ? score : Math.floor(score / 10));
+                int score1 = (int) (net.somethingdreadful.MAL.account.AccountService.Companion.isMAL() ? score : Math.floor(score / 10));
                 return score1 > 0 ? String.valueOf(score1) : "?";
             case 1:
                 return score > 0 ? String.valueOf((int) score) : "?";

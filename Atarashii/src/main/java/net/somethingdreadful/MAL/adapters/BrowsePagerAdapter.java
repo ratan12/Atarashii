@@ -18,7 +18,7 @@ public class BrowsePagerAdapter extends FragmentPagerAdapter {
         super(fm);
         fragments = new Fragments(activity);
 
-        fragments.add(AccountService.isMAL() ? new BrowseFragmentMAL() : new BrowseFragmentAL(), R.string.title_activity_browse);
+        fragments.add(AccountService.Companion.isMAL() ? new BrowseFragmentMAL() : new BrowseFragmentAL(), R.string.title_activity_browse);
         fragments.add(new CoverFragment().setType(true), "ANIME");
     }
 

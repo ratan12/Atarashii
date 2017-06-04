@@ -171,11 +171,11 @@ public class Anime extends GenericRecord implements Serializable {
      */
     @Getter @SerializedName("external_links") private externalLinks externalLinks;
 
-    private class externalLinks implements Serializable {
-        @Getter @SerializedName("AnimeDB") private String animeDB;
-        @Getter @SerializedName("AnimeNewsNetwork") private String animeNewsNetwork;
-        @Getter @SerializedName("Wikipedia") private String wikipedia;
-        @Getter @SerializedName("Official Site") private String officialSite;
+    public class externalLinks implements Serializable {
+        @Getter @SerializedName("AnimeDB") public String animeDB;
+        @Getter @SerializedName("AnimeNewsNetwork") public String animeNewsNetwork;
+        @Getter @SerializedName("Wikipedia") public String wikipedia;
+        @Getter @SerializedName("Official Site") public String officialSite;
     }
 
     /**

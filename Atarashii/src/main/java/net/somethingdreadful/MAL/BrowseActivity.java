@@ -30,7 +30,7 @@ public class BrowseActivity extends AppCompatActivity implements CoverFragment.C
         browsePagerAdapter = (BrowsePagerAdapter) Theme.setActionBar(this, new BrowsePagerAdapter(getFragmentManager(), this));
         ButterKnife.bind(this);
 
-        NfcHelper.disableBeam(this);
+        NfcHelper.INSTANCE.disableBeam(this);
     }
 
     @Override

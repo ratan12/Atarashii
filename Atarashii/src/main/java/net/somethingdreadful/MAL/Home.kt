@@ -74,24 +74,24 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
             Theme.setActionBar(this, IGFPagerAdapter(fragmentManager))
 
             ButterKnife.bind(this)
-            username = AccountService.getUsername()
+            username = AccountService.username
             if (PrefManager.getHideHomeTabs())
-                tabs!!.visibility = View.GONE
-            viewPager!!.addOnPageChangeListener(this)
-            searchView!!.version = SearchView.VERSION_MENU_ITEM
-            searchView!!.setOnQueryTextListener(this)
-            searchView!!.setArrowOnly(true)
+                tabs.visibility = View.GONE
+            viewPager.addOnPageChangeListener(this)
+            searchView.version = SearchView.VERSION_MENU_ITEM
+            searchView.setOnQueryTextListener(this)
+            searchView.setArrowOnly(true)
 
             //Initializing NavigationView
-            navigationView!!.setNavigationItemSelectedListener(this)
-            navigationView!!.menu.findItem(R.id.nav_list).isChecked = true
+            navigationView.setNavigationItemSelectedListener(this)
+            navigationView.menu.findItem(R.id.nav_list).isChecked = true
             Theme.setNavDrawer(navigationView, this, this)
 
             //Initializing navigation toggle button
             val drawerToggle = object : ActionBarDrawerToggle(this, drawerLayout, findViewById(R.id.actionbar) as Toolbar, R.string.drawer_open, R.string.drawer_close) {
 
             }
-            drawerLayout!!.addDrawerListener(drawerToggle)
+            drawerLayout.addDrawerListener(drawerToggle)
             drawerToggle.syncState()
 
             networkReceiver = object : BroadcastReceiver() {
@@ -113,10 +113,10 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(if (AccountService.isMAL()) R.menu.activity_home_mal else R.menu.activity_home_al, menu)
+        menuInflater.inflate(if (AccountService.isMAL) R.menu.activity_home_mal else R.menu.activity_home_al, menu)
         this.menu = menu
 
-        if (!AccountService.isMAL())
+        if (!AccountService.isMAL)
             setCustomList(PrefManager.getCustomAnimeList())
         return true
     }
@@ -170,8 +170,8 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
             } else if (item.itemId == R.id.forceSync) {
                 getPersonalList(TaskJob.FORCESYNC, personalList, null)
             } else if (item.itemId == R.id.action_search) {
-                searchView!!.open(true, item)
-                appBarLayout!!.setExpanded(true, true)
+                searchView.open(true, item)
+                appBarLayout.setExpanded(true, true)
                 return true
             } else if (item.itemId == R.id.menu_inverse) {
                 item.isChecked = !item.isChecked
@@ -309,7 +309,7 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-        if (AccountService.isMAL()) {
+        if (AccountService.isMAL) {
             if (menu != null)
                 menu!!.findItem(R.id.listType_rewatching).title = getString(if (position == 0) R.string.listType_rewatching else R.string.listType_rereading)
         } else {
@@ -330,7 +330,7 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.nav_list)
             item.isChecked = !item.isChecked
-        drawerLayout!!.closeDrawers()
+        drawerLayout.closeDrawers()
 
         //Performing the action
         when (item.itemId) {
@@ -353,8 +353,7 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
             R.id.nav_schedule -> startActivity(Intent(this, ScheduleActivity::class.java))
             R.id.nav_charts -> startActivity(Intent(this, ChartActivity::class.java))
             R.id.nav_browse -> startActivity(Intent(this, BrowseActivity::class.java))
-            R.id.nav_logout // Others subgroup
-            -> showLogoutDialog()
+            R.id.nav_logout -> showLogoutDialog()
             R.id.nav_settings -> startActivity(Intent(this, Settings::class.java))
             R.id.nav_support -> startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://atarashii.freshdesk.com/support/tickets/new")))
             R.id.nav_about -> startActivity(Intent(this, AboutActivity::class.java))
@@ -380,7 +379,7 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
     }
 
     override fun onQueryTextSubmit(query: String): Boolean {
-        searchView!!.close(true)
+        searchView.close(true)
         val Search = Intent(this, SearchActivity::class.java)
         Search.putExtra("query", query)
         startActivity(Search)

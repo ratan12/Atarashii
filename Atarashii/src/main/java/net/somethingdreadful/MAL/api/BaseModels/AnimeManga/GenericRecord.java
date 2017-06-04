@@ -51,14 +51,14 @@ public class GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private int id;
+    public int id;
 
     /**
      * Title of the record (Preference)
      */
     @Setter
     @Getter
-    private String title;
+    public String title;
 
     /**
      * Get the customList.
@@ -66,35 +66,35 @@ public class GenericRecord implements Serializable {
      * Defined as 0 or 1 like 010010100101001
      */
     @Getter
-    private String customList = "000000000000000";
+    public String customList = "000000000000000";
 
     /**
      * Title of the record (Romaji)
      */
     @Setter
     @Getter
-    private ArrayList<String> titleRomaji;
+    public ArrayList<String> titleRomaji;
 
     /**
      * Title of the record (Japanese)
      */
     @Setter
     @Getter
-    private ArrayList<String> titleJapanese;
+    public ArrayList<String> titleJapanese;
 
     /**
      * Title of the record (English)
      */
     @Setter
     @Getter
-    private ArrayList<String> titleEnglish;
+    public ArrayList<String> titleEnglish;
 
     /**
      * Title of the record (Synonyms)
      */
     @Setter
     @Getter
-    private ArrayList<String> titleSynonyms;
+    public ArrayList<String> titleSynonyms;
 
     /**
      * Type of record
@@ -104,14 +104,14 @@ public class GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private String type;
+    public String type;
 
     /**
      * URL of an image to the record
      */
     @Setter
     @Getter
-    private String imageUrl;
+    public String imageUrl;
 
     /**
      * Description of the record
@@ -119,7 +119,7 @@ public class GenericRecord implements Serializable {
      * An HTML-formatted string describing the anime/manga
      */
     @Setter
-    private String synopsis;
+    public String synopsis;
 
     /**
      * Publishing/Airing status of the record
@@ -129,27 +129,27 @@ public class GenericRecord implements Serializable {
      */
     @Getter
     @Setter
-    private String status;
+    public String status;
 
     /**
      * Beginning date from when this anime/manga will be aired/published.
      */
     @Getter
     @Setter
-    private String startDate;
+    public String startDate;
 
     /**
      * End date when this anime/manga was ended being aired/published.
      */
     @Getter
     @Setter
-    private String endDate;
+    public String endDate;
 
     /**
      * User's score for the record, from 1 to 10
      */
     @Getter
-    private int score;
+    public int score;
 
     /**
      * Reading priority level for the title.
@@ -159,7 +159,7 @@ public class GenericRecord implements Serializable {
      * Website: MyAnimeList
      */
     @Getter
-    private int priority;
+    public int priority;
 
     /**
      * Rating of the anime/manga
@@ -168,14 +168,14 @@ public class GenericRecord implements Serializable {
      */
     @Getter
     @Setter
-    private String classification;
+    public String classification;
 
     /**
      * The average score of the record chosen by the users.
      */
     @Setter
     @Getter
-    private String averageScore;
+    public String averageScore;
 
     /**
      * The amount of users that contributed to the average score.
@@ -184,14 +184,14 @@ public class GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private String averageScoreCount;
+    public String averageScoreCount;
 
     /**
      * Global rank of the record based on popularity (number of people with the title on the list).
      */
     @Setter
     @Getter
-    private int popularity;
+    public int popularity;
 
     /**
      * A list of popular tags for the record
@@ -200,14 +200,14 @@ public class GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private ArrayList<String> tags;
+    public ArrayList<String> tags;
 
     /**
      * A list of genres for the record.
      */
     @Getter
     @Setter
-    private ArrayList<String> genres;
+    public ArrayList<String> genres;
 
     /**
      * The global rank of the record
@@ -216,7 +216,7 @@ public class GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private int rank;
+    public int rank;
 
     /**
      * A list of alternative versions of this record
@@ -225,7 +225,7 @@ public class GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private ArrayList<RecordStub> alternativeVersions;
+    public ArrayList<RecordStub> alternativeVersions;
 
     /**
      * A banner URL of the record
@@ -234,19 +234,19 @@ public class GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private String bannerUrl;
+    public String bannerUrl;
 
     /**
      * comments of an user.
      */
     @Getter
-    private String notes;
+    public String notes;
 
     /**
      * Tags assigned by the user
      */
     @Getter
-    private ArrayList<String> personalTags;
+    public ArrayList<String> personalTags;
 
     /**
      * The number of members that have the record marked as a favorite
@@ -255,26 +255,26 @@ public class GenericRecord implements Serializable {
      */
     @Setter
     @Getter
-    private int favoritedCount;
+    public int favoritedCount;
 
     /**
      * An array which contains the information which we should update.
      */
     @Setter
     @Getter
-    private ArrayList<String> dirty;
+    public ArrayList<String> dirty;
 
     /**
      * The date of when the anime details got updated.
      */
     @Setter
     @Getter
-    private Date lastSync;
+    public Date lastSync;
 
     /**
      * Adds the record on the website after a sync.
      */
-    private boolean createFlag;
+    public boolean createFlag;
 
     /**
      * Removes the record on the website after a sync.
@@ -288,7 +288,7 @@ public class GenericRecord implements Serializable {
      */
     @Getter
     @Setter
-    private ListStats listStats;
+    public ListStats listStats;
 
     @Setter
     @Getter
@@ -522,7 +522,7 @@ public class GenericRecord implements Serializable {
         if (!cursor.isNull(columnNames.indexOf("dirty")))
             result.setDirty(new Gson().fromJson(cursor.getString(columnNames.indexOf("dirty")), ArrayList.class));
 
-        if (!AccountService.isMAL()) {
+        if (!AccountService.Companion.isMAL()) {
             ListStats listStats = new ListStats();
             listStats.setPlanToRead(cursor.getInt(columnNames.indexOf("lsPlanned")));
             listStats.setPlanToWatch(cursor.getInt(columnNames.indexOf("lsPlanned")));

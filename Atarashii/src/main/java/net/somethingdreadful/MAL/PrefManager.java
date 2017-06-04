@@ -27,21 +27,6 @@ public class PrefManager {
     }
 
     /**
-     * Remove the old account info.
-     * <p/>
-     * The username & password were saved in Atarashii! < 2.0.
-     * Currently we are using this to remove the old username and password.
-     *
-     * @see net.somethingdreadful.MAL.account.AccountService
-     */
-    public static void deleteAccount() {
-        if (prefs.getString("user", null) != null) {
-            prefEditor.remove("user");
-            prefEditor.remove("pass");
-        }
-    }
-
-    /**
      * Remove the preferences.
      * <p/>
      * Reset all the preferences
@@ -244,6 +229,42 @@ public class PrefManager {
      */
     public static void setProfileImage(String image) {
         prefEditor.putString("profile_image", image);
+    }
+
+    /**
+     * Returns the width of an cover.
+     *
+     * @return int The width of an cover.
+     */
+    public static int getCoverWidth() {
+        return prefs.getInt("coverWidth", 500);
+    }
+
+    /**
+     * Set the width of an cover.
+     *
+     * @param coverWidth The width of an cover
+     */
+    public static void setCoverWidth(int coverWidth) {
+        prefEditor.putInt("coverWidth", coverWidth).commit();
+    }
+
+    /**
+     * Returns the height of an cover.
+     *
+     * @return int The height of an cover.
+     */
+    public static int getCoverHeight() {
+        return prefs.getInt("coverHeight", 500);
+    }
+
+    /**
+     * Set the height of an cover.
+     *
+     * @param coverHeight The height of an cover
+     */
+    public static void setCoverHeight(int coverHeight) {
+        prefEditor.putInt("coverHeight", coverHeight).commit();
     }
 
     /**

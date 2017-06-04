@@ -38,12 +38,12 @@ public class MALApi {
     private MALInterface service;
 
     public MALApi() {
-        setupRESTService(AccountService.getUsername(), AccountService.getPassword());
+        setupRESTService(AccountService.Companion.getUsername(), AccountService.Companion.getPassword());
     }
 
     public MALApi(Activity activity) {
         this.activity = activity;
-        setupRESTService(AccountService.getUsername(), AccountService.getPassword());
+        setupRESTService(AccountService.Companion.getUsername(), AccountService.Companion.getPassword());
     }
 
     /*
@@ -201,6 +201,8 @@ public class MALApi {
                     }
                 }
                 return APIHelper.isOK(service.updateAnime(anime.getId(), fieldMap), "addOrUpdateAnime");
+            } else {
+                AppLog.log(Log.INFO, "Atarashii", "MALApi.addOrUpdateAnime(): No dirty fields found");
             }
         }
         return false;
@@ -237,6 +239,8 @@ public class MALApi {
                     }
                 }
                 return APIHelper.isOK(service.updateManga(manga.getId(), fieldMap), "addOrUpdateManga");
+            } else {
+                AppLog.log(Log.INFO, "Atarashii", "MALApi.addOrUpdateManga(): No dirty fields found");
             }
         }
         return false;

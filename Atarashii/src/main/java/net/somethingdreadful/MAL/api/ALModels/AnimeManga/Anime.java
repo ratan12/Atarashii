@@ -36,17 +36,17 @@ public class Anime extends GenericRecord implements Serializable {
     public static class Airing implements Serializable {
         @Getter
         @Setter
-        private String time;
+        public String time;
         @Getter
         @Setter
-        private String normaltime;
+        public String normaltime;
         @Getter
         @Setter
-        private int countdown;
+        public int countdown;
         @Getter
         @Setter
         @SerializedName("next_episode")
-        private int nextEpisode;
+        public int nextEpisode;
     }
 
     public static Schedule convertBaseSchedule(ArrayList<Anime> ALArray) {
@@ -55,7 +55,7 @@ public class Anime extends GenericRecord implements Serializable {
             for (Anime anime : ALArray) {
                 // Some records do not have airing info.
                 if (anime.getAiring() != null && anime.getAiring().getTime() != null) {
-                    switch (DateTools.getDayOfWeek(anime.getAiring().getTime())) {
+                    switch (DateTools.INSTANCE.getDayOfWeek(anime.getAiring().getTime())) {
                         case 2: // Monday
                             schedule.getMonday().add(anime.createBaseModel());
                             break;
@@ -95,7 +95,7 @@ public class Anime extends GenericRecord implements Serializable {
         model.setYoutubeId(getYoutubeId());
         model.setAiring(getAiring());
         if (model.getAiring()!= null && model.getAiring().getTime() != null)
-            model.getAiring().setNormaltime(DateTools.parseDate(model.getAiring().getTime(), true));
+            model.getAiring().setNormaltime(DateTools.INSTANCE.parseDate(model.getAiring().getTime(), true));
         net.somethingdreadful.MAL.api.BaseModels.AnimeManga.GenericRecord.setFromCursor(false);
         return model;
     }

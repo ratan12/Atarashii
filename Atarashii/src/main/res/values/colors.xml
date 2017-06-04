@@ -10,6 +10,7 @@
     <color name="bg_listview_pressed">#d9d9d9</color>
     <color name="primary">#0096c8</color>
     <color name="primaryDark">#0078a0</color>
+    <color name="cover">#cd000000</color>
     <color name="accent">#c85000</color>
 
 

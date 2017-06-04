@@ -46,7 +46,6 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
     public boolean isAnime;                     // True if it is an anime
     public boolean clear;                       // True if it the list will be cleared
     @Setter public int sortType = 1;
-    private int coverHeight = 0;                // coverheight calculated
     private int page = 1;                       // pagenumber
     @Setter public boolean isInversed = false;         // True if it is an inversed list
     public CoverAdapter recyclerAdapter;
@@ -62,6 +61,7 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
     int lastVisibleItem;
     int visibleItemCount;
     int firstLoadingItem;
+    RecyclerView.OnScrollListener onScrollListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
@@ -71,22 +71,11 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
         ButterKnife.bind(this, view);
         setLoading(true);
 
-        int recyclerViewColumns = getColumns();
-        swipeRefresh.setOnRefreshListener(this);
-        recyclerAdapter = new CoverAdapter(this, isAnime, coverHeight, listener, CoverAction.getpersonalIcons());
-        recyclerManager = new GridLayoutManager(activity, recyclerViewColumns);
-        recyclerView.setLayoutManager(recyclerManager);
-        recyclerView.setAdapter(recyclerAdapter);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setItemViewCacheSize(20);
-        recyclerView.setDrawingCacheEnabled(true);
-        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-        recyclerView.addItemDecoration(new SpacesItemDecoration(recyclerViewColumns));
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        onScrollListener = new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-
+                Log.e("s", "d" + dx + "d" + dy);
                 totalItemCount = recyclerManager.getItemCount();
                 lastVisibleItem = recyclerManager.findLastVisibleItemPosition();
                 firstVisibleItem = recyclerManager.findFirstVisibleItemPosition();
@@ -98,13 +87,23 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
                     listener.onCoverRequest(isAnime);
                 }
             }
-        });
+        };
+
+        int recyclerViewColumns = getColumns();
+        swipeRefresh.setOnRefreshListener(this);
+        recyclerAdapter = new CoverAdapter(this, isAnime, listener, CoverAction.Companion.getpersonalIcons());
+        recyclerManager = new GridLayoutManager(activity, recyclerViewColumns);
+        recyclerManager.setInitialPrefetchItemCount(4);
+        recyclerView.setLayoutManager(recyclerManager);
+        recyclerView.setAdapter(recyclerAdapter);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setDrawingCacheEnabled(true);
+        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        recyclerView.addItemDecoration(new SpacesItemDecoration(recyclerViewColumns));
+        recyclerView.addOnScrollListener(onScrollListener);
+
 
         if (state != null) {
-            isAnime = state.getBoolean("isAnime");
-            clear = state.getBoolean("clear");
-            recyclerAdapter.setRecordList(getSavedList("recordList" + isAnime + activity.getClass().getSimpleName()));
-            IGFModel.coverText = state.getStringArray("strings");
         } else {
             IGFModel.coverText = getResources().getStringArray(R.array.igf_strings);
         }
@@ -210,9 +209,45 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
     }
 
     @Override
+    public void onViewStateRestored(Bundle state) {
+        super.onViewStateRestored(state);
+        if (state != null) {
+            page = state.getInt("page", 1);
+            sortType = state.getInt("sortType", 1);
+            totalItemCount = state.getInt("totalItemCount", 0);
+            firstVisibleItem = state.getInt("firstVisibleItem", 0);
+            lastVisibleItem = state.getInt("lastVisibleItem", 0);
+            visibleItemCount = state.getInt("visibleItemCount", 0);
+            firstLoadingItem = state.getInt("firstLoadingItem", 0);
+
+            clear = state.getBoolean("clear");
+            isAnime = state.getBoolean("isAnime");
+            isLoading = state.getBoolean("isLoading");
+            isInversed = state.getBoolean("isInversed");
+            pagesAvailable = state.getBoolean("pagesAvailable");
+
+            recyclerAdapter.setRecordList(getSavedList("recordList" + isAnime + activity.getClass().getSimpleName()));
+            if (IGFModel.coverText == null)
+                IGFModel.coverText = state.getStringArray("strings");
+        }
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle state) {
-        state.putBoolean("isAnime", isAnime);
+        state.putInt("page", page);
+        state.putInt("sortType", sortType);
+        state.putInt("totalItemCount", totalItemCount);
+        state.putInt("firstVisibleItem", firstVisibleItem);
+        state.putInt("lastVisibleItem", lastVisibleItem);
+        state.putInt("visibleItemCount", visibleItemCount);
+        state.putInt("firstLoadingItem", firstLoadingItem);
+
         state.putBoolean("clear", clear);
+        state.putBoolean("isAnime", isAnime);
+        state.putBoolean("isLoading", isLoading);
+        state.putBoolean("isInversed", isInversed);
+        state.putBoolean("pagesAvailable", pagesAvailable);
+
         state.putStringArray("strings", IGFModel.coverText);
         saveList("recordList" + isAnime + activity.getClass().getSimpleName(), recyclerAdapter.getRecordList());
         super.onSaveInstanceState(state);
@@ -297,6 +332,7 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
             args.add(String.valueOf(sortType));
             args.add(String.valueOf(isInversed));
         }
+        recyclerView.removeOnScrollListener(onScrollListener);
 
         NetworkTask networkTask = new NetworkTask(task, isAnime, activity, new Bundle(), this);
         networkTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, args.toArray(new String[args.size()]));
@@ -319,16 +355,18 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
     private int getColumns() {
         int screenWidth = Theme.convert(activity.getResources().getConfiguration().screenWidthDp);
         if (PrefManager.getTraditionalListEnabled()) {
+            PrefManager.setCoverWidth(screenWidth);
             return 1;
         } else if (PrefManager.getIGFColumns() == 0) {
             int columns = (int) Math.ceil(screenWidth / Theme.floatConvert(225));
-            int coverwidth = screenWidth / columns;
-            coverHeight = (int) (coverwidth / 0.7);
+            PrefManager.setCoverWidth(screenWidth / columns);
+            PrefManager.setCoverHeight((int) (PrefManager.getCoverWidth() / 0.7));
             PrefManager.setIGFColumns(columns);
             PrefManager.commitChanges();
             return columns;
         } else {
-            coverHeight = (int) (screenWidth / PrefManager.getIGFColumns() / 0.7);
+            PrefManager.setCoverWidth(screenWidth / PrefManager.getIGFColumns());
+            PrefManager.setCoverHeight((int) (PrefManager.getCoverWidth() / 0.7));
             return PrefManager.getIGFColumns();
         }
     }

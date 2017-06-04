@@ -24,7 +24,7 @@ public class Profile implements Serializable {
     @Getter
     @Setter
     @SerializedName("avatar_url")
-    private String avatarUrl = "http://cdn.myanimelist.net/images/na.gif";
+    public String avatarUrl = "http://cdn.myanimelist.net/images/na.gif";
 
     /**
      * An AnimeStats object containing information on the user's anime statistics
@@ -32,7 +32,7 @@ public class Profile implements Serializable {
     @Getter
     @Setter
     @SerializedName("anime_stats")
-    private AnimeStats animeStats;
+    public AnimeStats animeStats;
 
     /**
      * A MangaStats object containing information on the user's manga statistics
@@ -40,7 +40,7 @@ public class Profile implements Serializable {
     @Getter
     @Setter
     @SerializedName("manga_stats")
-    private MangaStats mangaStats;
+    public MangaStats mangaStats;
 
     public String getSpecialAccesRank(String username) {
         if (getDetails() != null && getDetails().getAccessRank() != null) {
@@ -70,7 +70,7 @@ public class Profile implements Serializable {
         @Getter
         @Setter
         @SerializedName("last_online")
-        private String lastOnline;
+        public String lastOnline;
 
         /**
          * The status of an user.
@@ -80,7 +80,7 @@ public class Profile implements Serializable {
          */
         @Getter
         @Setter
-        private String status;
+        public String status;
 
         /**
          * The gender of an user.
@@ -90,28 +90,28 @@ public class Profile implements Serializable {
          */
         @Getter
         @Setter
-        private String gender;
+        public String gender;
 
         /**
          * The birthday of an user.
          */
         @Getter
         @Setter
-        private String birthday;
+        public String birthday;
 
         /**
          * The location of an user.
          */
         @Getter
         @Setter
-        private String location;
+        public String location;
 
         /**
          * The website of an user.
          */
         @Getter
         @Setter
-        private String website;
+        public String website;
 
         /**
          * The date of when the user joined MAL.
@@ -119,7 +119,7 @@ public class Profile implements Serializable {
         @Getter
         @Setter
         @SerializedName("join_date")
-        private String joinDate;
+        public String joinDate;
 
         /**
          * The rank of an user.
@@ -129,7 +129,7 @@ public class Profile implements Serializable {
         @Getter
         @Setter
         @SerializedName("access_rank")
-        private String accessRank;
+        public String accessRank;
 
         /**
          * The amount of animelist views of an user.
@@ -137,7 +137,7 @@ public class Profile implements Serializable {
         @Getter
         @Setter
         @SerializedName("anime_list_views")
-        private int animeListViews;
+        public int animeListViews;
 
         /**
          * The amount of manga views of an user.
@@ -145,7 +145,7 @@ public class Profile implements Serializable {
         @Getter
         @Setter
         @SerializedName("manga_list_views")
-        private int mangaListViews;
+        public int mangaListViews;
 
         /**
          * The amount of forum posts of an user
@@ -153,14 +153,14 @@ public class Profile implements Serializable {
         @Getter
         @Setter
         @SerializedName("forum_posts")
-        private int forumPosts;
+        public int forumPosts;
 
         /**
          * The amount of comments of an user
          */
         @Getter
         @Setter
-        private int comments;
+        public int comments;
 
         public int getGenderInt() {
             String[] gender = {
@@ -180,21 +180,21 @@ public class Profile implements Serializable {
         @Getter
         @Setter
         @SerializedName("time_days")
-        private Double timeDays;
+        public Double timeDays;
 
         /**
          * The amount of animes on your watching list
          */
         @Getter
         @Setter
-        private int watching;
+        public int watching;
 
         /**
          * The amount of animes on your completed list
          */
         @Getter
         @Setter
-        private int completed;
+        public int completed;
 
         /**
          * The amount of animes on your on hold list
@@ -202,14 +202,14 @@ public class Profile implements Serializable {
         @Getter
         @Setter
         @SerializedName("on_hold")
-        private int onHold;
+        public int onHold;
 
         /**
          * The amount of animes on your dropped list
          */
         @Getter
         @Setter
-        private int dropped;
+        public int dropped;
 
         /**
          * The amount of animes on your plan to watch list
@@ -217,7 +217,7 @@ public class Profile implements Serializable {
         @Getter
         @Setter
         @SerializedName("plan_to_watch")
-        private int planToWatch;
+        public int planToWatch;
 
         /**
          * The total amount of anime entries.
@@ -225,7 +225,7 @@ public class Profile implements Serializable {
         @Getter
         @Setter
         @SerializedName("total_entries")
-        private int totalEntries;
+        public int totalEntries;
     }
 
     public static class MangaStats implements Serializable {
@@ -237,21 +237,21 @@ public class Profile implements Serializable {
         @Getter
         @Setter
         @SerializedName("time_days")
-        private Double timeDays;
+        public Double timeDays;
 
         /**
          * The amount of mangas on your reading list
          */
         @Getter
         @Setter
-        private int reading;
+        public int reading;
 
         /**
          * The amount of mangas on your completed list
          */
         @Getter
         @Setter
-        private int completed;
+        public int completed;
 
         /**
          * The amount of mangas on your on hold list
@@ -259,14 +259,14 @@ public class Profile implements Serializable {
         @Getter
         @Setter
         @SerializedName("on_hold")
-        private int onHold;
+        public int onHold;
 
         /**
          * The amount of mangas on your dropped list
          */
         @Getter
         @Setter
-        private int dropped;
+        public int dropped;
 
         /**
          * The amount of mangas on your plan to read list
@@ -274,7 +274,7 @@ public class Profile implements Serializable {
         @Getter
         @Setter
         @SerializedName("plan_to_read")
-        private int planToRead;
+        public int planToRead;
 
         /**
          * The total amount of manga entries.
@@ -282,7 +282,7 @@ public class Profile implements Serializable {
         @Getter
         @Setter
         @SerializedName("total_entries")
-        private int totalEntries;
+        public int totalEntries;
     }
 
     public net.somethingdreadful.MAL.api.BaseModels.Profile createBaseModel() {

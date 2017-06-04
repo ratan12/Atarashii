@@ -107,7 +107,7 @@ public class ForumActivity extends AppCompatActivity implements ForumNetworkTask
     }
 
     public void launchBrowser(String MAL, String AL) {
-        if (AccountService.isMAL())
+        if (AccountService.Companion.isMAL())
             startActivity((new Intent(Intent.ACTION_VIEW)).setData(Uri.parse(MAL)));
         else
             startActivity((new Intent(Intent.ACTION_VIEW)).setData(Uri.parse(AL)));

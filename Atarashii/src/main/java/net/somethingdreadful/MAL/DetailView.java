@@ -153,7 +153,7 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
     }
 
     public String getDate(String string) {
-        return (isEmpty(string) ? getString(R.string.unknown) : DateTools.parseDate(string, false));
+        return (isEmpty(string) ? getString(R.string.unknown) : DateTools.INSTANCE.parseDate(string, false));
     }
 
     /**
@@ -314,7 +314,7 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
     private String makeShareText() {
         String shareText = PrefManager.getCustomShareText();
         shareText = shareText.replace("$title;", toolbar.getTitle());
-        if (AccountService.isMAL())
+        if (AccountService.Companion.isMAL())
             shareText = shareText.replace("$link;", "https://myanimelist.net/" + (isAnime?"anime":"manga") + "/" + String.valueOf(recordID));
         else
             shareText = shareText.replace("$link;", "http://anilist.co/" + (isAnime?"anime":"manga") + "/" + String.valueOf(recordID));
@@ -409,7 +409,7 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
                 break;
             case R.id.action_ViewMALPage:
                 Uri malurl;
-                if (AccountService.isMAL())
+                if (AccountService.Companion.isMAL())
                     malurl = Uri.parse("https://myanimelist.net/" + (isAnime?"anime":"manga") + "/" + recordID + "/");
                 else
                     malurl = Uri.parse("http://anilist.co/" + (isAnime?"anime":"manga") + "/" + recordID + "/");

@@ -1,9 +1,13 @@
 package net.somethingdreadful.MAL.api.BaseModels;
 
 import android.database.Cursor;
+import android.net.Uri;
 
+import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
+import net.somethingdreadful.MAL.PrefManager;
 import net.somethingdreadful.MAL.database.DatabaseHelper;
 
 import java.io.Serializable;
@@ -32,22 +36,22 @@ public class IGFModel implements Serializable {
          * The record id
          */
         @Getter
-        @Setter private int id;
+        @Setter public int id;
 
         /**
          * The profile image of the user
          */
         @Getter
-        private String imageUrl;
+        public String imageUrl;
         @Getter
-        private ImageRequest[] imageUrlArray;
+        public ImageRequest[] imageUrlArray;
 
         /**
          * The names of the anime/manga
          */
         @Getter
         @Setter
-        private String title;
+        public String title;
 
 
         /**
@@ -55,13 +59,13 @@ public class IGFModel implements Serializable {
          */
         @Getter
         @Setter
-        private String status;
+        public String status;
         @Getter
         @Setter
-        private String statusRaw;
+        public String statusRaw;
         @Getter
         @Setter
-        private String userStatusRaw;
+        public String userStatusRaw;
 
         /**
          * Short details
@@ -74,35 +78,39 @@ public class IGFModel implements Serializable {
          */
         @Getter
         @Setter
-        private String score;
+        public String score;
         @Getter
         @Setter
-        private int scoreRaw;
+        public int scoreRaw;
 
         /**
          * The type of the record
          */
         @Getter
         @Setter
-        private String typeRaw;
+        public String typeRaw;
 
         /**
          * The number of notifications
          */
         @Getter
         @Setter
-        private String progress;
+        public String progress;
         @Getter
         @Setter
-        private int progressRaw;
+        public int progressRaw;
         @Getter
         @Setter
-        private int progressRawMax;
+        public int progressRawMax;
 
         public void setImageUrl(String imageUrl) {
             this.imageUrl = imageUrl;
-            ImageRequest request1 = ImageRequest.fromUri(imageUrl);
-            ImageRequest request2 = ImageRequest.fromUri(imageUrl.replace("l.jpg", ".jpg"));
+            ImageRequest request1 = ImageRequestBuilder.newBuilderWithSource(Uri.parse(imageUrl))
+                    .setResizeOptions(new ResizeOptions(PrefManager.getCoverWidth(), PrefManager.getCoverHeight()))
+                    .build();
+            ImageRequest request2 = ImageRequestBuilder.newBuilderWithSource(Uri.parse(imageUrl.replace("l.jpg", ".jpg")))
+                    .setResizeOptions(new ResizeOptions(PrefManager.getCoverWidth(), PrefManager.getCoverHeight()))
+                    .build();
             imageUrlArray = new ImageRequest[]{ request1, request2 };
         }
 

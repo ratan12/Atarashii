@@ -33,7 +33,7 @@ public class ContentManager {
 
     public ContentManager(Context context) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.ContentManager(context)");
-        if (AccountService.isMAL())
+        if (AccountService.Companion.isMAL())
             malApi = new MALApi();
         else
             alApi = new ALApi();
@@ -42,7 +42,7 @@ public class ContentManager {
 
     public ContentManager(Activity activity) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.ContentManager(activity)");
-        if (AccountService.isMAL())
+        if (AccountService.Companion.isMAL())
             malApi = new MALApi(activity);
         else
             alApi = new ALApi(activity);
@@ -85,19 +85,19 @@ public class ContentManager {
 
     public IGFModel getProfileAnimeList(String username) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getProfileAnimeList(): username=" + username);
-        return AccountService.isMAL() ? malApi.getProfileAnimeList(username) : alApi.getProfileAnimeList(username);
+        return AccountService.Companion.isMAL() ? malApi.getProfileAnimeList(username) : alApi.getProfileAnimeList(username);
     }
 
     public IGFModel getProfileMangaList(String username) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getProfileMangaList(): username=" + username);
-        return AccountService.isMAL() ? malApi.getProfileMangaList(username) : alApi.getProfileMangaList(username);
+        return AccountService.Companion.isMAL() ? malApi.getProfileMangaList(username) : alApi.getProfileMangaList(username);
     }
 
     public ArrayList<Anime> downloadAnimeList(String username) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.downloadAnimeList(): username=" + username);
-        UserList animeList = AccountService.isMAL() ? malApi.getAnimeList(username) : alApi.getAnimeList(username);
+        UserList animeList = AccountService.Companion.isMAL() ? malApi.getAnimeList(username) : alApi.getAnimeList(username);
 
-        if (animeList != null && username.equals(AccountService.getUsername())) {
+        if (animeList != null && username.equals(AccountService.Companion.getUsername())) {
             dbMan.saveAnimeList(animeList.getAnimeList());
             dbMan.cleanupAnimeTable();
             return animeList.getAnimeList();
@@ -109,9 +109,9 @@ public class ContentManager {
 
     public ArrayList<Manga> downloadMangaList(String username) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.downloadMangaList(): username=" + username);
-        UserList mangaList = AccountService.isMAL() ? malApi.getMangaList(username) : alApi.getMangaList(username);
+        UserList mangaList = AccountService.Companion.isMAL() ? malApi.getMangaList(username) : alApi.getMangaList(username);
 
-        if (mangaList != null && username.equals(AccountService.getUsername())) {
+        if (mangaList != null && username.equals(AccountService.Companion.getUsername())) {
             dbMan.saveMangaList(mangaList.getMangaList());
             dbMan.cleanupMangaTable();
             return mangaList.getMangaList();
@@ -133,22 +133,22 @@ public class ContentManager {
 
     public Manga updateWithDetails(int id, Manga manga) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.updateWithDetails(): id=" + id);
-        Manga manga_api = AccountService.isMAL() ? malApi.getManga(id, 1) : alApi.getManga(id);
+        Manga manga_api = AccountService.Companion.isMAL() ? malApi.getManga(id, 1) : alApi.getManga(id);
 
         if (manga_api != null) {
             dbMan.saveManga(manga_api);
-            return AccountService.isMAL() ? manga_api : dbMan.getManga(id);
+            return AccountService.Companion.isMAL() ? manga_api : dbMan.getManga(id);
         }
         return manga;
     }
 
     public Anime updateWithDetails(int id, Anime anime) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.updateWithDetails(): id=" + id);
-        Anime anime_api = AccountService.isMAL() ? malApi.getAnime(id, 1) : alApi.getAnime(id);
+        Anime anime_api = AccountService.Companion.isMAL() ? malApi.getAnime(id, 1) : alApi.getAnime(id);
 
         if (anime_api != null) {
             dbMan.saveAnime(anime_api);
-            return AccountService.isMAL() ? anime_api : dbMan.getAnime(id);
+            return AccountService.Companion.isMAL() ? anime_api : dbMan.getAnime(id);
         }
         return anime;
     }
@@ -157,9 +157,9 @@ public class ContentManager {
         ArrayList<Profile> result = new ArrayList<>();
         try {
             AppLog.log(Log.INFO, "Atarashii", "ContentManager.downloadAndStoreFriendList(): username=" + user);
-            result = AccountService.isMAL() ? malApi.getFriends(user) : alApi.getFollowing(user);
+            result = AccountService.Companion.isMAL() ? malApi.getFriends(user) : alApi.getFollowing(user);
 
-            if (result != null && result.size() > 0 && AccountService.getUsername().equals(user))
+            if (result != null && result.size() > 0 && AccountService.Companion.getUsername().equals(user))
                 dbMan.saveFriendList(result);
         } catch (Exception e) {
             AppLog.log(Log.ERROR, "Atarashii", "ContentManager.downloadAndStoreFriendList(): " + e.getMessage());
@@ -202,11 +202,11 @@ public class ContentManager {
         Profile profile = new Profile();
         try {
             AppLog.log(Log.INFO, "Atarashii", "ContentManager.getProfile(): username=" + name);
-            profile = AccountService.isMAL() ? malApi.getProfile(name) : alApi.getProfile(name);
+            profile = AccountService.Companion.isMAL() ? malApi.getProfile(name) : alApi.getProfile(name);
 
             if (profile != null) {
                 profile.setUsername(name);
-                if (name.equalsIgnoreCase(AccountService.getUsername())) {
+                if (name.equalsIgnoreCase(AccountService.Companion.getUsername())) {
                     PrefManager.setProfileImage(profile.getImageUrl());
                     PrefManager.commitChanges();
                     dbMan.saveProfile(profile);
@@ -271,7 +271,7 @@ public class ContentManager {
     }
 
     public ArrayList<History> getActivity(String username, int page) {
-        ArrayList<History> result = AccountService.isMAL() ? malApi.getActivity(username) : alApi.getActivity(username, page);
+        ArrayList<History> result = AccountService.Companion.isMAL() ? malApi.getActivity(username) : alApi.getActivity(username, page);
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getActivity(): got " + String.valueOf(result != null ? result.size() : 0) + " records on " + page);
         return result;
     }
@@ -284,19 +284,19 @@ public class ContentManager {
 
     public Anime getAnimeRecord(int id) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getAnimeRecord(): id=" + id);
-        return AccountService.isMAL() ? malApi.getAnime(id, 0) : alApi.getAnime(id);
+        return AccountService.Companion.isMAL() ? malApi.getAnime(id, 0) : alApi.getAnime(id);
     }
 
     public Manga getMangaRecord(int id) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getMangaRecord(): id=" + id);
-        return AccountService.isMAL() ? malApi.getManga(id, 0) : alApi.getManga(id);
+        return AccountService.Companion.isMAL() ? malApi.getManga(id, 0) : alApi.getManga(id);
     }
 
     public void verifyAuthentication() {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.verifyAuthentication()");
-        if (AccountService.isMAL())
+        if (AccountService.Companion.isMAL())
             malApi.isAuth();
-        else if (AccountService.getAccesToken() == null)
+        else if (AccountService.Companion.getAccesToken() == null)
             alApi.getAccesToken();
     }
 
@@ -304,9 +304,9 @@ public class ContentManager {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.writeAnimeDetails(): id=" + anime.getId());
         boolean result;
         if (anime.getDeleteFlag())
-            result = AccountService.isMAL() ? malApi.deleteAnimeFromList(anime.getId()) : alApi.deleteAnimeFromList(anime.getId());
+            result = AccountService.Companion.isMAL() ? malApi.deleteAnimeFromList(anime.getId()) : alApi.deleteAnimeFromList(anime.getId());
         else
-            result = AccountService.isMAL() ? malApi.addOrUpdateAnime(anime) : alApi.addOrUpdateAnime(anime);
+            result = AccountService.Companion.isMAL() ? malApi.addOrUpdateAnime(anime) : alApi.addOrUpdateAnime(anime);
         AppLog.log(result ? Log.INFO : Log.ERROR, "Atarashii", "ContentManager.writeAnimeDetails(): successfully=" + result);
         return result;
     }
@@ -315,86 +315,86 @@ public class ContentManager {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.writeMangaDetails(): id=" + manga.getId());
         boolean result;
         if (manga.getDeleteFlag())
-            result = AccountService.isMAL() ? malApi.deleteMangaFromList(manga.getId()) : alApi.deleteMangaFromList(manga.getId());
+            result = AccountService.Companion.isMAL() ? malApi.deleteMangaFromList(manga.getId()) : alApi.deleteMangaFromList(manga.getId());
         else
-            result = AccountService.isMAL() ? malApi.addOrUpdateManga(manga) : alApi.addOrUpdateManga(manga);
+            result = AccountService.Companion.isMAL() ? malApi.addOrUpdateManga(manga) : alApi.addOrUpdateManga(manga);
         AppLog.log(result ? Log.INFO : Log.ERROR, "Atarashii", "ContentManager.writeMangaDetails(): successfully=" + result);
         return result;
     }
 
     public IGFModel getMostPopularAnime(int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getMostPopularAnime(): page=" + page);
-        return AccountService.isMAL() ? malApi.getMostPopularAnime(page) : alApi.getMostPopularAnime(page);
+        return AccountService.Companion.isMAL() ? malApi.getMostPopularAnime(page) : alApi.getMostPopularAnime(page);
     }
 
     public IGFModel getMostPopularManga(int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getMostPopularManga(): page=" + page);
-        return AccountService.isMAL() ? malApi.getMostPopularManga(page) : alApi.getMostPopularManga(page);
+        return AccountService.Companion.isMAL() ? malApi.getMostPopularManga(page) : alApi.getMostPopularManga(page);
     }
 
     public IGFModel getTopRatedAnime(int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getTopRatedAnime(): page=" + page);
-        return AccountService.isMAL() ? malApi.getTopRatedAnime(page) : alApi.getTopRatedAnime(page);
+        return AccountService.Companion.isMAL() ? malApi.getTopRatedAnime(page) : alApi.getTopRatedAnime(page);
     }
 
     public IGFModel getTopRatedManga(int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getTopRatedManga(): page=" + page);
-        return AccountService.isMAL() ? malApi.getTopRatedManga(page) : alApi.getTopRatedManga(page);
+        return AccountService.Companion.isMAL() ? malApi.getTopRatedManga(page) : alApi.getTopRatedManga(page);
     }
 
     public IGFModel getJustAddedAnime(int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getJustAddedAnime(): page=" + page);
-        return AccountService.isMAL() ? malApi.getJustAddedAnime(page) : alApi.getJustAddedAnime(page);
+        return AccountService.Companion.isMAL() ? malApi.getJustAddedAnime(page) : alApi.getJustAddedAnime(page);
     }
 
     public IGFModel getJustAddedManga(int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getJustAddedManga(): page=" + page);
-        return AccountService.isMAL() ? malApi.getJustAddedManga(page) : alApi.getJustAddedManga(page);
+        return AccountService.Companion.isMAL() ? malApi.getJustAddedManga(page) : alApi.getJustAddedManga(page);
     }
 
     public IGFModel getUpcomingAnime(int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getUpcomingAnime(): page=" + page);
-        return AccountService.isMAL() ? malApi.getUpcomingAnime(page) : alApi.getUpcomingAnime(page);
+        return AccountService.Companion.isMAL() ? malApi.getUpcomingAnime(page) : alApi.getUpcomingAnime(page);
     }
 
     public IGFModel getUpcomingManga(int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getUpcomingManga(): page=" + page);
-        return AccountService.isMAL() ? malApi.getUpcomingManga(page) : alApi.getUpcomingManga(page);
+        return AccountService.Companion.isMAL() ? malApi.getUpcomingManga(page) : alApi.getUpcomingManga(page);
     }
 
     public IGFModel searchAnime(String query, int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.searchAnime(): page=" + page + " query=" + query);
-        return AccountService.isMAL() ? malApi.searchAnime(query, page) : alApi.searchAnime(query, page);
+        return AccountService.Companion.isMAL() ? malApi.searchAnime(query, page) : alApi.searchAnime(query, page);
     }
 
     public IGFModel searchManga(String query, int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.searchManga(): page=" + page + " query=" + query);
-        return AccountService.isMAL() ? malApi.searchManga(query, page) : alApi.searchManga(query, page);
+        return AccountService.Companion.isMAL() ? malApi.searchManga(query, page) : alApi.searchManga(query, page);
     }
 
     public ArrayList<Reviews> getAnimeReviews(int id, int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getAnimeReviews(): page=" + page + " id=" + id);
-        return AccountService.isMAL() ? malApi.getAnimeReviews(id, page) : alApi.getAnimeReviews(id, page);
+        return AccountService.Companion.isMAL() ? malApi.getAnimeReviews(id, page) : alApi.getAnimeReviews(id, page);
     }
 
     public ArrayList<Reviews> getMangaReviews(int id, int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getMangaReviews(): page=" + page + " id=" + id);
-        return AccountService.isMAL() ? malApi.getMangaReviews(id, page) : alApi.getMangaReviews(id, page);
+        return AccountService.Companion.isMAL() ? malApi.getMangaReviews(id, page) : alApi.getMangaReviews(id, page);
     }
 
     public ArrayList<Forum> getForumCategories() {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getForumCategories()");
-        return AccountService.isMAL() ? malApi.getForum().createBaseModel() : ForumAL.getForum();
+        return AccountService.Companion.isMAL() ? malApi.getForum().createBaseModel() : ForumAL.getForum();
     }
 
     public ArrayList<Forum> getCategoryTopics(int id, int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getCategoryTopics(): page=" + page + " id=" + id);
-        return AccountService.isMAL() ? malApi.getCategoryTopics(id, page).createBaseModel() : alApi.getTags(id, page).getForumListBase();
+        return AccountService.Companion.isMAL() ? malApi.getCategoryTopics(id, page).createBaseModel() : alApi.getTags(id, page).getForumListBase();
     }
 
     public ArrayList<Forum> getTopic(int id, int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getTopic(): page=" + page + " id=" + id);
-        return AccountService.isMAL() ? malApi.getPosts(id, page).createBaseModel() : alApi.getPosts(id, page).convertBaseModel();
+        return AccountService.Companion.isMAL() ? malApi.getPosts(id, page).createBaseModel() : alApi.getPosts(id, page).convertBaseModel();
     }
 
     public void deleteAnime(Anime anime) {
@@ -409,7 +409,7 @@ public class ContentManager {
 
     public ArrayList<Forum> search(String query) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.search(): query=" + query);
-        return AccountService.isMAL() ? malApi.search(query).createBaseModel() : alApi.search(query).getForumListBase();
+        return AccountService.Companion.isMAL() ? malApi.search(query).createBaseModel() : alApi.search(query).getForumListBase();
     }
 
     public ArrayList<Forum> getSubCategory(int id, int page) {
@@ -419,12 +419,12 @@ public class ContentManager {
 
     public boolean addComment(int id, String message) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.addComment(): message=" + message + " id=" + id);
-        return AccountService.isMAL() ? malApi.addComment(id, message) : alApi.addComment(id, message);
+        return AccountService.Companion.isMAL() ? malApi.addComment(id, message) : alApi.addComment(id, message);
     }
 
     public boolean updateComment(int id, String message) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.updateComment(): message=" + message + " id=" + id);
-        return AccountService.isMAL() ? malApi.updateComment(id, message) : alApi.updateComment(id, message);
+        return AccountService.Companion.isMAL() ? malApi.updateComment(id, message) : alApi.updateComment(id, message);
     }
 
     public ArrayList<Recommendations> getAnimeRecs(int id) {
@@ -439,7 +439,7 @@ public class ContentManager {
 
     public Schedule getSchedule() {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getSchedule()");
-        return AccountService.isMAL() ? malApi.getSchedule() : alApi.getSchedule();
+        return AccountService.Companion.isMAL() ? malApi.getSchedule() : alApi.getSchedule();
     }
 
     public void saveSchedule(Schedule schedule) {
@@ -454,51 +454,51 @@ public class ContentManager {
 
     public IGFModel  getPopularSeasonAnime(int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getPopularSeasonAnime(): page=" + page);
-        return AccountService.isMAL() ? malApi.getPopularSeasonAnime(page) : alApi.getPopularSeasonAnime(page);
+        return AccountService.Companion.isMAL() ? malApi.getPopularSeasonAnime(page) : alApi.getPopularSeasonAnime(page);
     }
 
     public IGFModel  getPopularYearAnime(int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getPopularYearAnime(): page=" + page);
-        return AccountService.isMAL() ? malApi.getPopularYearAnime(page) : alApi.getPopularYearAnime(page);
+        return AccountService.Companion.isMAL() ? malApi.getPopularYearAnime(page) : alApi.getPopularYearAnime(page);
     }
 
     public IGFModel  getTopSeasonAnime(int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getTopSeasonAnime(): page=" + page);
-        return AccountService.isMAL() ? malApi.getTopSeasonAnime(page) : alApi.getTopSeasonAnime(page);
+        return AccountService.Companion.isMAL() ? malApi.getTopSeasonAnime(page) : alApi.getTopSeasonAnime(page);
     }
 
     public IGFModel  getTopYearAnime(int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getTopYearAnime(): page=" + page);
-        return AccountService.isMAL() ? malApi.getTopYearAnime(page) : alApi.getTopYearAnime(page);
+        return AccountService.Companion.isMAL() ? malApi.getTopYearAnime(page) : alApi.getTopYearAnime(page);
     }
 
     public IGFModel getPopularSeasonManga(int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getPopularSeasonManga(): page=" + page);
-        return AccountService.isMAL() ? malApi.getPopularSeasonManga(page) : alApi.getPopularSeasonManga(page);
+        return AccountService.Companion.isMAL() ? malApi.getPopularSeasonManga(page) : alApi.getPopularSeasonManga(page);
     }
 
     public IGFModel getPopularYearManga(int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getPopularYearManga(): page=" + page);
-        return AccountService.isMAL() ? malApi.getPopularYearManga(page) : alApi.getPopularYearManga(page);
+        return AccountService.Companion.isMAL() ? malApi.getPopularYearManga(page) : alApi.getPopularYearManga(page);
     }
 
     public IGFModel getTopSeasonManga(int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getTopSeasonManga(): page=" + page);
-        return AccountService.isMAL() ? malApi.getTopSeasonManga(page) : alApi.getTopSeasonManga(page);
+        return AccountService.Companion.isMAL() ? malApi.getTopSeasonManga(page) : alApi.getTopSeasonManga(page);
     }
 
     public IGFModel getTopYearManga(int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getTopYearManga(): page=" + page);
-        return AccountService.isMAL() ? malApi.getTopYearManga(page) : alApi.getTopYearManga(page);
+        return AccountService.Companion.isMAL() ? malApi.getTopYearManga(page) : alApi.getTopYearManga(page);
     }
 
     public IGFModel getBrowseAnime(Map<String, String> queries) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getBrowseAnime(): queries=" + queries.toString());
-        return AccountService.isMAL() ? malApi.getBrowseAnime(queries) : alApi.getBrowseAnime(queries);
+        return AccountService.Companion.isMAL() ? malApi.getBrowseAnime(queries) : alApi.getBrowseAnime(queries);
     }
 
     public IGFModel getBrowseManga(Map<String, String> queries) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getBrowseManga(): queries=" + queries.toString());
-        return AccountService.isMAL() ? malApi.getBrowseManga(queries) : alApi.getBrowseManga(queries);
+        return AccountService.Companion.isMAL() ? malApi.getBrowseManga(queries) : alApi.getBrowseManga(queries);
     }
 }

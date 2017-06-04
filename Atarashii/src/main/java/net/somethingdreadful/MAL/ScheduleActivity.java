@@ -267,7 +267,7 @@ public class ScheduleActivity extends AppCompatActivity implements Serializable,
             this.episodes = getString(R.string.card_content_episodes) + ":";
             this.members = getString(R.string.card_content_members) + ":";
             this.unknown = getString(R.string.unknown);
-            this.isMal = AccountService.isMAL();
+            this.isMal = AccountService.Companion.isMAL();
         }
 
         @Override

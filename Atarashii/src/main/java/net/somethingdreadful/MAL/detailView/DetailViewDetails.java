@@ -161,7 +161,7 @@ public class DetailViewDetails extends Fragment implements Serializable {
         // set all the views
         ButterKnife.bind(this, view);
 
-        if (!AccountService.isMAL()) {
+        if (!AccountService.Companion.isMAL()) {
             producers.setVisibility(View.GONE);
             producersRow.setVisibility(View.GONE);
             classification.setVisibility(View.GONE);
@@ -244,7 +244,7 @@ public class DetailViewDetails extends Fragment implements Serializable {
             if (activity.animeRecord.getAiring() == null || activity.animeRecord.getAiring().getTime() == null)
                 broadcastRow.setVisibility(View.GONE);
             else
-                broadcast.setText(activity.nullCheck(DateTools.parseDate(activity.animeRecord.getAiring().getTime(), true)));
+                broadcast.setText(activity.nullCheck(DateTools.INSTANCE.parseDate(activity.animeRecord.getAiring().getTime(), true)));
             volumes.setVisibility(View.GONE);
             volumesRow.setVisibility(View.GONE);
             volumesLabel.setVisibility(View.GONE);
@@ -275,7 +275,7 @@ public class DetailViewDetails extends Fragment implements Serializable {
 
         // Information card
         infoValue1.setText(record.getAverageScore());
-        if (AccountService.isMAL()) {
+        if (AccountService.Companion.isMAL()) {
             infoValue2.setText(String.valueOf(record.getRank()));
             infoValue3.setText(String.valueOf(record.getPopularity()));
             infoValue4.setText(String.valueOf(record.getAverageScoreCount()));

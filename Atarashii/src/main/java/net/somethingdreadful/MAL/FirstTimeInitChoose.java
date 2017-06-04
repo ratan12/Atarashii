@@ -31,12 +31,12 @@ public class FirstTimeInitChoose extends Fragment implements RadioGroup.OnChecke
     public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
         switch(i) {
             case R.id.radio_mal:
-                activity.isMAL = true;
-                activity.firstTimeInitLogin.isMal();
+                activity.setMAL(true);
+                activity.getFirstTimeInitLogin().isMal();
                 break;
             case R.id.radio_al:
-                activity.isMAL = false;
-                activity.firstTimeInitLogin.isMal();
+                activity.setMAL(false);
+                activity.getFirstTimeInitLogin().isMal();
                 break;
         }
     }

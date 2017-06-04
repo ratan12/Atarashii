@@ -65,7 +65,7 @@ public class ProfileActivity extends AppCompatActivity implements UserNetworkTas
             getActivity(1);
         }
 
-        NfcHelper.disableBeam(this);
+        NfcHelper.INSTANCE.disableBeam(this);
     }
 
     @Override
@@ -179,7 +179,7 @@ public class ProfileActivity extends AppCompatActivity implements UserNetworkTas
     }
 
     private String getProfileURL() {
-        return AccountService.isMAL() ? "https://myanimelist.net/profile/" : "http://anilist.co/user/";
+        return AccountService.Companion.isMAL() ? "https://myanimelist.net/profile/" : "http://anilist.co/user/";
     }
 
     private void refresh() {

@@ -91,7 +91,7 @@ public class Reviews implements Serializable {
     }
 
     public void setDate(String date) {
-        this.date = DateTools.parseDate(date, !AccountService.isMAL());
+        this.date = DateTools.INSTANCE.parseDate(date, !AccountService.Companion.isMAL());
     }
 
     public void setEpisodesSeen(int episodesSeen) {

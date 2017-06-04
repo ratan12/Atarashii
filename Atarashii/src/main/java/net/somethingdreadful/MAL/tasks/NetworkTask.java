@@ -93,7 +93,7 @@ public class NetworkTask extends AsyncTask<String, Void, Object> {
         taskResult = null;
         ContentManager cManager = new ContentManager(activity != null ? activity : context);
 
-        if (!AccountService.isMAL() && isNetworkAvailable)
+        if (!AccountService.Companion.isMAL() && isNetworkAvailable)
             cManager.verifyAuthentication();
 
         try {
@@ -116,16 +116,16 @@ public class NetworkTask extends AsyncTask<String, Void, Object> {
                          *
                          * this will throw an RetrofitError-Exception if the credentials are wrong
                          */
-                        if (AccountService.isMAL())
+                        if (AccountService.Companion.isMAL())
                             cManager.verifyAuthentication();
 
                         if (isAnimeTask()) {
                             cManager.cleanDirtyAnimeRecords();
-                            cManager.downloadAnimeList(AccountService.getUsername());
+                            cManager.downloadAnimeList(AccountService.Companion.getUsername());
                             taskResult = cManager.getAnimeListFromDB(params[0], Integer.parseInt(params[1]), params[2]);
                         } else {
                             cManager.cleanDirtyMangaRecords();
-                            cManager.downloadMangaList(AccountService.getUsername());
+                            cManager.downloadMangaList(AccountService.Companion.getUsername());
                             taskResult = cManager.getMangaListFromDB(params[0], Integer.parseInt(params[1]), params[2]);
                         }
                     }

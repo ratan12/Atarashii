@@ -211,10 +211,10 @@ public class BrowseFragmentMAL extends Fragment implements AdapterView.OnItemSel
     public void onDateSet(Boolean start, int year, int month, int day) {
         if (start) {
             startDate = year == 0 ? "" : (year + "-" + (month < 10 ? "0" + month : month) + "-" + (day < 10 ? "0" + day : day));
-            startDateButton.setText(getString(R.string.card_content_start) + ": " + DateTools.parseDate(startDate, false));
+            startDateButton.setText(getString(R.string.card_content_start) + ": " + DateTools.INSTANCE.parseDate(startDate, false));
         } else {
             endDate = year == 0 ? "" : (year + "-" + (month < 10 ? "0" + month : month) + "-" + (day < 10 ? "0" + day : day));
-            endDateButton.setText(getString(R.string.card_content_end) + ": " + DateTools.parseDate(endDate, false));
+            endDateButton.setText(getString(R.string.card_content_end) + ": " + DateTools.INSTANCE.parseDate(endDate, false));
         }
     }
 
