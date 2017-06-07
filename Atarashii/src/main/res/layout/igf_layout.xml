@@ -6,13 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
-        android:id="@+id/recyclerView"
+    <GridView
+        android:id="@+id/gridView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clickable="true"
-        android:focusable="true"
-        android:scrollbars="none"
-        app:fastScrollPopupBgColor="@color/primary"
-        app:fastScrollThumbColor="@color/primary"/>
+        android:fastScrollAlwaysVisible="true"
+        android:fastScrollEnabled="true"
+        android:fastScrollStyle="@android:style/Widget.Material.FastScroll"
+        android:horizontalSpacing="1dp"
+        android:smoothScrollbar="true"
+        android:verticalSpacing="1dp"/>
 </android.support.v4.widget.SwipeRefreshLayout>

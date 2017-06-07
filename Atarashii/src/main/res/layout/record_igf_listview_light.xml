@@ -83,8 +83,7 @@
         android:layout_height="match_parent"
         android:background="@drawable/highlite"/>
 
-
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/coverImage"
         android:layout_width="78dp"
         android:layout_height="102dp"

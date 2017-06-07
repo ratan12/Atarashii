@@ -89,7 +89,6 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
 
             //Initializing navigation toggle button
             val drawerToggle = object : ActionBarDrawerToggle(this, drawerLayout, findViewById(R.id.actionbar) as Toolbar, R.string.drawer_open, R.string.drawer_close) {
-
             }
             drawerLayout.addDrawerListener(drawerToggle)
             drawerToggle.syncState()
