@@ -14,7 +14,7 @@
         <TextView
             android:id="@+id/CardTitle"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="42dp"
             android:background="@drawable/card_header"
             android:ellipsize="marquee"
             android:focusable="true"
@@ -27,7 +27,7 @@
             android:singleLine="true"
             android:text="@string/card_content_loading"
             android:textColor="#0099CC"
-            android:textSize="18sp" />
+            android:textSize="16sp"/>
 
         <RelativeLayout
             android:id="@+id/content"

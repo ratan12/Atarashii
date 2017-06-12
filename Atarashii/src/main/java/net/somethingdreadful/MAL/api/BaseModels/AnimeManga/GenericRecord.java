@@ -3,13 +3,18 @@ package net.somethingdreadful.MAL.api.BaseModels.AnimeManga;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.net.Uri;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.google.gson.Gson;
 
 import net.somethingdreadful.MAL.AppLog;
+import net.somethingdreadful.MAL.PrefManager;
 import net.somethingdreadful.MAL.R;
 import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.api.MALModels.RecordStub;
@@ -311,6 +316,16 @@ public class GenericRecord implements Serializable {
         if (!fromCursor)
             addDirtyField("notes");
         this.notes = notes;
+    }
+
+    public ImageRequest[] getBannerImage(){
+        ImageRequest request1 = ImageRequestBuilder.newBuilderWithSource(Uri.parse(imageUrl))
+                .setResizeOptions(new ResizeOptions(PrefManager.getCoverWidth(), PrefManager.getCoverHeight()))
+                .build();
+        ImageRequest request2 = ImageRequestBuilder.newBuilderWithSource(Uri.parse(imageUrl.replace("l.jpg", ".jpg")))
+                .setResizeOptions(new ResizeOptions(PrefManager.getCoverWidth(), PrefManager.getCoverHeight()))
+                .build();
+        return new ImageRequest[]{ request1, request2 };
     }
 
     public void setCustomList(String customList) {

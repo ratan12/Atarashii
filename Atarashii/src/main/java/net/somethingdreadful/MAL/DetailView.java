@@ -25,6 +25,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import net.somethingdreadful.MAL.account.AccountService;
@@ -510,8 +512,16 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
                 animeRecord = (Anime) result;
             else
                 mangaRecord = (Manga) result;
-            coverImage.setImageURI(((GenericRecord) result).getImageUrl());
-            bannerImage.setImageURI(((GenericRecord) result).getImageUrl());
+            DraweeController controller1 = Fresco.newDraweeControllerBuilder()
+                    .setFirstAvailableImageRequests(((GenericRecord) result).getBannerImage())
+                    .setOldController(coverImage.getController())
+                    .build();
+            coverImage.setController(controller1);
+            DraweeController controller2 = Fresco.newDraweeControllerBuilder()
+                    .setFirstAvailableImageRequests(((GenericRecord) result).getBannerImage())
+                    .setOldController(bannerImage.getController())
+                    .build();
+            bannerImage.setController(controller2);
             setRefreshing(false);
 
             setText();
@@ -528,11 +538,11 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
     public void setToolbarImages() {
         try {
             GenericRecord record = (isAnime ? animeRecord : mangaRecord);
-            if (record.getBannerUrl() != null && !record.getBannerUrl().equals("")) {
-                bannerImage.setImageURI(record.getBannerUrl());
-            } else {
-                bannerImage.setImageURI(record.getBannerUrl());
-            }
+            DraweeController controller = Fresco.newDraweeControllerBuilder()
+                    .setFirstAvailableImageRequests(record.getBannerImage())
+                    .setOldController(bannerImage.getController())
+                    .build();
+            bannerImage.setController(controller);
             coverImageLoaded = true;
         } catch (Exception e) {
             AppLog.logException(e);

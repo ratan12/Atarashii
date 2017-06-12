@@ -5,7 +5,7 @@
     <RelativeLayout
         android:id="@+id/rewatchPriorityPanel"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="42dp"
         android:background="@drawable/highlite">
 
         <TextView
@@ -15,7 +15,7 @@
             android:layout_marginLeft="16dp"
             android:text="@string/card_content_rewatch_priority"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="14sp"/>
 
         <TextView
             android:id="@+id/priority"
@@ -26,7 +26,7 @@
             android:layout_marginRight="16dp"
             android:text="@string/layout_card_loading"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="14sp"/>
     </RelativeLayout>
 
     <View
@@ -34,12 +34,12 @@
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:layout_below="@id/rewatchPriorityPanel"
-        android:background="@color/bg_listview_pressed" />
+        android:background="@color/primarytransparant" />
 
     <RelativeLayout
         android:id="@+id/countPanel"
         android:layout_width="match_parent"
-        android:layout_height="57dp"
+        android:layout_height="42dp"
         android:background="@drawable/highlite"
         android:layout_below="@id/divider1">
 
@@ -50,7 +50,7 @@
             android:layout_marginLeft="16dp"
             android:text="@string/card_content_count"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/count2Text2"
@@ -61,7 +61,7 @@
             android:layout_marginRight="16dp"
             android:text="@string/layout_card_loading"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
     </RelativeLayout>
 </RelativeLayout>

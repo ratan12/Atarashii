@@ -18,7 +18,7 @@
                 android:id="@+id/basic"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                custom:header_Color="@color/card_green"
+                custom:header_Color="@color/card"
                 custom:header_Title="@string/card_name_basic"
                 custom:header_Title_Color="@color/white" />
 
@@ -29,7 +29,7 @@
                 android:layout_height="match_parent"
                 android:layout_below="@id/basic"
                 android:layout_marginTop="8dp"
-                custom:header_Color="@color/card_green"
+                custom:header_Color="@color/card"
                 custom:header_Title="@string/card_name_other"
                 custom:header_Title_Color="@color/white" />
 
@@ -40,7 +40,7 @@
                 android:layout_height="match_parent"
                 android:layout_below="@id/other"
                 android:layout_marginTop="8dp"
-                custom:header_Color="@color/card_green"
+                custom:header_Color="@color/card"
                 custom:header_Title="@string/card_name_rewatch"
                 custom:header_Title_Color="@color/white" />
         </RelativeLayout>

@@ -1,27 +1,172 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="fill_parent">
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent">
 
-    <include
-        android:id="@+id/container"
-        layout="@layout/card_detailview_general_personal"
+    <RelativeLayout
+        android:id="@+id/status"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="42dp"
+        android:background="@drawable/highlite">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:text="@string/card_content_status"
+            android:textColor="#000000"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/statusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:text="@string/layout_card_loading"
+            android:textColor="#000000"
+            android:textSize="14sp"/>
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/progress1"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_below="@id/status"
+        android:background="@drawable/highlite">
+        <View
+            android:id="@+id/divider7"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/primarytransparant"/>
+
+        <TextView
+            android:id="@+id/progress1Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:text="@string/card_content_volumes"
+            android:textColor="#000000"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/progress1Text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:text="@string/layout_card_loading"
+            android:textColor="#000000"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/progress1Text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/progress1Text1"
+            android:textColor="#000000"
+            android:textSize="14sp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/progress2"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_below="@id/progress1"
+        android:background="@drawable/highlite">
+
+        <View
+            android:id="@+id/divider8"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/primarytransparant"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:text="@string/card_content_chapters"
+            android:textColor="#000000"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/progress2Text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:text="@string/layout_card_loading"
+            android:textColor="#000000"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/progress2Text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/progress2Text1"
+            android:textColor="#000000"
+            android:textSize="14sp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/scorePanel"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/progress2"
+        android:background="@drawable/highlite">
+
+        <View
+            android:id="@+id/divider9"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/primarytransparant"/>
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:text="@string/card_content_my_score"
+            android:textColor="#000000"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/myScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:text="@string/layout_card_loading"
+            android:textColor="#000000"
+            android:textSize="14sp"/>
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/startDatePanel"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="42dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/container"
+        android:layout_below="@+id/scorePanel"
         android:background="@drawable/highlite">
 
         <View
             android:id="@+id/divider1"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:background="@color/bg_listview_pressed" />
+            android:background="@color/primarytransparant"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -30,7 +175,7 @@
             android:layout_marginLeft="16dp"
             android:text="@string/card_content_my_start"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="14sp"/>
 
         <TextView
             android:id="@+id/myStartDate"
@@ -41,13 +186,13 @@
             android:layout_marginRight="16dp"
             android:text="@string/layout_card_loading"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="14sp"/>
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/endDatePanel"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="42dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/startDatePanel"
@@ -57,7 +202,7 @@
             android:id="@+id/divider2"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:background="@color/bg_listview_pressed" />
+            android:background="@color/primarytransparant"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -66,7 +211,7 @@
             android:layout_marginLeft="16dp"
             android:text="@string/card_content_my_end"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="14sp"/>
 
         <TextView
             android:id="@+id/myEndDate"
@@ -77,13 +222,13 @@
             android:layout_marginRight="16dp"
             android:text="@string/layout_card_loading"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="14sp"/>
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/priorityPanel"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="42dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/endDatePanel"
@@ -93,7 +238,7 @@
             android:id="@+id/divider3"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:background="@color/bg_listview_pressed" />
+            android:background="@color/primarytransparant"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -102,7 +247,7 @@
             android:layout_marginLeft="16dp"
             android:text="@string/card_content_my_priority"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="14sp"/>
 
         <TextView
             android:id="@+id/myPriority"
@@ -113,7 +258,7 @@
             android:layout_marginRight="16dp"
             android:text="@string/layout_card_loading"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="14sp"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -124,39 +269,39 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/priorityPanel"
         android:background="@drawable/highlite"
-        android:minHeight="56dp">
+        android:minHeight="42dp">
 
         <View
             android:id="@+id/divider4"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:background="@color/bg_listview_pressed" />
+            android:background="@color/primarytransparant"/>
 
         <TableRow
-            android:layout_centerVertical="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="16dp">
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/card_content_my_tags"
                 android:textColor="#000000"
-                android:textSize="16sp" />
+                android:textSize="14sp"/>
 
             <TextView
                 android:id="@+id/myTags"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginLeft="18dp"
+                android:gravity="right"
                 android:text="@string/layout_card_loading"
                 android:textColor="#000000"
-                android:textSize="16sp"
-                android:layout_gravity="right"
-                android:gravity="right"
-                android:layout_marginLeft="18dp" />
+                android:textSize="14sp"/>
         </TableRow>
     </RelativeLayout>
 
@@ -168,40 +313,40 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/tagsPanel"
         android:background="@drawable/highlite"
-        android:minHeight="56dp">
+        android:minHeight="42dp">
 
         <View
             android:id="@+id/divider5"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:background="@color/bg_listview_pressed" />
+            android:background="@color/primarytransparant"/>
 
 
         <TableRow
-            android:layout_centerVertical="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="16dp">
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/card_content_comments"
                 android:textColor="#000000"
-                android:textSize="16sp" />
+                android:textSize="14sp"/>
 
             <TextView
                 android:id="@+id/comments"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginLeft="18dp"
+                android:gravity="right"
                 android:text="@string/layout_card_loading"
                 android:textColor="#000000"
-                android:textSize="16sp"
-                android:layout_gravity="right"
-                android:gravity="right"
-                android:layout_marginLeft="18dp" />
+                android:textSize="14sp"/>
         </TableRow>
     </RelativeLayout>
 
@@ -213,40 +358,40 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/commentspanel"
         android:background="@drawable/highlite"
-        android:minHeight="56dp">
+        android:minHeight="42dp">
 
         <View
             android:id="@+id/divider6"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:background="@color/bg_listview_pressed" />
+            android:background="@color/primarytransparant"/>
 
 
         <TableRow
-            android:layout_centerVertical="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="16dp">
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/card_content_customList"
                 android:textColor="#000000"
-                android:textSize="16sp" />
+                android:textSize="14sp"/>
 
             <TextView
                 android:id="@+id/customList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginLeft="18dp"
+                android:gravity="right"
                 android:text="@string/layout_card_loading"
                 android:textColor="#000000"
-                android:textSize="16sp"
-                android:layout_gravity="right"
-                android:gravity="right"
-                android:layout_marginLeft="18dp" />
+                android:textSize="14sp"/>
         </TableRow>
     </RelativeLayout>
 </RelativeLayout>

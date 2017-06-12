@@ -14,6 +14,10 @@ import android.view.ViewGroup
 import android.widget.*
 import net.somethingdreadful.MAL.adapters.DetailViewRelationsAdapter
 
+
+
+
+
 class Card @JvmOverloads constructor(private val appContext: Context, attrs: AttributeSet, defStyle: Int = 0) : RelativeLayout(appContext, attrs, defStyle) {
     private val center: Boolean
     val Header: TextView
@@ -98,18 +102,19 @@ class Card @JvmOverloads constructor(private val appContext: Context, attrs: Att
      * @param view The view that should be themed.
      */
     private fun initLoop(view: RelativeLayout) {
-        for (i in 0..view.childCount - 1) {
-            val child = view.getChildAt(i)
-            if (child is TextView)
-                child.setTextColor(ContextCompat.getColor(appContext, R.color.text_dark))
-            else if (child is RelativeLayout) {
-                initLoop(child)
-                Theme.setBackground(context, child)
-            } else if (child is TableRow) {
-                initLoop(child)
-            } else if (child.id > 0 && resources.getResourceEntryName(child.id).contains("divider"))
-                child.setBackgroundColor(ContextCompat.getColor(appContext, R.color.bg_dark_card))
-        }
+        (0..view.childCount - 1)
+                .map { view.getChildAt(it) }
+                .forEach {
+                    if (it is TextView)
+                        it.setTextColor(ContextCompat.getColor(appContext, R.color.text_dark))
+                    else if (it is RelativeLayout) {
+                        initLoop(it)
+                        Theme.setBackground(context, it)
+                    } else if (it is TableRow) {
+                        initLoop(it)
+                    } else if (it.id > 0 && resources.getResourceEntryName(it.id).contains("divider"))
+                        it.setBackgroundColor(ContextCompat.getColor(appContext, R.color.bg_dark_card))
+                }
     }
 
     /**
@@ -142,16 +147,7 @@ class Card @JvmOverloads constructor(private val appContext: Context, attrs: Att
      * @param adapter The listadapter
      */
     fun refreshList(adapter: DetailViewRelationsAdapter) {
-        if (adapter.visable == 0) {
-            this.visibility = View.GONE
-        } else {
-            var Height = (adapter.visable - adapter.headers.size) * 56
-            Height += adapter.headers.size * 48
-            Height += (adapter.visable - 1)
 
-            if (this.findViewById(R.id.ListView) != null)
-                this.findViewById(R.id.ListView).layoutParams.height = Theme.convert(Height)
-        }
     }
 
     /**

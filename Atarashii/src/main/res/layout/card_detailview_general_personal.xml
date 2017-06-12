@@ -5,7 +5,7 @@
     <RelativeLayout
         android:id="@+id/status"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="42dp"
         android:background="@drawable/highlite">
 
         <TextView
@@ -15,7 +15,7 @@
             android:layout_marginLeft="16dp"
             android:text="@string/card_content_status"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/statusText"
@@ -26,7 +26,7 @@
             android:layout_marginRight="16dp"
             android:text="@string/layout_card_loading"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
     </RelativeLayout>
 
     <View
@@ -34,12 +34,12 @@
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:layout_below="@id/status"
-        android:background="@color/bg_listview_pressed" />
+        android:background="@color/primarytransparant" />
 
     <RelativeLayout
         android:id="@+id/progress1"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="42dp"
         android:layout_below="@id/divider1"
         android:background="@drawable/highlite">
 
@@ -51,7 +51,7 @@
             android:layout_marginLeft="16dp"
             android:text="@string/card_content_volumes"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/progress1Text1"
@@ -62,7 +62,7 @@
             android:layout_marginRight="16dp"
             android:text="@string/layout_card_loading"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/progress1Text2"
@@ -71,7 +71,7 @@
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@id/progress1Text1"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -85,7 +85,7 @@
             android:id="@+id/divider2"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:background="@color/bg_listview_pressed" />
+            android:background="@color/primarytransparant" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -94,7 +94,7 @@
             android:layout_marginLeft="16dp"
             android:text="@string/card_content_chapters"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/progress2Text1"
@@ -105,7 +105,7 @@
             android:layout_marginRight="16dp"
             android:text="@string/layout_card_loading"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/progress2Text2"
@@ -114,13 +114,13 @@
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@id/progress2Text1"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/scorePanel"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="42dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/progress2"
@@ -130,7 +130,7 @@
             android:id="@+id/divider3"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:background="@color/bg_listview_pressed" />
+            android:background="@color/primarytransparant" />
 
         <TextView
             android:id="@+id/textView"
@@ -140,7 +140,7 @@
             android:layout_marginLeft="16dp"
             android:text="@string/card_content_my_score"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/myScore"
@@ -151,6 +151,6 @@
             android:layout_marginRight="16dp"
             android:text="@string/layout_card_loading"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
     </RelativeLayout>
 </RelativeLayout>

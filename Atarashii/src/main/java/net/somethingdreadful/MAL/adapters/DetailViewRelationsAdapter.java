@@ -165,8 +165,6 @@ public class DetailViewRelationsAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.record_details_listview_header, parent, false);
-            if (Theme.darkTheme)
-                convertView.setBackgroundColor(ContextCompat.getColor(context, R.color.card_dark_green));
         }
 
         TextView name = (TextView) convertView.findViewById(R.id.name);

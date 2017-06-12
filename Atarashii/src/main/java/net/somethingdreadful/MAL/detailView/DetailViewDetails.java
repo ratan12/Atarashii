@@ -12,7 +12,6 @@ import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListView;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -173,7 +172,7 @@ public class DetailViewDetails extends Fragment implements Serializable {
         relations = (ExpandableListView) cardRelations.findViewById(R.id.ListView);
         relations.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
-            public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPos, int childPos, long l) {
+            public boolean onChildClick(android.widget.ExpandableListView expandableListView, View view, int groupPos, int childPos, long l) {
                 Intent detailView = new Intent(activity, DetailView.class);
                 detailView.putExtra("recordID", relation.getRecordStub(groupPos, childPos).getId());
                 detailView.putExtra("recordType", relation.getRecordStub(groupPos, childPos).getType());
@@ -187,7 +186,7 @@ public class DetailViewDetails extends Fragment implements Serializable {
         musics = (ExpandableListView) cardMusic.findViewById(R.id.ListView);
         musics.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
-            public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPos, int childPos, long l) {
+            public boolean onChildClick(android.widget.ExpandableListView expandableListView, View view, int groupPos, int childPos, long l) {
                 // #[TRACK NUMBER]: \"[TITLE] ([JAPANESE TITLE])\" [SINGER] ([EPISODES])
                 Pattern pattern = Pattern.compile("\"(.+?)\\((.+?)\"(.+?)\\(");
                 Matcher matcher = pattern.matcher(music.getRecordStub(groupPos, childPos).getTitle());

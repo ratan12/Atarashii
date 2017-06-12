@@ -21,14 +21,13 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.DraweeView;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import net.somethingdreadful.MAL.AppLog;
 import net.somethingdreadful.MAL.DetailView;
 import net.somethingdreadful.MAL.R;
 import net.somethingdreadful.MAL.Theme;
 import net.somethingdreadful.MAL.api.APIHelper;
-
 import net.somethingdreadful.MAL.api.MALModels.Recommendations;
 import net.somethingdreadful.MAL.tasks.NetworkTask;
 import net.somethingdreadful.MAL.tasks.TaskJob;
@@ -229,7 +228,7 @@ public class DetailViewRecs extends Fragment implements NetworkTask.NetworkTaskL
         public final TextView subTitle2;
         public final TextView subTitle3;
         public final TextView content;
-        public final DraweeView imageView;
+        public final SimpleDraweeView imageView;
         public final RelativeLayout header;
 
         public recommendationAdapterHolder(View itemView) {
@@ -239,14 +238,14 @@ public class DetailViewRecs extends Fragment implements NetworkTask.NetworkTaskL
             subTitle2 = (TextView) itemView.findViewById(R.id.Cardsub2);
             subTitle3 = (TextView) itemView.findViewById(R.id.Cardsub3);
             content = (TextView) itemView.findViewById(R.id.content);
-            imageView = (DraweeView) itemView.findViewById(R.id.coverImage);
+            imageView = (SimpleDraweeView) itemView.findViewById(R.id.coverImage);
             header = (RelativeLayout) itemView.findViewById(R.id.header);
 
             subTitle2.setVisibility(View.INVISIBLE);
             subTitle3.setVisibility(View.INVISIBLE);
 
             GradientDrawable shape = (GradientDrawable) header.getBackground();
-            shape.setColor(ContextCompat.getColor(activity, R.color.card_green));
+            shape.setColor(ContextCompat.getColor(activity, R.color.card));
 
             imageView.setOnClickListener(this);
             content.setOnClickListener(this);

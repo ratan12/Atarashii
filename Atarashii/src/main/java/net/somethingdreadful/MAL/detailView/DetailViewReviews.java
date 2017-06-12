@@ -21,7 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.DraweeView;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import net.somethingdreadful.MAL.AppLog;
 import net.somethingdreadful.MAL.DetailView;
@@ -30,7 +30,6 @@ import net.somethingdreadful.MAL.Theme;
 import net.somethingdreadful.MAL.account.AccountService;
 import net.somethingdreadful.MAL.api.APIHelper;
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Reviews;
-
 import net.somethingdreadful.MAL.tasks.NetworkTask;
 import net.somethingdreadful.MAL.tasks.TaskJob;
 
@@ -283,7 +282,7 @@ public class DetailViewReviews extends Fragment implements NetworkTask.NetworkTa
         public final TextView subTitle2;
         public final TextView subTitle3;
         public final TextView content;
-        public final DraweeView imageView;
+        public final SimpleDraweeView imageView;
         public final RelativeLayout header;
 
         public reviewAdapterHolder(View itemView) {
@@ -293,11 +292,11 @@ public class DetailViewReviews extends Fragment implements NetworkTask.NetworkTa
             subTitle2 = (TextView) itemView.findViewById(R.id.Cardsub2);
             subTitle3 = (TextView) itemView.findViewById(R.id.Cardsub3);
             content = (TextView) itemView.findViewById(R.id.content);
-            imageView = (DraweeView) itemView.findViewById(R.id.coverImage);
+            imageView = (SimpleDraweeView) itemView.findViewById(R.id.coverImage);
             header = (RelativeLayout) itemView.findViewById(R.id.header);
 
             GradientDrawable shape = (GradientDrawable) header.getBackground();
-            shape.setColor(ContextCompat.getColor(activity, R.color.card_green));
+            shape.setColor(ContextCompat.getColor(activity, R.color.card));
 
             imageView.setOnClickListener(this);
             content.setOnClickListener(this);
