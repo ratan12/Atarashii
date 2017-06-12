@@ -81,10 +81,8 @@ class AccountService : Service() {
             AppLog.log(Log.INFO, "Atarashii", "AccountService.onUpgrade(): Upgrading from " + oldVersion + " to " + accountVersion.toString() + ".")
             setAccountVersion()
             when (oldVersion + 1) {
-                1, 2 // We added new base models to make loading easier, the user needs to log out (2.2 beta 1).
-                -> deleteAccount()
-                3 // The profile image is now saved in the settings
-                -> {
+                1, 2 -> deleteAccount() // We added new base models to make loading easier, the user needs to log out (2.2 beta 1).
+                3 -> { // The profile image is now saved in the settings
                     val cManager = ContentManager(context)
                     if (!PrefManager.isCreated())
                         PrefManager.create(context)

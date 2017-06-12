@@ -28,7 +28,6 @@ class AuthenticationCheckTask
             // Avoid overwrite issues
             if (DatabaseHelper.DBExists(activity))
                 DatabaseHelper.deleteDatabase(activity)
-
             if (params.size >= 2) {
                 val api = MALApi(params[0], params[1])
                 val valid = api.isAuth

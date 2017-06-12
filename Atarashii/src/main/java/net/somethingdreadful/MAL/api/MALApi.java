@@ -33,6 +33,7 @@ import retrofit2.Response;
 public class MALApi {
     // Use version 2.1 of the API interface
     private static final String API_HOST = "https://api.atarashiiapp.com/2.1/";
+    private static final String MAL_HOST = "https://myanimelist.net/";
     private Activity activity = null;
 
     private MALInterface service;
@@ -50,7 +51,7 @@ public class MALApi {
      * Only use for verifying.
      */
     public MALApi(String username, String password) {
-        setupRESTService(username, password);
+        service = APIHelper.createClient(MAL_HOST, MALInterface.class, Credentials.basic(username, password));
     }
 
     private void setupRESTService(String username, String password) {
