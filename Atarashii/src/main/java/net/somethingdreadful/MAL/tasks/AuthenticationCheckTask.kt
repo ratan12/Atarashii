@@ -21,34 +21,43 @@ class AuthenticationCheckTask
  * *
  * @param activity The FirstTimeActivity
  */
-(private val callback: AuthenticationCheckTask.AuthenticationCheckListener?, private val activity: Activity) : AsyncTask<String, Void, Boolean>() {
+(private val callback: AuthenticationCheckTask.AuthenticationCheckListener?, private val activity: Activity, private val removeDB: Boolean) : AsyncTask<String, Void, Boolean>() {
 
     override fun doInBackground(vararg params: String): Boolean? {
         try {
+
             // Avoid overwrite issues
-            if (DatabaseHelper.DBExists(activity))
+            if (DatabaseHelper.DBExists(activity) && removeDB)
                 DatabaseHelper.deleteDatabase(activity)
+            var contentManager: ContentManager = ContentManager(activity)
+
             if (params.size >= 2) {
                 val api = MALApi(params[0], params[1])
                 val valid = api.isAuth
                 if (valid) {
-                    AccountService.addAccount(params[0], params[1], AccountType.MyAnimeList)
-                    ContentManager(activity).getProfile(params[0])
+                    val id: Int = contentManager.newAccountId
+                    AccountService.addAccount(id, params[0], params[1], AccountType.MyAnimeList)
+                    contentManager = ContentManager(activity)
+                    val profile: Profile? = contentManager.rawProfile(params[0])
+                    if (profile != null) {
+                        contentManager.createAccount(params[0], profile.imageUrl, 0)
+                        contentManager.saveProfile(params[0], profile)
+                        return valid
+                    }
                 }
-                return valid
             } else {
                 val api = ALApi(activity)
 
                 val auth = api.getAuthCode(params[0])
                 var profile: Profile? = api.currentUser
-                if (profile == null)
-                // try again
+                if (profile == null) // try again
                     profile = api.currentUser
 
                 if (profile == null) {
                     Theme.Snackbar(activity, R.string.toast_error_keys)
                 } else {
-                    AccountService.addAccount(profile.username, "none", AccountType.AniList)
+                    val id: Int = contentManager.createAccount(profile.username, profile.imageUrl, 1)
+                    AccountService.addAccount(id, profile.username, "none", AccountType.AniList)
                     AccountService.setAccesToken(auth.access_token, java.lang.Long.parseLong(auth.expires_in))
                     AccountService.refreshToken = auth.refresh_token
 

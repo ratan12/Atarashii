@@ -25,6 +25,11 @@ import net.somethingdreadful.MAL.profile.ProfileFriends;
 import net.somethingdreadful.MAL.profile.ProfileHistory;
 import net.somethingdreadful.MAL.tasks.UserNetworkTask;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -209,7 +214,7 @@ public class ProfileActivity extends AppCompatActivity implements UserNetworkTas
     }
 
     @Override
-    public void onUserNetworkTaskFinished(Profile result) {
+    public void onUserNetworkTaskFinished(@Nullable Profile result) {
         record = result;
         refresh();
         refreshing(false);

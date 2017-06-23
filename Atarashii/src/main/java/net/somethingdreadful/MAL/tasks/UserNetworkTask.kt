@@ -8,7 +8,7 @@ import net.somethingdreadful.MAL.account.AccountService
 import net.somethingdreadful.MAL.api.APIHelper
 import net.somethingdreadful.MAL.api.BaseModels.Profile
 
-class UserNetworkTask(private val forcesync: Boolean, private val callback: UserNetworkTask.UserNetworkTaskListener?, val activity: Activity) : AsyncTask<String, Void, Profile>() {
+class UserNetworkTask(private val forcesync: Boolean, private val callback: UserNetworkTask.UserNetworkTaskListener?, val activity: Activity) : AsyncTask<String, Void, Profile?>() {
 
     override fun doInBackground(vararg params: String): Profile? {
         val isNetworkAvailable = APIHelper.isNetworkAvailable(activity)
@@ -40,11 +40,11 @@ class UserNetworkTask(private val forcesync: Boolean, private val callback: User
         return result
     }
 
-    override fun onPostExecute(result: Profile) {
+    override fun onPostExecute(result: Profile?) {
         callback?.onUserNetworkTaskFinished(result)
     }
 
     interface UserNetworkTaskListener {
-        fun onUserNetworkTaskFinished(result: Profile)
+        fun onUserNetworkTaskFinished(result: Profile?)
     }
 }

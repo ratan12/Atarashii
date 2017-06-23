@@ -1,12 +1,10 @@
 package net.somethingdreadful.MAL
 
 import android.app.ProgressDialog
-import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import com.github.paolorotolo.appintro.AppIntro
-import com.github.paolorotolo.appintro.AppIntroFragment
 import net.somethingdreadful.MAL.api.APIHelper
 import net.somethingdreadful.MAL.api.BaseModels.IGFModel
 import net.somethingdreadful.MAL.tasks.AuthenticationCheckTask
@@ -14,20 +12,19 @@ import net.somethingdreadful.MAL.tasks.NetworkTask
 import net.somethingdreadful.MAL.tasks.TaskJob
 import java.util.*
 
-class FirstTimeInit : AppIntro(), AuthenticationCheckTask.AuthenticationCheckListener, NetworkTask.NetworkTaskListener {
+class AddAccount : AppIntro(), AuthenticationCheckTask.AuthenticationCheckListener, NetworkTask.NetworkTaskListener {
     var isMAL = true
     var username: String = ""
     var password: String = ""
     private var dialog: ProgressDialog? = null
     private var loadedRecords = 0
-    var firstTimeInitLogin: FirstTimeInitLogin = FirstTimeInitLogin.newInstance(this)
+    var AddAccountLogin: FirstTimeInitLogin = FirstTimeInitLogin.newInstance(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        addSlide(AppIntroFragment.newInstance(getString(R.string.app_name), getString(R.string.app_welcome), R.drawable.icon, resources.getColor(R.color.primary)))
         addSlide(FirstTimeInitChoose.newInstance(this))
-        addSlide(firstTimeInitLogin)
+        addSlide(AddAccountLogin)
 
         setBarColor(resources.getColor(R.color.accent))
         setSeparatorColor(resources.getColor(android.R.color.black))
@@ -42,9 +39,9 @@ class FirstTimeInit : AppIntro(), AuthenticationCheckTask.AuthenticationCheckLis
         super.onDonePressed(currentFragment)
         if (APIHelper.isNetworkAvailable(this)) {
             // Get username and password from the inputviews
-            if (firstTimeInitLogin.input1 != null && firstTimeInitLogin.input2 != null) {
-                username = firstTimeInitLogin.input1.text.toString()
-                password = firstTimeInitLogin.input2.text.toString()
+            if (AddAccountLogin.input1 != null && AddAccountLogin.input2 != null) {
+                username = AddAccountLogin.input1.text.toString()
+                password = AddAccountLogin.input2.text.toString()
 
                 // Create loading dialog
                 dialog = ProgressDialog(this)
@@ -57,9 +54,9 @@ class FirstTimeInit : AppIntro(), AuthenticationCheckTask.AuthenticationCheckLis
 
                 // Make auth check request
                 if (isMAL)
-                    AuthenticationCheckTask(this, this, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, username, password)
+                    AuthenticationCheckTask(this, this, false).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, username, password)
                 else
-                    AuthenticationCheckTask(this, this, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, username)
+                    AuthenticationCheckTask(this, this, false).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, username)
             } else {
                 dialog!!.dismiss()
                 Theme.Snackbar(this, R.string.toast_error_layout)
@@ -107,8 +104,6 @@ class FirstTimeInit : AppIntro(), AuthenticationCheckTask.AuthenticationCheckLis
         dialog!!.setTitle(getString(R.string.dialog_title_records) + " (" + loadedRecords + "/2)")
         if (loadedRecords == 2) {
             dialog!!.dismiss()
-            val goHome = Intent(this, Home::class.java)
-            startActivity(goHome)
             finish()
         }
     }

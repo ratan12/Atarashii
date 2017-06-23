@@ -2,6 +2,9 @@
     <string name="app_name" translatable="false">Atarashii!</string>
     <string name="app_name_beta" translatable="false">Atarashii! β</string>
 
+
+    <string name="account_add">Add account</string>
+
     <!-- All (Actionbar Title) Strings -->
     <string name="title_activity_firstRun">First Run Setup</string>
     <string name="title_activity_settings">Settings</string>

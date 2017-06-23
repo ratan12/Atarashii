@@ -54,8 +54,9 @@ public class MALApi {
         service = APIHelper.createClient(MAL_HOST, MALInterface.class, Credentials.basic(username, password));
     }
 
-    private void setupRESTService(String username, String password) {
+    public MALApi setupRESTService(String username, String password) {
         service = APIHelper.createClient(API_HOST, MALInterface.class, Credentials.basic(username, password));
+        return this;
     }
 
     public boolean isAuth() {

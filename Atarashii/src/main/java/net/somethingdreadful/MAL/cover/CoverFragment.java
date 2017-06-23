@@ -332,6 +332,7 @@ public class CoverFragment extends Fragment implements NetworkTask.NetworkTaskLi
         clear = true;
         NetworkTask networkTask = new NetworkTask(TaskJob.GETFRIENDLIST, isAnime, activity, new Bundle(), this);
         networkTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, username);
+        pagesAvailable = false;
     }
 
     /**

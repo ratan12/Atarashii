@@ -8,7 +8,7 @@ import net.somethingdreadful.MAL.R
 class ChooseDialogFragment : DialogFragment() {
     private var callback: onClickListener? = null
 
-    override fun onCreateDialog(state: Bundle): AlertDialog {
+    override fun onCreateDialog(state: Bundle?): AlertDialog {
         val builder = AlertDialog.Builder(activity)
         builder.setTitle(arguments.getString("title"))
         builder.setMessage(arguments.getString("message"))

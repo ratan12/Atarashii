@@ -23,7 +23,6 @@ import net.somethingdreadful.MAL.api.APIHelper
 import net.somethingdreadful.MAL.dialog.ChooseDialogFragment
 
 
-
 class FirstTimeInitLogin : Fragment(), ChooseDialogFragment.onClickListener {
     val input1: EditText by bindView(R.id.input_username)
     val input2: EditText by bindView(R.id.input_password)
@@ -32,7 +31,8 @@ class FirstTimeInitLogin : Fragment(), ChooseDialogFragment.onClickListener {
     val footer: RelativeLayout by bindView(R.id.footer)
     val title: TextView by bindView(R.id.title)
     internal var webviewIsInit = false
-    private var firstTimeInit: FirstTimeInit? = null
+    private var activity1: FirstTimeInit? = null
+    private var activity2: AddAccount? = null
 
     @OnClick(R.id.register)
     fun register() {
@@ -57,18 +57,34 @@ class FirstTimeInitLogin : Fragment(), ChooseDialogFragment.onClickListener {
      * Note: should be called after website change
      */
     fun isMal() {
-        if (firstTimeInit!!.isMAL) {
-            title.text = getString(R.string.init_hint_myanimelist)
-            webview.visibility = View.GONE
-            loginBlock.visibility = View.VISIBLE
-            footer.visibility = View.VISIBLE
-            firstTimeInit!!.showDoneButton(true)
-        } else {
-            title.text = getString(R.string.init_hint_anilist)
-            firstTimeInit!!.showDoneButton(false)
-            webview.visibility = View.VISIBLE
-            loginBlock.visibility = View.GONE
-            footer.visibility = View.GONE
+        if (activity1 != null) {
+            if (activity1!!.isMAL) {
+                title.text = getString(R.string.init_hint_myanimelist)
+                webview.visibility = View.GONE
+                loginBlock.visibility = View.VISIBLE
+                footer.visibility = View.VISIBLE
+                activity1!!.showDoneButton(true)
+            } else {
+                title.text = getString(R.string.init_hint_anilist)
+                activity1!!.showDoneButton(false)
+                webview.visibility = View.VISIBLE
+                loginBlock.visibility = View.GONE
+                footer.visibility = View.GONE
+            }
+        } else if (activity2 != null) {
+            if (activity2!!.isMAL) {
+                title.text = getString(R.string.init_hint_myanimelist)
+                webview.visibility = View.GONE
+                loginBlock.visibility = View.VISIBLE
+                footer.visibility = View.VISIBLE
+                activity2!!.showDoneButton(true)
+            } else {
+                title.text = getString(R.string.init_hint_anilist)
+                activity2!!.showDoneButton(false)
+                webview.visibility = View.VISIBLE
+                loginBlock.visibility = View.GONE
+                footer.visibility = View.GONE
+            }
         }
     }
 
@@ -85,7 +101,10 @@ class FirstTimeInitLogin : Fragment(), ChooseDialogFragment.onClickListener {
                     val code = ALApi.getCode(url)
                     if (code != null) {
                         input1!!.setText(code)
-                        firstTimeInit!!.onDonePressed(targetFragment)
+                        if (activity1 != null)
+                            activity1!!.onDonePressed(targetFragment)
+                        else
+                            activity2!!.onDonePressed(targetFragment)
                         return true
                     } else {
                         return false
@@ -122,7 +141,13 @@ class FirstTimeInitLogin : Fragment(), ChooseDialogFragment.onClickListener {
 
         fun newInstance(firstTimeInit: FirstTimeInit): FirstTimeInitLogin {
             val fragment = FirstTimeInitLogin()
-            fragment.firstTimeInit = firstTimeInit
+            fragment.activity1 = firstTimeInit
+            return FirstTimeInitLogin()
+        }
+
+        fun newInstance(firstTimeInit: AddAccount): FirstTimeInitLogin {
+            val fragment = FirstTimeInitLogin()
+            fragment.activity2 = firstTimeInit
             return fragment
         }
     }

@@ -10,11 +10,12 @@ import android.view.ViewGroup;
 import android.widget.RadioGroup;
 
 public class FirstTimeInitChoose extends Fragment implements RadioGroup.OnCheckedChangeListener {
-    private FirstTimeInit activity;
+    private FirstTimeInit activity1;
+    private AddAccount activity2;
 
     public static FirstTimeInitChoose newInstance(FirstTimeInit activity) {
         FirstTimeInitChoose fragment = new FirstTimeInitChoose();
-        fragment.activity = activity;
+        fragment.activity1 = activity;
         return fragment;
     }
 
@@ -31,13 +32,29 @@ public class FirstTimeInitChoose extends Fragment implements RadioGroup.OnChecke
     public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
         switch(i) {
             case R.id.radio_mal:
-                activity.setMAL(true);
-                activity.getFirstTimeInitLogin().isMal();
+                if (activity1 != null) {
+                    activity1.setMAL(true);
+                    activity1.getFirstTimeInitLogin().isMal();
+                } else {
+                    activity2.setMAL(true);
+                    activity2.getAddAccountLogin().isMal();
+                }
                 break;
             case R.id.radio_al:
-                activity.setMAL(false);
-                activity.getFirstTimeInitLogin().isMal();
+                if (activity1 != null) {
+                    activity1.setMAL(false);
+                    activity1.getFirstTimeInitLogin().isMal();
+                } else {
+                    activity2.setMAL(false);
+                    activity2.getAddAccountLogin().isMal();
+                }
                 break;
         }
+    }
+
+    public static FirstTimeInitChoose newInstance(AddAccount addAccount) {
+        FirstTimeInitChoose fragment = new FirstTimeInitChoose();
+        fragment.activity2 = addAccount;
+        return fragment;
     }
 }

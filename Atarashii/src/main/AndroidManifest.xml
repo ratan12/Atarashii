@@ -48,6 +48,9 @@
             android:name=".Settings"
             android:label="@string/title_activity_settings"/>
         <activity
+            android:name=".AddAccount"
+            android:label="@string/account_add"/>
+        <activity
             android:name=".DetailView"
             android:label="@string/layout_card_loading">
             <intent-filter>

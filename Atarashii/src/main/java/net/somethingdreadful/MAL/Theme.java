@@ -20,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -178,6 +179,7 @@ public class Theme extends Application {
             String username = net.somethingdreadful.MAL.account.AccountService.Companion.getUsername();
             SimpleDraweeView image = (SimpleDraweeView) view.findViewById(R.id.Image);
             SimpleDraweeView image2 = (SimpleDraweeView) view.findViewById(R.id.NDimage);
+            RelativeLayout accountList = (RelativeLayout) view.findViewById(R.id.AccountList);
             ((TextView) view.findViewById(R.id.siteName)).setText(activity.getString(net.somethingdreadful.MAL.account.AccountService.Companion.isMAL() ? R.string.init_hint_myanimelist : R.string.init_hint_anilist));
             ((TextView) view.findViewById(R.id.name)).setText(username);
 
@@ -201,6 +203,7 @@ public class Theme extends Application {
 
             // init images
             image.setImageURI(Uri.parse(PrefManager.getProfileImage()));
+            accountList.setOnClickListener(listener);
             if (PrefManager.getNavigationBackground() != null)
                 image2.setImageURI(Uri.parse(PrefManager.getNavigationBackground()));
             if (listener != null) {

@@ -1,36 +1,95 @@
 package net.somethingdreadful.MAL.database;
 
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.text.TextUtils;
 import android.util.Log;
 
 import net.somethingdreadful.MAL.AppLog;
+import net.somethingdreadful.MAL.account.AccountService;
+
+import static net.somethingdreadful.MAL.database.DatabaseHelper.COLUMN_ID;
 
 public class Table {
     private String queryString = "";
     private static SQLiteDatabase db;
+
+    static final String TABLE_ACCOUNTS = "accounts";
+    static final String TABLE_ANIME = "anime";
+    static final String TABLE_MANGA = "manga";
+    static final String TABLE_PROFILE = "profile";
+    static final String TABLE_FRIENDLIST = "friendlist";
+    static final String TABLE_PRODUCER = "producer";
+    static final String TABLE_ANIME_PRODUCER = "anime_producer";
+    static final String TABLE_ANIME_MUSIC = "animemusic";
+    static final String TABLE_ANIME_OTHER_TITLES = "animeothertitles";
+    static final String TABLE_MANGA_OTHER_TITLES = "mangaothertitles";
+    static final String TABLE_SCHEDULE = "schedule";
+
+    static final String TABLE_ANIME_ANIME_RELATIONS = "rel_anime_anime";
+    static final String TABLE_ANIME_MANGA_RELATIONS = "rel_anime_manga";
+    static final String TABLE_MANGA_MANGA_RELATIONS = "rel_manga_manga";
+    static final String TABLE_MANGA_ANIME_RELATIONS = "rel_manga_anime";
+
+    static final String TABLE_GENRES = "genres";
+    static final String TABLE_ANIME_GENRES = "anime_genres";
+    static final String TABLE_MANGA_GENRES = "manga_genres";
+
+    static final String TABLE_TAGS = "tags";
+    static final String TABLE_ANIME_TAGS = "anime_tags";
+    static final String TABLE_ANIME_PERSONALTAGS = "anime_personaltags";
+    static final String TABLE_MANGA_TAGS = "manga_tags";
+    static final String TABLE_MANGA_PERSONALTAGS = "manga_personaltags";
 
     public static Table create(SQLiteDatabase db) {
         Table.db = db;
         return new Table();
     }
 
+    /**
+     * Get the valid table name of an user account.
+     *
+     * @param table The table name
+     * @return String that the real table will be
+     */
+    public static String getName(String table) {
+        return table + "_" + AccountService.Companion.getAccountId() + "_";
+    }
+
+    /**
+     * Get the valid table name of an user account.
+     *
+     * @param table The table name
+     * @return String that the real table will be
+     */
+    public static String setName(String table, int id) {
+        return table + "_" + id + "_";
+    }
+
     public void createOtherTitles(String table, String ListTypeTable) {
         queryString += "CREATE TABLE "
-                + table + "("
-                + DatabaseHelper.COLUMN_ID + " integer NOT NULL REFERENCES " + ListTypeTable + "(" + DatabaseHelper.COLUMN_ID + ") ON DELETE CASCADE, "
+                + table + " ("
+                + COLUMN_ID + " integer NOT NULL REFERENCES " + ListTypeTable + " (" + COLUMN_ID + ") ON DELETE CASCADE, "
                 + "titleType integer NOT NULL, "
                 + "title varchar NOT NULL, "
-                + "PRIMARY KEY(" + DatabaseHelper.COLUMN_ID + ",titleType , title)"
+                + "PRIMARY KEY(" + COLUMN_ID + ",titleType , title)"
+                + ");";
+        run();
+    }
+
+    public void createAccounts() {
+        queryString += "CREATE TABLE "
+                + TABLE_ACCOUNTS + " ("
+                + COLUMN_ID + " integer primary key autoincrement,"
+                + "username varchar, "
+                + "imageUrl varchar, "
+                + "website integer "
                 + ");";
         run();
     }
 
     public void createRecord(String table) {
-        queryString += "create table "
-                + table + "("
-                + DatabaseHelper.COLUMN_ID + " integer primary key, "
+        queryString += "create TABLE "
+                + table + " ("
+                + COLUMN_ID + " integer primary key, "
                 + "title varchar, "
                 + "type varchar, "
                 + "imageUrl varchar, "
@@ -59,7 +118,7 @@ public class Table {
                 + "customList varchar default '000000000000000', "
                 + "lastSync long, ";
 
-        if (table.equals(DatabaseHelper.TABLE_ANIME))
+        if (table.contains(TABLE_ANIME))
             queryString += "duration integer, "
                     + "episodes integer, "
                     + "youtubeId varchar, "
@@ -94,9 +153,9 @@ public class Table {
         run();
     }
 
-    public void createFriendlist() {
+    public void createFriendlist(String table) {
         queryString += "create table "
-                + DatabaseHelper.TABLE_FRIENDLIST + "("
+                + table + " ("
                 + "username varchar, "
                 + "imageUrl varchar, "
                 + "lastOnline varchar "
@@ -104,10 +163,10 @@ public class Table {
         run();
     }
 
-    public void createSchedule() {
+    public void createSchedule(String table) {
         queryString += "create table "
-                + DatabaseHelper.TABLE_SCHEDULE + "("
-                + DatabaseHelper.COLUMN_ID + " integer, "
+                + table + " ("
+                + COLUMN_ID + " integer, "
                 + "title varchar, "
                 + "imageUrl varchar, "
                 + "type varchar, "
@@ -120,12 +179,41 @@ public class Table {
         run();
     }
 
+    public void createProducer(String table, String main) {
+        queryString += "create table "
+                + table + " ("
+                + "anime_id integer NOT NULL REFERENCES " + getName(TABLE_ANIME) + " (" + COLUMN_ID + ") ON DELETE CASCADE, "
+                + "producer_id integer NOT NULL REFERENCES " + main + " (" + COLUMN_ID + ") ON DELETE CASCADE, "
+                + "PRIMARY KEY(anime_id, producer_id)"
+                + ");";
+        run();
+    }
+
+    public void createMainLink(String table) {
+        queryString += "create table "
+                + table + " ("
+                + COLUMN_ID + " integer primary key autoincrement, "
+                + "title varchar NOT NULL "
+                + ");";
+        run();
+    }
+
+    public void createGenre(String table, String record) {
+        queryString += "create table "
+                + table + " ("
+                + getTagsColumn(record) + " integer NOT NULL REFERENCES " + record + " (" + COLUMN_ID + ") ON DELETE CASCADE, "
+                + "genre_id integer NOT NULL REFERENCES " + getName(TABLE_GENRES) + " (" + COLUMN_ID + ") ON DELETE CASCADE, "
+                + "PRIMARY KEY(" + getTagsColumn(record) + ", genre_id)"
+                + ");";
+        run();
+    }
+
     /**
      * Create the profile table.
      */
-    public void createProfile() {
+    public void createProfile(String table) {
         queryString += "create table "
-                + DatabaseHelper.TABLE_PROFILE + "("
+                + table + " ("
                 + "username varchar UNIQUE, "
                 + "imageUrl varchar, "
                 + "imageUrlBanner varchar, "
@@ -171,9 +259,9 @@ public class Table {
      * @param refTable2 The table that will be referenced with
      */
     public void createTags(String table, String refTable1, String refTable2) {
-        queryString += "CREATE TABLE " + table + "("
-                + getTagsColumn(table) + " integer NOT NULL REFERENCES " + refTable1 + "(" + DatabaseHelper.COLUMN_ID + ") ON DELETE CASCADE, "
-                + "tag_id integer NOT NULL REFERENCES " + refTable2 + "(" + DatabaseHelper.COLUMN_ID + ") ON DELETE CASCADE, "
+        queryString += "CREATE TABLE " + table + " ("
+                + getTagsColumn(table) + " integer NOT NULL REFERENCES " + refTable1 + " (" + COLUMN_ID + ") ON DELETE CASCADE, "
+                + "tag_id integer NOT NULL REFERENCES " + refTable2 + " (" + COLUMN_ID + ") ON DELETE CASCADE, "
                 + "PRIMARY KEY(" + getTagsColumn(table) + ", tag_id)"
                 + ");";
         run();
@@ -197,71 +285,19 @@ public class Table {
      * @param refTable2 The table that will be referenced with
      */
     public void createRelation(String table, String refTable1, String refTable2) {
-        queryString += "CREATE TABLE " + table + "("
-                + DatabaseHelper.COLUMN_ID + " integer NOT NULL REFERENCES " + refTable1 + "(" + DatabaseHelper.COLUMN_ID + ") ON DELETE CASCADE, "
-                + "relationId integer NOT NULL REFERENCES " + refTable2 + "(" + DatabaseHelper.COLUMN_ID + ") ON DELETE CASCADE, "
+        queryString += "CREATE TABLE " + table + " ("
+                + COLUMN_ID + " integer NOT NULL REFERENCES " + refTable1 + " (" + COLUMN_ID + ") ON DELETE CASCADE, "
+                + "relationId integer NOT NULL REFERENCES " + refTable2 + " (" + COLUMN_ID + ") ON DELETE CASCADE, "
                 + "relationType integer NOT NULL, "
-                + "PRIMARY KEY(" + DatabaseHelper.COLUMN_ID + ", relationType, relationId)"
+                + "PRIMARY KEY(" + COLUMN_ID + ", relationType, relationId)"
                 + ");";
         run();
-    }
-
-    /**
-     * Recreates the table and removes the rows which are passed.
-     *
-     * @param table The table name
-     * @param rows  All the row names
-     */
-    public void recreateListTable(String table, String... rows) {
-        // Get all columns
-        Cursor c = db.rawQuery("SELECT * FROM " + table + " WHERE 0", null);
-        String[] columnNames = c.getColumnNames();
-        c.close();
-
-        // Remove old columns
-        String column = TextUtils.join(",", columnNames);
-        if (!rows[0].equals(""))
-            for (String row : rows) {
-                column = column.replace(row + ",", "");
-            }
-
-        // Recreate anime table
-        db.execSQL("CREATE TABLE temp_table AS SELECT * FROM " + table);
-        db.execSQL("DROP TABLE " + table);
-        createRecord(table);
-        db.execSQL("INSERT INTO " + table + " (" + column + ") SELECT " + column + " FROM temp_table;");
-        db.execSQL("DROP TABLE temp_table;");
-    }
-
-    /**
-     * Recreates the table and removes the rows which are passed.
-     *
-     * @param rows All the row names
-     */
-    public void recreateProfileTable(String... rows) {
-        // Get all columns
-        Cursor c = db.rawQuery("SELECT * FROM " + DatabaseHelper.TABLE_PROFILE + " WHERE 0", null);
-        String[] columnNames = c.getColumnNames();
-        c.close();
-
-        // Remove old columns
-        String column = TextUtils.join(",", columnNames);
-        if (!rows[0].equals(""))
-            for (String row : rows) {
-                column = column.replace(row + ",", "");
-            }
-
-        // Recreate anime table
-        db.execSQL("CREATE TABLE temp_table AS SELECT * FROM " + DatabaseHelper.TABLE_PROFILE);
-        db.execSQL("DROP TABLE " + DatabaseHelper.TABLE_PROFILE);
-        createProfile();
-        db.execSQL("INSERT INTO " + DatabaseHelper.TABLE_PROFILE + " (" + column + ") SELECT " + column + " FROM temp_table;");
-        db.execSQL("DROP TABLE temp_table;");
     }
 
     private void run() {
         try {
             db.execSQL(queryString);
+            queryString = "";
         } catch (Exception e) {
             AppLog.log(Log.INFO, "Atarashii", "Table.run(" + toString() + "): " + e.getMessage());
         }

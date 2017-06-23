@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.NavigationView
@@ -18,12 +19,17 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
+import android.widget.ListView
 import butterknife.ButterKnife
 import butterknife.bindView
 import com.facebook.drawee.view.SimpleDraweeView
 import com.lapism.searchview.SearchView
 import net.somethingdreadful.MAL.Theme.context
+import net.somethingdreadful.MAL.account.AccountListAdapter
 import net.somethingdreadful.MAL.account.AccountService
+import net.somethingdreadful.MAL.account.AccountService.Companion.username
 import net.somethingdreadful.MAL.adapters.IGFPagerAdapter
 import net.somethingdreadful.MAL.api.APIHelper
 import net.somethingdreadful.MAL.api.BaseModels.IGFModel
@@ -32,17 +38,33 @@ import net.somethingdreadful.MAL.cover.CoverAction
 import net.somethingdreadful.MAL.cover.CoverFragment
 import net.somethingdreadful.MAL.dialog.ChooseDialogFragment
 import net.somethingdreadful.MAL.dialog.InputDialogFragment
+import net.somethingdreadful.MAL.tasks.AccountTask
 import net.somethingdreadful.MAL.tasks.TaskJob
 import java.util.*
 
-class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFragment.CoverListener, View.OnClickListener, ViewPager.OnPageChangeListener, NavigationView.OnNavigationItemSelectedListener, InputDialogFragment.onClickListener, RecordStatusUpdatedReceiver.RecordStatusUpdatedListener, SearchView.OnQueryTextListener {
+class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFragment.CoverListener, View.OnClickListener, ViewPager.OnPageChangeListener, NavigationView.OnNavigationItemSelectedListener, InputDialogFragment.onClickListener, RecordStatusUpdatedReceiver.RecordStatusUpdatedListener, SearchView.OnQueryTextListener, AccountTask.accountTaskListener {
+    override fun onAccountTaskFinished(result: ArrayList<AccountService.userAccount>?) {
+        if (result != null) {
+            val listView = findViewById(R.id.accounts) as ListView
+            accountAdapter = AccountListAdapter(result)
+            listView.adapter = accountAdapter
+            listView.setOnItemClickListener { _, _, position, _ ->
+                AccountService.setAccount(accountAdapter!!.getItem(position) as AccountService.userAccount)
+                getPersonalList(TaskJob.GETLIST, personalList, null)
+                Theme.setNavDrawer(navigationView, this, this)
+            }
+            findViewById(R.id.addAccount).setOnClickListener(this)
+        }
+    }
+
     private var af: CoverFragment? = null
+    private var accountAdapter: AccountListAdapter? = null
     private var mf: CoverFragment? = null
     private var menu: Menu? = null
     private var networkReceiver: BroadcastReceiver? = null
-    private var username: String? = null
     private var networkAvailable = true
     private var personalList = 0
+    private var accountList = false
 
     val navigationView: NavigationView by bindView(R.id.navigationView)
     val drawerLayout: DrawerLayout by bindView(R.id.drawerLayout)
@@ -74,7 +96,6 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
             Theme.setActionBar(this, IGFPagerAdapter(fragmentManager))
 
             ButterKnife.bind(this)
-            username = AccountService.username
             if (PrefManager.getHideHomeTabs())
                 tabs.visibility = View.GONE
             viewPager.addOnPageChangeListener(this)
@@ -99,7 +120,7 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
                     myListChanged()
                 }
             }
-
+            AccountTask(this, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
             val recordStatusReceiver = RecordStatusUpdatedReceiver(this)
             val filter = IntentFilter(RecordStatusUpdatedReceiver.RECV_IDENT)
             LocalBroadcastManager.getInstance(this).registerReceiver(recordStatusReceiver, filter)
@@ -303,6 +324,18 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
                 lcdf.arguments = bundle
                 lcdf.setCallback(this)
                 lcdf.show(fragmentManager, "fragment_InputDialogFragment")
+            }
+            R.id.AccountList -> {
+                accountList = !accountList
+                if (accountList)
+                    navigationView.findViewById(R.id.accountswitch).scaleY = -1f
+                else
+                    navigationView.findViewById(R.id.accountswitch).scaleY = 1f
+                findViewById(R.id.accountGroup).visibility = if (accountList) VISIBLE else GONE
+                navigationView.menu.setGroupVisible(R.id.group_listitems, !accountList)
+            }
+            R.id.addAccount -> {
+                startActivity(Intent(this, AddAccount::class.java))
             }
         }
     }

@@ -16,13 +16,90 @@ import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Manga
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Schedule
 import net.somethingdreadful.MAL.api.BaseModels.IGFModel
 import net.somethingdreadful.MAL.api.BaseModels.Profile
+import net.somethingdreadful.MAL.database.Table.*
 import java.util.*
 
-class DatabaseManager(context: Context) {
-    private val db: SQLiteDatabase
 
-    init {
-        this.db = DatabaseHelper.getInstance(context).writableDatabase
+class DatabaseManager(context: Context) {
+    private val db: SQLiteDatabase = DatabaseHelper.getInstance(context).writableDatabase
+
+    /**
+     * Create tables when an account has been created.
+     */
+    fun createAccountTable(accountId: Int) {
+        val table = Table.create(db)
+        table.createRecord(setName(Table.TABLE_ANIME, accountId))
+        table.createRecord(setName(Table.TABLE_MANGA, accountId))
+        table.createMainLink(setName(Table.TABLE_TAGS, accountId))
+        table.createMainLink(setName(Table.TABLE_GENRES, accountId))
+        table.createMainLink(setName(Table.TABLE_PRODUCER, accountId))
+        table.createProfile(setName(Table.TABLE_PROFILE, accountId))
+        table.createFriendlist(setName(Table.TABLE_FRIENDLIST, accountId))
+        table.createSchedule(setName(Table.TABLE_SCHEDULE, accountId))
+        table.createRelation(setName(Table.TABLE_ANIME_ANIME_RELATIONS, accountId), setName(Table.TABLE_ANIME, accountId), setName(Table.TABLE_ANIME, accountId))
+        table.createRelation(setName(Table.TABLE_ANIME_MANGA_RELATIONS, accountId), setName(Table.TABLE_ANIME, accountId), setName(Table.TABLE_MANGA, accountId))
+        table.createRelation(setName(Table.TABLE_MANGA_MANGA_RELATIONS, accountId), setName(Table.TABLE_MANGA, accountId), setName(Table.TABLE_MANGA, accountId))
+        table.createRelation(setName(Table.TABLE_MANGA_ANIME_RELATIONS, accountId), setName(Table.TABLE_MANGA, accountId), setName(Table.TABLE_ANIME, accountId))
+        table.createTags(setName(Table.TABLE_ANIME_TAGS, accountId), setName(Table.TABLE_ANIME, accountId), setName(Table.TABLE_TAGS, accountId))
+        table.createTags(setName(Table.TABLE_MANGA_TAGS, accountId), setName(Table.TABLE_MANGA, accountId), setName(Table.TABLE_TAGS, accountId))
+        table.createTags(setName(Table.TABLE_ANIME_PERSONALTAGS, accountId), setName(Table.TABLE_ANIME, accountId), setName(Table.TABLE_TAGS, accountId))
+        table.createTags(setName(Table.TABLE_MANGA_PERSONALTAGS, accountId), setName(Table.TABLE_MANGA, accountId), setName(Table.TABLE_TAGS, accountId))
+        table.createGenre(setName(Table.TABLE_ANIME_GENRES, accountId), setName(Table.TABLE_ANIME, accountId))
+        table.createGenre(setName(Table.TABLE_MANGA_GENRES, accountId), setName(Table.TABLE_MANGA, accountId))
+        table.createOtherTitles(setName(Table.TABLE_ANIME_MUSIC, accountId), setName(Table.TABLE_ANIME, accountId))
+        table.createOtherTitles(setName(Table.TABLE_ANIME_OTHER_TITLES, accountId), setName(Table.TABLE_ANIME, accountId))
+        table.createOtherTitles(setName(Table.TABLE_MANGA_OTHER_TITLES, accountId), setName(Table.TABLE_MANGA, accountId))
+        table.createProducer(setName(Table.TABLE_ANIME_PRODUCER, accountId), setName(Table.TABLE_PRODUCER, accountId))
+    }
+
+    fun removeAccountTable(accountId: Int) {
+        val tables = ArrayList<String>()
+        val cursor = Query.newQuery(db).selectFrom("*", "sqlite_master").where("type", "table").run()
+        cursor.moveToFirst()
+        while (!cursor.isAfterLast) {
+            val tableName = cursor.getString(1)
+            if (tableName.contains("_" + accountId + "_"))
+                tables.add(tableName)
+            cursor.moveToNext()
+        }
+        cursor.close()
+
+        for (tableName in tables) {
+            db.execSQL("DROP TABLE IF EXISTS " + tableName)
+        }
+    }
+
+    fun addAccount(id: Int, username: String, imageUrl: String, website: Int) {
+        val cv = ContentValues()
+        cv.put(DatabaseHelper.COLUMN_ID, id)
+        cv.put("username", username)
+        cv.put("imageUrl", imageUrl)
+        cv.put("website", website)
+
+        try {
+            db.beginTransaction()
+            Query.newQuery(db).updateRecord(Table.TABLE_ACCOUNTS, cv, id)
+            db.setTransactionSuccessful()
+        } catch (e: Exception) {
+            AppLog.log(Log.ERROR, "Atarashii", "DatabaseManager.addAccount(): " + e.message)
+            AppLog.logException(e)
+        } finally {
+            db.endTransaction()
+        }
+    }
+
+    fun getAccounts(): ArrayList<AccountService.userAccount> {
+        val result = ArrayList<AccountService.userAccount>()
+        val cursor: Cursor = Query.newQuery(db).selectFrom("*", TABLE_ACCOUNTS).run()
+        if (cursor.moveToFirst()) {
+            do {
+                var account:AccountService.userAccount = AccountService.userAccount()
+                result.add(account.create(cursor))
+            } while (cursor.moveToNext())
+        }
+        AppLog.log(Log.INFO, "Atarashii", "DatabaseManager.getAccounts(): got " + cursor.count.toString())
+        cursor.close()
+        return result
     }
 
     fun saveAnime(anime: Anime) {
@@ -61,21 +138,21 @@ class DatabaseManager(context: Context) {
 
         try {
             db.beginTransaction()
-            Query.newQuery(db).updateRecord(DatabaseHelper.TABLE_ANIME, cv, anime.id)
-            Query.newQuery(db).updateRelation(DatabaseHelper.TABLE_ANIME_ANIME_RELATIONS, DatabaseHelper.RELATION_TYPE_ALTERNATIVE, anime.id, anime.alternativeVersions)
-            Query.newQuery(db).updateRelation(DatabaseHelper.TABLE_ANIME_ANIME_RELATIONS, DatabaseHelper.RELATION_TYPE_CHARACTER, anime.id, anime.characterAnime)
-            Query.newQuery(db).updateRelation(DatabaseHelper.TABLE_ANIME_ANIME_RELATIONS, DatabaseHelper.RELATION_TYPE_SIDE_STORY, anime.id, anime.sideStories)
-            Query.newQuery(db).updateRelation(DatabaseHelper.TABLE_ANIME_ANIME_RELATIONS, DatabaseHelper.RELATION_TYPE_SPINOFF, anime.id, anime.spinOffs)
-            Query.newQuery(db).updateRelation(DatabaseHelper.TABLE_ANIME_ANIME_RELATIONS, DatabaseHelper.RELATION_TYPE_SUMMARY, anime.id, anime.summaries)
-            Query.newQuery(db).updateRelation(DatabaseHelper.TABLE_ANIME_MANGA_RELATIONS, DatabaseHelper.RELATION_TYPE_ADAPTATION, anime.id, anime.mangaAdaptations)
-            Query.newQuery(db).updateRelation(DatabaseHelper.TABLE_ANIME_ANIME_RELATIONS, DatabaseHelper.RELATION_TYPE_PREQUEL, anime.id, anime.prequels)
-            Query.newQuery(db).updateRelation(DatabaseHelper.TABLE_ANIME_ANIME_RELATIONS, DatabaseHelper.RELATION_TYPE_SEQUEL, anime.id, anime.sequels)
-            Query.newQuery(db).updateRelation(DatabaseHelper.TABLE_ANIME_ANIME_RELATIONS, DatabaseHelper.RELATION_TYPE_PARENT_STORY, anime.id, anime.parentStoryArray)
-            Query.newQuery(db).updateRelation(DatabaseHelper.TABLE_ANIME_ANIME_RELATIONS, DatabaseHelper.RELATION_TYPE_OTHER, anime.id, anime.other)
-            Query.newQuery(db).updateLink(DatabaseHelper.TABLE_GENRES, DatabaseHelper.TABLE_ANIME_GENRES, anime.id, anime.genres, "genre_id")
-            Query.newQuery(db).updateLink(DatabaseHelper.TABLE_GENRES, DatabaseHelper.TABLE_ANIME_TAGS, anime.id, anime.tags, "tag_id")
-            Query.newQuery(db).updateLink(DatabaseHelper.TABLE_PRODUCER, DatabaseHelper.TABLE_ANIME_PRODUCER, anime.id, anime.producers, "producer_id")
-            Query.newQuery(db).updateLink(DatabaseHelper.TABLE_TAGS, DatabaseHelper.TABLE_ANIME_PERSONALTAGS, anime.id, anime.personalTags, "tag_id")
+            Query.newQuery(db).updateRecord(getName(Table.TABLE_ANIME), cv, anime.id)
+            Query.newQuery(db).updateRelation(getName(Table.TABLE_ANIME_ANIME_RELATIONS), DatabaseHelper.RELATION_TYPE_ALTERNATIVE, anime.id, anime.alternativeVersions)
+            Query.newQuery(db).updateRelation(getName(Table.TABLE_ANIME_ANIME_RELATIONS), DatabaseHelper.RELATION_TYPE_CHARACTER, anime.id, anime.characterAnime)
+            Query.newQuery(db).updateRelation(getName(Table.TABLE_ANIME_ANIME_RELATIONS), DatabaseHelper.RELATION_TYPE_SIDE_STORY, anime.id, anime.sideStories)
+            Query.newQuery(db).updateRelation(getName(Table.TABLE_ANIME_ANIME_RELATIONS), DatabaseHelper.RELATION_TYPE_SPINOFF, anime.id, anime.spinOffs)
+            Query.newQuery(db).updateRelation(getName(Table.TABLE_ANIME_ANIME_RELATIONS), DatabaseHelper.RELATION_TYPE_SUMMARY, anime.id, anime.summaries)
+            Query.newQuery(db).updateRelation(getName(Table.TABLE_ANIME_MANGA_RELATIONS), DatabaseHelper.RELATION_TYPE_ADAPTATION, anime.id, anime.mangaAdaptations)
+            Query.newQuery(db).updateRelation(getName(Table.TABLE_ANIME_ANIME_RELATIONS), DatabaseHelper.RELATION_TYPE_PREQUEL, anime.id, anime.prequels)
+            Query.newQuery(db).updateRelation(getName(Table.TABLE_ANIME_ANIME_RELATIONS), DatabaseHelper.RELATION_TYPE_SEQUEL, anime.id, anime.sequels)
+            Query.newQuery(db).updateRelation(getName(Table.TABLE_ANIME_ANIME_RELATIONS), DatabaseHelper.RELATION_TYPE_PARENT_STORY, anime.id, anime.parentStoryArray)
+            Query.newQuery(db).updateRelation(getName(Table.TABLE_ANIME_ANIME_RELATIONS), DatabaseHelper.RELATION_TYPE_OTHER, anime.id, anime.other)
+            Query.newQuery(db).updateLink(getName(Table.TABLE_GENRES), getName(Table.TABLE_ANIME_GENRES), anime.id, anime.genres, "genre_id")
+            Query.newQuery(db).updateLink(getName(Table.TABLE_GENRES), getName(Table.TABLE_ANIME_TAGS), anime.id, anime.tags, "tag_id")
+            Query.newQuery(db).updateLink(getName(Table.TABLE_PRODUCER), getName(Table.TABLE_ANIME_PRODUCER), anime.id, anime.producers, "producer_id")
+            Query.newQuery(db).updateLink(getName(Table.TABLE_TAGS), getName(Table.TABLE_ANIME_PERSONALTAGS), anime.id, anime.personalTags, "tag_id")
             Query.newQuery(db).updateTitles(anime.id, true, anime.titleJapanese, anime.titleEnglish, anime.titleSynonyms, anime.titleRomaji)
             Query.newQuery(db).updateMusic(anime.id, anime.openingTheme, anime.endingTheme)
             db.setTransactionSuccessful()
@@ -108,7 +185,7 @@ class DatabaseManager(context: Context) {
             saveAnimeList(anime)
         }
         if (result.size > 0)
-            clearOldRecords(result[0], DatabaseHelper.TABLE_ANIME, "saveAnimeList")
+            clearOldRecords(result[0], getName(Table.TABLE_ANIME), "saveAnimeList")
     }
 
     /**
@@ -141,7 +218,7 @@ class DatabaseManager(context: Context) {
 
         try {
             db.beginTransaction()
-            Query.newQuery(db).updateRecord(DatabaseHelper.TABLE_ANIME, cv, anime.id)
+            Query.newQuery(db).updateRecord(getName(Table.TABLE_ANIME), cv, anime.id)
             db.setTransactionSuccessful()
         } catch (e: Exception) {
             AppLog.log(Log.ERROR, "Atarashii", "DatabaseManager.saveAnimeList(): " + e.message)
@@ -174,13 +251,13 @@ class DatabaseManager(context: Context) {
 
         try {
             db.beginTransaction()
-            Query.newQuery(db).updateRecord(DatabaseHelper.TABLE_MANGA, cv, manga.id)
-            Query.newQuery(db).updateRelation(DatabaseHelper.TABLE_MANGA_MANGA_RELATIONS, DatabaseHelper.RELATION_TYPE_RELATED, manga.id, manga.relatedManga)
-            Query.newQuery(db).updateRelation(DatabaseHelper.TABLE_MANGA_ANIME_RELATIONS, DatabaseHelper.RELATION_TYPE_ADAPTATION, manga.id, manga.animeAdaptations)
-            Query.newQuery(db).updateRelation(DatabaseHelper.TABLE_MANGA_MANGA_RELATIONS, DatabaseHelper.RELATION_TYPE_ALTERNATIVE, manga.id, manga.alternativeVersions)
-            Query.newQuery(db).updateLink(DatabaseHelper.TABLE_GENRES, DatabaseHelper.TABLE_MANGA_GENRES, manga.id, manga.genres, "genre_id")
-            Query.newQuery(db).updateLink(DatabaseHelper.TABLE_GENRES, DatabaseHelper.TABLE_MANGA_TAGS, manga.id, manga.tags, "tag_id")
-            Query.newQuery(db).updateLink(DatabaseHelper.TABLE_TAGS, DatabaseHelper.TABLE_MANGA_PERSONALTAGS, manga.id, manga.personalTags, "tag_id")
+            Query.newQuery(db).updateRecord(getName(Table.TABLE_MANGA), cv, manga.id)
+            Query.newQuery(db).updateRelation(getName(Table.TABLE_MANGA_MANGA_RELATIONS), DatabaseHelper.RELATION_TYPE_RELATED, manga.id, manga.relatedManga)
+            Query.newQuery(db).updateRelation(getName(Table.TABLE_MANGA_ANIME_RELATIONS), DatabaseHelper.RELATION_TYPE_ADAPTATION, manga.id, manga.animeAdaptations)
+            Query.newQuery(db).updateRelation(getName(Table.TABLE_MANGA_MANGA_RELATIONS), DatabaseHelper.RELATION_TYPE_ALTERNATIVE, manga.id, manga.alternativeVersions)
+            Query.newQuery(db).updateLink(getName(Table.TABLE_GENRES), getName(Table.TABLE_MANGA_GENRES), manga.id, manga.genres, "genre_id")
+            Query.newQuery(db).updateLink(getName(Table.TABLE_GENRES), getName(Table.TABLE_MANGA_TAGS), manga.id, manga.tags, "tag_id")
+            Query.newQuery(db).updateLink(getName(Table.TABLE_TAGS), getName(Table.TABLE_MANGA_PERSONALTAGS), manga.id, manga.personalTags, "tag_id")
             Query.newQuery(db).updateTitles(manga.id, false, manga.titleJapanese, manga.titleEnglish, manga.titleSynonyms, manga.titleRomaji)
             db.setTransactionSuccessful()
         } catch (e: Exception) {
@@ -196,7 +273,7 @@ class DatabaseManager(context: Context) {
             saveMangaList(manga)
         }
         if (result.size > 0)
-            clearOldRecords(result[0], DatabaseHelper.TABLE_MANGA, "saveMangaList")
+            clearOldRecords(result[0], getName(Table.TABLE_MANGA), "saveMangaList")
     }
 
     /**
@@ -223,7 +300,7 @@ class DatabaseManager(context: Context) {
 
         try {
             db.beginTransaction()
-            Query.newQuery(db).updateRecord(DatabaseHelper.TABLE_MANGA, cv, manga.id)
+            Query.newQuery(db).updateRecord(getName(Table.TABLE_MANGA), cv, manga.id)
             db.setTransactionSuccessful()
         } catch (e: Exception) {
             AppLog.log(Log.ERROR, "Atarashii", "DatabaseManager.saveMangaList(): " + e.message)
@@ -279,8 +356,8 @@ class DatabaseManager(context: Context) {
     val suggestions: List<SearchItem>
         get() {
             val result = ArrayList<SearchItem>()
-            result.addAll(getSuggestions(Query.newQuery(db).selectFrom("title", DatabaseHelper.TABLE_ANIME).run()))
-            result.addAll(getSuggestions(Query.newQuery(db).selectFrom("title", DatabaseHelper.TABLE_MANGA).run()))
+            result.addAll(getSuggestions(Query.newQuery(db).selectFrom("title", getName(Table.TABLE_ANIME)).run()))
+            result.addAll(getSuggestions(Query.newQuery(db).selectFrom("title", getName(Table.TABLE_MANGA)).run()))
             return result
         }
 
@@ -297,7 +374,7 @@ class DatabaseManager(context: Context) {
     }
 
     fun getAnime(id: Int): Anime? {
-        val cursor = Query.newQuery(db).selectFrom("*", DatabaseHelper.TABLE_ANIME).where(DatabaseHelper.COLUMN_ID, id.toString()).run()
+        val cursor = Query.newQuery(db).selectFrom("*", getName(Table.TABLE_ANIME)).where(DatabaseHelper.COLUMN_ID, id.toString()).run()
 
         var result: Anime? = null
         if (cursor.moveToFirst()) {
@@ -308,20 +385,20 @@ class DatabaseManager(context: Context) {
             result.titleRomaji = Query.newQuery(db).getTitles(result.id, true, DatabaseHelper.TITLE_TYPE_ROMAJI)
             result.openingTheme = Query.newQuery(db).getMusic(result.id, DatabaseHelper.MUSIC_TYPE_OPENING)
             result.endingTheme = Query.newQuery(db).getMusic(result.id, DatabaseHelper.MUSIC_TYPE_ENDING)
-            result.alternativeVersions = Query.newQuery(db).getRelation(result.id, DatabaseHelper.TABLE_ANIME_ANIME_RELATIONS, DatabaseHelper.RELATION_TYPE_ALTERNATIVE, true)
-            result.characterAnime = Query.newQuery(db).getRelation(result.id, DatabaseHelper.TABLE_ANIME_ANIME_RELATIONS, DatabaseHelper.RELATION_TYPE_CHARACTER, true)
-            result.sideStories = Query.newQuery(db).getRelation(result.id, DatabaseHelper.TABLE_ANIME_ANIME_RELATIONS, DatabaseHelper.RELATION_TYPE_SIDE_STORY, true)
-            result.spinOffs = Query.newQuery(db).getRelation(result.id, DatabaseHelper.TABLE_ANIME_ANIME_RELATIONS, DatabaseHelper.RELATION_TYPE_SPINOFF, true)
-            result.summaries = Query.newQuery(db).getRelation(result.id, DatabaseHelper.TABLE_ANIME_ANIME_RELATIONS, DatabaseHelper.RELATION_TYPE_SUMMARY, true)
-            result.mangaAdaptations = Query.newQuery(db).getRelation(result.id, DatabaseHelper.TABLE_ANIME_MANGA_RELATIONS, DatabaseHelper.RELATION_TYPE_ADAPTATION, false)
-            result.prequels = Query.newQuery(db).getRelation(result.id, DatabaseHelper.TABLE_ANIME_ANIME_RELATIONS, DatabaseHelper.RELATION_TYPE_PREQUEL, true)
-            result.sequels = Query.newQuery(db).getRelation(result.id, DatabaseHelper.TABLE_ANIME_ANIME_RELATIONS, DatabaseHelper.RELATION_TYPE_SEQUEL, true)
-            result.parentStoryArray = Query.newQuery(db).getRelation(result.id, DatabaseHelper.TABLE_ANIME_ANIME_RELATIONS, DatabaseHelper.RELATION_TYPE_PARENT_STORY, true)
-            result.other = Query.newQuery(db).getRelation(result.id, DatabaseHelper.TABLE_ANIME_ANIME_RELATIONS, DatabaseHelper.RELATION_TYPE_OTHER, true)
-            result.genres = Query.newQuery(db).getArrayList(result.id, DatabaseHelper.TABLE_GENRES, DatabaseHelper.TABLE_ANIME_GENRES, "genre_id", true)
-            result.tags = Query.newQuery(db).getArrayList(result.id, DatabaseHelper.TABLE_TAGS, DatabaseHelper.TABLE_ANIME_TAGS, "tag_id", true)
-            result.personalTags = Query.newQuery(db).getArrayList(result.id, DatabaseHelper.TABLE_TAGS, DatabaseHelper.TABLE_ANIME_PERSONALTAGS, "tag_id", true)
-            result.producers = Query.newQuery(db).getArrayList(result.id, DatabaseHelper.TABLE_PRODUCER, DatabaseHelper.TABLE_ANIME_PRODUCER, "producer_id", true)
+            result.alternativeVersions = Query.newQuery(db).getRelation(result.id, getName(Table.TABLE_ANIME_ANIME_RELATIONS), DatabaseHelper.RELATION_TYPE_ALTERNATIVE, true)
+            result.characterAnime = Query.newQuery(db).getRelation(result.id, getName(Table.TABLE_ANIME_ANIME_RELATIONS), DatabaseHelper.RELATION_TYPE_CHARACTER, true)
+            result.sideStories = Query.newQuery(db).getRelation(result.id, getName(Table.TABLE_ANIME_ANIME_RELATIONS), DatabaseHelper.RELATION_TYPE_SIDE_STORY, true)
+            result.spinOffs = Query.newQuery(db).getRelation(result.id, getName(Table.TABLE_ANIME_ANIME_RELATIONS), DatabaseHelper.RELATION_TYPE_SPINOFF, true)
+            result.summaries = Query.newQuery(db).getRelation(result.id, getName(Table.TABLE_ANIME_ANIME_RELATIONS), DatabaseHelper.RELATION_TYPE_SUMMARY, true)
+            result.mangaAdaptations = Query.newQuery(db).getRelation(result.id, getName(Table.TABLE_ANIME_MANGA_RELATIONS), DatabaseHelper.RELATION_TYPE_ADAPTATION, false)
+            result.prequels = Query.newQuery(db).getRelation(result.id, getName(Table.TABLE_ANIME_ANIME_RELATIONS), DatabaseHelper.RELATION_TYPE_PREQUEL, true)
+            result.sequels = Query.newQuery(db).getRelation(result.id, getName(Table.TABLE_ANIME_ANIME_RELATIONS), DatabaseHelper.RELATION_TYPE_SEQUEL, true)
+            result.parentStoryArray = Query.newQuery(db).getRelation(result.id, getName(Table.TABLE_ANIME_ANIME_RELATIONS), DatabaseHelper.RELATION_TYPE_PARENT_STORY, true)
+            result.other = Query.newQuery(db).getRelation(result.id, getName(Table.TABLE_ANIME_ANIME_RELATIONS), DatabaseHelper.RELATION_TYPE_OTHER, true)
+            result.genres = Query.newQuery(db).getArrayList(result.id, getName(Table.TABLE_GENRES), getName(Table.TABLE_ANIME_GENRES), "genre_id", true)
+            result.tags = Query.newQuery(db).getArrayList(result.id, getName(Table.TABLE_TAGS), getName(Table.TABLE_ANIME_TAGS), "tag_id", true)
+            result.personalTags = Query.newQuery(db).getArrayList(result.id, getName(Table.TABLE_TAGS), getName(Table.TABLE_ANIME_PERSONALTAGS), "tag_id", true)
+            result.producers = Query.newQuery(db).getArrayList(result.id, getName(Table.TABLE_PRODUCER), getName(Table.TABLE_ANIME_PRODUCER), "producer_id", true)
         }
         cursor.close()
         GenericRecord.fromCursor = false;
@@ -329,7 +406,7 @@ class DatabaseManager(context: Context) {
     }
 
     fun getManga(id: Int): Manga? {
-        val cursor = Query.newQuery(db).selectFrom("*", DatabaseHelper.TABLE_MANGA).where(DatabaseHelper.COLUMN_ID, id.toString()).run()
+        val cursor = Query.newQuery(db).selectFrom("*", getName(Table.TABLE_MANGA)).where(DatabaseHelper.COLUMN_ID, id.toString()).run()
 
         var result: Manga? = null
         if (cursor.moveToFirst()) {
@@ -338,12 +415,12 @@ class DatabaseManager(context: Context) {
             result.titleSynonyms = Query.newQuery(db).getTitles(result.id, false, DatabaseHelper.TITLE_TYPE_SYNONYM)
             result.titleJapanese = Query.newQuery(db).getTitles(result.id, false, DatabaseHelper.TITLE_TYPE_JAPANESE)
             result.titleRomaji = Query.newQuery(db).getTitles(result.id, false, DatabaseHelper.TITLE_TYPE_ROMAJI)
-            result.genres = Query.newQuery(db).getArrayList(result.id, DatabaseHelper.TABLE_GENRES, DatabaseHelper.TABLE_MANGA_GENRES, "genre_id", false)
-            result.tags = Query.newQuery(db).getArrayList(result.id, DatabaseHelper.TABLE_TAGS, DatabaseHelper.TABLE_MANGA_TAGS, "tag_id", false)
-            result.personalTags = Query.newQuery(db).getArrayList(result.id, DatabaseHelper.TABLE_TAGS, DatabaseHelper.TABLE_MANGA_PERSONALTAGS, "tag_id", false)
-            result.alternativeVersions = Query.newQuery(db).getRelation(result.id, DatabaseHelper.TABLE_MANGA_MANGA_RELATIONS, DatabaseHelper.RELATION_TYPE_ALTERNATIVE, false)
-            result.relatedManga = Query.newQuery(db).getRelation(result.id, DatabaseHelper.TABLE_MANGA_MANGA_RELATIONS, DatabaseHelper.RELATION_TYPE_RELATED, false)
-            result.animeAdaptations = Query.newQuery(db).getRelation(result.id, DatabaseHelper.TABLE_MANGA_ANIME_RELATIONS, DatabaseHelper.RELATION_TYPE_ADAPTATION, true)
+            result.genres = Query.newQuery(db).getArrayList(result.id, getName(Table.TABLE_GENRES), getName(Table.TABLE_MANGA_GENRES), "genre_id", false)
+            result.tags = Query.newQuery(db).getArrayList(result.id, getName(Table.TABLE_TAGS), getName(Table.TABLE_MANGA_TAGS), "tag_id", false)
+            result.personalTags = Query.newQuery(db).getArrayList(result.id, getName(Table.TABLE_TAGS), getName(Table.TABLE_MANGA_PERSONALTAGS), "tag_id", false)
+            result.alternativeVersions = Query.newQuery(db).getRelation(result.id, getName(Table.TABLE_MANGA_MANGA_RELATIONS), DatabaseHelper.RELATION_TYPE_ALTERNATIVE, false)
+            result.relatedManga = Query.newQuery(db).getRelation(result.id, getName(Table.TABLE_MANGA_MANGA_RELATIONS), DatabaseHelper.RELATION_TYPE_RELATED, false)
+            result.animeAdaptations = Query.newQuery(db).getRelation(result.id, getName(Table.TABLE_MANGA_ANIME_RELATIONS), DatabaseHelper.RELATION_TYPE_ADAPTATION, true)
         }
         cursor.close()
         GenericRecord.fromCursor = false;
@@ -352,13 +429,13 @@ class DatabaseManager(context: Context) {
 
     val dirtyAnimeList: ArrayList<Anime>
         get() {
-            val cursor = Query.newQuery(db).selectFrom("*", DatabaseHelper.TABLE_ANIME).isNotNull("dirty").run()
+            val cursor = Query.newQuery(db).selectFrom("*", getName(Table.TABLE_ANIME)).isNotNull("dirty").run()
             return getAnimeList(cursor)
         }
 
     val dirtyMangaList: ArrayList<Manga>
         get() {
-            val cursor = Query.newQuery(db).selectFrom("*", DatabaseHelper.TABLE_MANGA).isNotNull("dirty").run()
+            val cursor = Query.newQuery(db).selectFrom("*", getName(Table.TABLE_MANGA)).isNotNull("dirty").run()
             return getMangaList(cursor)
         }
 
@@ -367,16 +444,16 @@ class DatabaseManager(context: Context) {
         val listNumber = Integer.parseInt(type.replace(GenericRecord.CUSTOMLIST, ""))
         for (i in 1..15) {
             if (i == listNumber)
-                reg = reg + "1"
+                reg += "1"
             else
-                reg = reg + "_"
+                reg += "_"
         }
         return reg
     }
 
     fun getAnimeList(type: String, sortType: Int, inv: Int): IGFModel {
         val cursor: Cursor
-        val query = Query.newQuery(db).selectFrom("*", DatabaseHelper.TABLE_ANIME)
+        val query = Query.newQuery(db).selectFrom("*", getName(Table.TABLE_ANIME))
         if (type.contains(GenericRecord.CUSTOMLIST)) {
             cursor = sort(query.like("customList", regCustomList(type)), sortType, inv)
         } else {
@@ -396,7 +473,7 @@ class DatabaseManager(context: Context) {
         var sortType = sortType
         sortType = if (sortType == 5) -5 else sortType
         val cursor: Cursor
-        val query = Query.newQuery(db).selectFrom("*", DatabaseHelper.TABLE_MANGA)
+        val query = Query.newQuery(db).selectFrom("*", getName(Table.TABLE_MANGA))
         if (type.contains(GenericRecord.CUSTOMLIST)) {
             cursor = sort(query.like("customList", regCustomList(type)), sortType, inv)
         } else {
@@ -482,21 +559,21 @@ class DatabaseManager(context: Context) {
     }
 
     fun cleanupAnimeTable() {
-        db.rawQuery("DELETE FROM " + DatabaseHelper.TABLE_ANIME + " WHERE " +
-                DatabaseHelper.COLUMN_ID + " NOT IN (SELECT DISTINCT relationId FROM " + DatabaseHelper.TABLE_ANIME_ANIME_RELATIONS + ") AND " +
-                DatabaseHelper.COLUMN_ID + " NOT IN (SELECT DISTINCT relationId FROM " + DatabaseHelper.TABLE_MANGA_ANIME_RELATIONS + ")", null)
+        db.rawQuery("DELETE FROM " + getName(Table.TABLE_ANIME) + " WHERE " +
+                DatabaseHelper.COLUMN_ID + " NOT IN (SELECT DISTINCT relationId FROM " + getName(Table.TABLE_ANIME_ANIME_RELATIONS) + ") AND " +
+                DatabaseHelper.COLUMN_ID + " NOT IN (SELECT DISTINCT relationId FROM " + getName(Table.TABLE_MANGA_ANIME_RELATIONS) + ")", null)
     }
 
     fun cleanupMangaTable() {
-        db.rawQuery("DELETE FROM " + DatabaseHelper.TABLE_MANGA + " WHERE " +
-                DatabaseHelper.COLUMN_ID + " NOT IN (SELECT DISTINCT relationId FROM " + DatabaseHelper.TABLE_MANGA_MANGA_RELATIONS + ") AND " +
-                DatabaseHelper.COLUMN_ID + " NOT IN (SELECT DISTINCT relationId FROM " + DatabaseHelper.TABLE_MANGA_ANIME_RELATIONS + ")", null)
+        db.rawQuery("DELETE FROM " + getName(Table.TABLE_MANGA) + " WHERE " +
+                DatabaseHelper.COLUMN_ID + " NOT IN (SELECT DISTINCT relationId FROM " + getName(Table.TABLE_MANGA_MANGA_RELATIONS) + ") AND " +
+                DatabaseHelper.COLUMN_ID + " NOT IN (SELECT DISTINCT relationId FROM " + getName(Table.TABLE_MANGA_ANIME_RELATIONS) + ")", null)
     }
 
     val friendList: ArrayList<Profile>
         get() {
             val result = ArrayList<Profile>()
-            val cursor = Query.newQuery(db).selectFrom("*", DatabaseHelper.TABLE_FRIENDLIST).OrderBy(1, "username").run()
+            val cursor = Query.newQuery(db).selectFrom("*", getName(Table.TABLE_FRIENDLIST)).OrderBy(1, "username").run()
 
             if (cursor.moveToFirst()) {
                 do
@@ -512,10 +589,10 @@ class DatabaseManager(context: Context) {
             db.beginTransaction()
             for (profile in list) {
                 val cv = ContentValues()
-                cv.put("username", profile.username)
+                cv.put("username", profile.username.capitalize())
                 cv.put("imageUrl", profile.imageUrl)
                 cv.put("lastOnline", if (AccountService.isMAL) profile.details.lastOnline else "")
-                Query.newQuery(db).updateRecord(DatabaseHelper.TABLE_FRIENDLIST, cv, profile.username)
+                Query.newQuery(db).updateRecord(getName(Table.TABLE_FRIENDLIST), cv, profile.username)
             }
             db.setTransactionSuccessful()
         } catch (e: Exception) {
@@ -528,7 +605,7 @@ class DatabaseManager(context: Context) {
 
     val profile: Profile
         get() {
-            val cursor = Query.newQuery(db).selectFrom("*", DatabaseHelper.TABLE_PROFILE).run()
+            val cursor = Query.newQuery(db).selectFrom("*", getName(Table.TABLE_PROFILE)).run()
             var profile: Profile? = null
             if (cursor.moveToFirst())
                 profile = Profile.fromCursor(cursor)
@@ -581,7 +658,7 @@ class DatabaseManager(context: Context) {
 
         try {
             db.beginTransaction()
-            Query.newQuery(db).updateRecord(DatabaseHelper.TABLE_PROFILE, cv, profile.username)
+            Query.newQuery(db).updateRecord(getName(Table.TABLE_PROFILE), cv, profile.username)
             db.setTransactionSuccessful()
         } catch (e: Exception) {
             AppLog.log(Log.ERROR, "Atarashii", "DatabaseManager.saveProfile(): " + e.message)
@@ -595,7 +672,7 @@ class DatabaseManager(context: Context) {
         var result = false
         try {
             db.beginTransaction()
-            result = db.delete(DatabaseHelper.TABLE_ANIME, DatabaseHelper.COLUMN_ID + " = ?", arrayOf(id.toString())) == 1
+            result = db.delete(getName(Table.TABLE_ANIME), DatabaseHelper.COLUMN_ID + " = ?", arrayOf(id.toString())) == 1
             db.setTransactionSuccessful()
         } catch (e: Exception) {
             AppLog.log(Log.ERROR, "Atarashii", "DatabaseManager.deleteAnime(): " + e.message)
@@ -611,7 +688,7 @@ class DatabaseManager(context: Context) {
         var result = false
         try {
             db.beginTransaction()
-            result = db.delete(DatabaseHelper.TABLE_MANGA, DatabaseHelper.COLUMN_ID + " = ?", arrayOf(id.toString())) == 1
+            result = db.delete(getName(Table.TABLE_MANGA), DatabaseHelper.COLUMN_ID + " = ?", arrayOf(id.toString())) == 1
             db.setTransactionSuccessful()
         } catch (e: Exception) {
             AppLog.log(Log.ERROR, "Atarashii", "DatabaseManager.deleteManga(): " + e.message)
@@ -624,7 +701,7 @@ class DatabaseManager(context: Context) {
     }
 
     fun saveSchedule(schedule: Schedule) {
-        Query.newQuery(db).clear(DatabaseHelper.TABLE_SCHEDULE)
+        Query.newQuery(db).clear(getName(Table.TABLE_SCHEDULE))
         saveScheduleDay(schedule.monday, 2)
         saveScheduleDay(schedule.tuesday, 3)
         saveScheduleDay(schedule.wednesday, 4)
@@ -649,7 +726,7 @@ class DatabaseManager(context: Context) {
                 if (anime.airing != null && anime.airing.time != null)
                     cv.put("broadcast", anime.airing.time)
                 cv.put("day", day)
-                Query.newQuery(db).updateRecord(DatabaseHelper.TABLE_SCHEDULE, cv, anime.id)
+                Query.newQuery(db).updateRecord(getName(Table.TABLE_SCHEDULE), cv, anime.id)
             }
             db.setTransactionSuccessful()
         } catch (e: Exception) {
@@ -662,7 +739,7 @@ class DatabaseManager(context: Context) {
 
     private fun getScheduleDay(day: Int): ArrayList<Anime> {
         val result = ArrayList<Anime>()
-        val cursor = Query.newQuery(db).selectFrom("*", DatabaseHelper.TABLE_SCHEDULE).where("day", day.toString()).run()
+        val cursor = Query.newQuery(db).selectFrom("*", getName(Table.TABLE_SCHEDULE)).where("day", day.toString()).run()
 
         if (cursor.moveToFirst()) {
             do

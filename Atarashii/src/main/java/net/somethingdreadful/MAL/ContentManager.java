@@ -83,6 +83,29 @@ public class ContentManager {
         return dbMan.getManga(id);
     }
 
+    public int createAccount(String username, String ImageUrl, int accountType) {
+        AppLog.log(Log.INFO, "Atarashii", "ContentManager.createAccount()");
+        int accountId = dbMan.getAccounts().size();
+        dbMan.addAccount(accountId, username, ImageUrl, accountType);
+        AppLog.log(Log.INFO, "Atarashii", "ContentManager.createAccountTable(): id= " + accountId + "accountType=" + accountType);
+        dbMan.createAccountTable(accountId);
+        return accountId;
+    }
+
+    public int getNewAccountId() {
+        return dbMan.getAccounts().size();
+    }
+
+    public void removeAccountTable(int id) {
+        AppLog.log(Log.INFO, "Atarashii", "ContentManager.getAnime(): id=" + id);
+        dbMan.removeAccountTable(id);
+    }
+
+    public ArrayList<AccountService.userAccount> getAccounts() {
+        AppLog.log(Log.INFO, "Atarashii", "ContentManager.getAccounts()");
+        return dbMan.getAccounts();
+    }
+
     public IGFModel getProfileAnimeList(String username) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getProfileAnimeList(): username=" + username);
         return AccountService.Companion.isMAL() ? malApi.getProfileAnimeList(username) : alApi.getProfileAnimeList(username);
@@ -205,12 +228,35 @@ public class ContentManager {
             profile = AccountService.Companion.isMAL() ? malApi.getProfile(name) : alApi.getProfile(name);
 
             if (profile != null) {
-                profile.setUsername(name);
-                if (name.equalsIgnoreCase(AccountService.Companion.getUsername())) {
-                    PrefManager.setProfileImage(profile.getImageUrl());
-                    PrefManager.commitChanges();
-                    dbMan.saveProfile(profile);
-                }
+                saveProfile(name, profile);
+            }
+        } catch (Exception e) {
+            AppLog.log(Log.ERROR, "Atarashii", "ContentManager.getProfile(): " + e.getMessage());
+            AppLog.logException(e);
+        }
+        return profile;
+    }
+
+    public Profile rawProfile(String name) {
+        Profile profile = new Profile();
+        try {
+            AppLog.log(Log.INFO, "Atarashii", "ContentManager.rawProfile(): username=" + name);
+            profile = AccountService.Companion.isMAL() ? malApi.getProfile(name) : alApi.getProfile(name);
+        } catch (Exception e) {
+            AppLog.log(Log.ERROR, "Atarashii", "ContentManager.rawProfile(): " + e.getMessage());
+            AppLog.logException(e);
+        }
+        return profile;
+    }
+
+    public Profile saveProfile(String name, Profile profile) {
+        try {
+            AppLog.log(Log.INFO, "Atarashii", "ContentManager.saveProfile(): username=" + name);
+            profile.setUsername(name);
+            if (name.equalsIgnoreCase(AccountService.Companion.getUsername())) {
+                PrefManager.setProfileImage(profile.getImageUrl());
+                PrefManager.commitChanges();
+                dbMan.saveProfile(profile);
             }
         } catch (Exception e) {
             AppLog.log(Log.ERROR, "Atarashii", "ContentManager.getProfile(): " + e.getMessage());
@@ -452,22 +498,22 @@ public class ContentManager {
         return dbMan.getSchedule();
     }
 
-    public IGFModel  getPopularSeasonAnime(int page) {
+    public IGFModel getPopularSeasonAnime(int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getPopularSeasonAnime(): page=" + page);
         return AccountService.Companion.isMAL() ? malApi.getPopularSeasonAnime(page) : alApi.getPopularSeasonAnime(page);
     }
 
-    public IGFModel  getPopularYearAnime(int page) {
+    public IGFModel getPopularYearAnime(int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getPopularYearAnime(): page=" + page);
         return AccountService.Companion.isMAL() ? malApi.getPopularYearAnime(page) : alApi.getPopularYearAnime(page);
     }
 
-    public IGFModel  getTopSeasonAnime(int page) {
+    public IGFModel getTopSeasonAnime(int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getTopSeasonAnime(): page=" + page);
         return AccountService.Companion.isMAL() ? malApi.getTopSeasonAnime(page) : alApi.getTopSeasonAnime(page);
     }
 
-    public IGFModel  getTopYearAnime(int page) {
+    public IGFModel getTopYearAnime(int page) {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.getTopYearAnime(): page=" + page);
         return AccountService.Companion.isMAL() ? malApi.getTopYearAnime(page) : alApi.getTopYearAnime(page);
     }

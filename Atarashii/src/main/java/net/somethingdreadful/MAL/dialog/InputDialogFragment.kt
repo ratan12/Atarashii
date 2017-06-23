@@ -23,7 +23,7 @@ class InputDialogFragment : DialogFragment() {
         return result
     }
 
-    override fun onCreateDialog(state: Bundle): Dialog {
+    override fun onCreateDialog(state: Bundle?): Dialog {
         val builder = AlertDialog.Builder(activity, theme)
         builder.setTitle(arguments.getString("title"))
         builder.setView(createView())

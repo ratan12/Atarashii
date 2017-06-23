@@ -11,6 +11,12 @@ import net.somethingdreadful.MAL.api.MALModels.RecordStub;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.somethingdreadful.MAL.database.Table.TABLE_ANIME;
+import static net.somethingdreadful.MAL.database.Table.TABLE_ANIME_MUSIC;
+import static net.somethingdreadful.MAL.database.Table.TABLE_ANIME_OTHER_TITLES;
+import static net.somethingdreadful.MAL.database.Table.TABLE_MANGA;
+import static net.somethingdreadful.MAL.database.Table.TABLE_MANGA_OTHER_TITLES;
+
 public class Query {
     private String queryString = "";
     private static SQLiteDatabase db;
@@ -170,7 +176,7 @@ public class Query {
 
         try {
             for (RecordStub relation : recordStubs) {
-                recordTable = relation.isAnime() ? DatabaseHelper.TABLE_ANIME : DatabaseHelper.TABLE_MANGA;
+                recordTable = relation.isAnime() ? Table.getName(TABLE_ANIME) : Table.getName(TABLE_MANGA);
                 if (!recordExists(DatabaseHelper.COLUMN_ID, recordTable, String.valueOf(relation.getId()))) {
                     ContentValues cv = new ContentValues();
                     cv.put(DatabaseHelper.COLUMN_ID, relation.getId());
@@ -244,7 +250,7 @@ public class Query {
      * @param sy    Arraylist of strings
      */
     public void updateTitles(int id, boolean anime, ArrayList<String> jp, ArrayList<String> en, ArrayList<String> sy, ArrayList<String> ro) {
-        String table = anime ? DatabaseHelper.TABLE_ANIME_OTHER_TITLES : DatabaseHelper.TABLE_MANGA_OTHER_TITLES;
+        String table = anime ? Table.getName(TABLE_ANIME_OTHER_TITLES) : Table.getName(TABLE_MANGA_OTHER_TITLES);
         // delete old links
         db.delete(table, DatabaseHelper.COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
 
@@ -263,10 +269,10 @@ public class Query {
      */
     public void updateMusic(int id, ArrayList<String> op, ArrayList<String> en) {
         // delete old links
-        db.delete(DatabaseHelper.TABLE_ANIME_MUSIC, DatabaseHelper.COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
+        db.delete(Table.getName(TABLE_ANIME_MUSIC), DatabaseHelper.COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
 
-        updateTitles(id, DatabaseHelper.TABLE_ANIME_MUSIC, DatabaseHelper.MUSIC_TYPE_OPENING, op);
-        updateTitles(id, DatabaseHelper.TABLE_ANIME_MUSIC, DatabaseHelper.MUSIC_TYPE_ENDING, en);
+        updateTitles(id, Table.getName(TABLE_ANIME_MUSIC), DatabaseHelper.MUSIC_TYPE_OPENING, op);
+        updateTitles(id, Table.getName(TABLE_ANIME_MUSIC), DatabaseHelper.MUSIC_TYPE_ENDING, en);
     }
 
     /**
@@ -307,7 +313,7 @@ public class Query {
      */
     public ArrayList<String> getTitles(int id, boolean anime, int titleType) {
         ArrayList<String> result = new ArrayList<>();
-        Cursor cursor = selectFrom("*", anime ? DatabaseHelper.TABLE_ANIME_OTHER_TITLES : DatabaseHelper.TABLE_MANGA_OTHER_TITLES)
+        Cursor cursor = selectFrom("*", anime ? Table.getName(TABLE_ANIME_OTHER_TITLES) : Table.getName(TABLE_MANGA_OTHER_TITLES))
                 .where(DatabaseHelper.COLUMN_ID, String.valueOf(id)).andEquals("titleType", String.valueOf(titleType))
                 .run();
 
@@ -330,7 +336,7 @@ public class Query {
      */
     public ArrayList<String> getMusic(int id, int titleType) {
         ArrayList<String> result = new ArrayList<>();
-        Cursor cursor = selectFrom("*", DatabaseHelper.TABLE_ANIME_MUSIC)
+        Cursor cursor = selectFrom("*", Table.getName(TABLE_ANIME_MUSIC))
                 .where(DatabaseHelper.COLUMN_ID, String.valueOf(id)).andEquals("titleType", String.valueOf(titleType))
                 .run();
 
@@ -412,7 +418,7 @@ public class Query {
             String name = "mr.title";
             String id = "mr." + DatabaseHelper.COLUMN_ID;
 
-            Cursor cursor = selectFrom(id + ", " + name, (anime ? DatabaseHelper.TABLE_ANIME : DatabaseHelper.TABLE_MANGA) + " mr")
+            Cursor cursor = selectFrom(id + ", " + name, (anime ? Table.getName(TABLE_ANIME) : Table.getName(TABLE_MANGA)) + " mr")
                     .innerJoinOn(relationTable + " rr", id, "rr.relationId")
                     .where("rr." + DatabaseHelper.COLUMN_ID, String.valueOf(Id)).andEquals("rr.relationType", relationType).run();
 
