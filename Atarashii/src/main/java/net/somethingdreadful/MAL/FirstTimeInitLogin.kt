@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -85,6 +86,8 @@ class FirstTimeInitLogin : Fragment(), ChooseDialogFragment.onClickListener {
                 loginBlock.visibility = View.GONE
                 footer.visibility = View.GONE
             }
+        } else {
+            AppLog.log(Log.ERROR, "Atarashii", "FirstTimeInitLogin.isMal(): No activity set?")
         }
     }
 
@@ -138,11 +141,10 @@ class FirstTimeInitLogin : Fragment(), ChooseDialogFragment.onClickListener {
     }
 
     companion object {
-
         fun newInstance(firstTimeInit: FirstTimeInit): FirstTimeInitLogin {
             val fragment = FirstTimeInitLogin()
             fragment.activity1 = firstTimeInit
-            return FirstTimeInitLogin()
+            return fragment
         }
 
         fun newInstance(firstTimeInit: AddAccount): FirstTimeInitLogin {

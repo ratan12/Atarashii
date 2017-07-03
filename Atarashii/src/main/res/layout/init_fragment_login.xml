@@ -24,6 +24,7 @@
         android:id="@+id/webview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:visibility="gone"
         android:layout_weight="8"/>
 
     <include
