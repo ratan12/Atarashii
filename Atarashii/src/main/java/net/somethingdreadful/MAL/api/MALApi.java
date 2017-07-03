@@ -36,7 +36,8 @@ public class MALApi {
     private static final String MAL_HOST = "https://myanimelist.net/";
     private Activity activity = null;
 
-    private MALInterface service;
+    private MALInterface MALservice;
+    private MALInterface APIservice;
 
     public MALApi() {
         setupRESTService(AccountService.Companion.getUsername(), AccountService.Companion.getPassword());
@@ -51,23 +52,24 @@ public class MALApi {
      * Only use for verifying.
      */
     public MALApi(String username, String password) {
-        service = APIHelper.createClient(MAL_HOST, MALInterface.class, Credentials.basic(username, password));
+        setupRESTService(username, password);
     }
 
     public MALApi setupRESTService(String username, String password) {
-        service = APIHelper.createClient(API_HOST, MALInterface.class, Credentials.basic(username, password));
+        MALservice = APIHelper.createClient(MAL_HOST, MALInterface.class, Credentials.basic(username, password));
+        APIservice = APIHelper.createClient(API_HOST, MALInterface.class, Credentials.basic(username, password));
         return this;
     }
 
     public boolean isAuth() {
-        return APIHelper.isOK(service.verifyAuthentication(), "isAuth");
+        return APIHelper.isOK(MALservice.verifyAuthentication(), "isAuth");
     }
 
     public IGFModel searchAnime(String query, int page) {
         if (PrefManager.getNSFWEnabled()) {
             Response<ArrayList<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Anime>> response = null;
             try {
-                response = service.searchAnime(query, page).execute();
+                response = APIservice.searchAnime(query, page).execute();
                 return AnimeList.convertBaseArray(response.body());
             } catch (Exception e) {
                 APIHelper.logE(activity, response, "MALApi", "searchAnime", e);
@@ -87,7 +89,7 @@ public class MALApi {
         if (PrefManager.getNSFWEnabled()) {
             Response<ArrayList<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Manga>> response = null;
             try {
-                response = service.searchManga(query, page).execute();
+                response = APIservice.searchManga(query, page).execute();
                 return MangaList.convertBaseArray(response.body());
             } catch (Exception e) {
                 APIHelper.logE(activity, response, "MALApi", "searchManga", e);
@@ -106,7 +108,7 @@ public class MALApi {
     public IGFModel getProfileAnimeList(String username) {
         Response<AnimeList> response = null;
         try {
-            response = service.getAnimeList(username).execute();
+            response = APIservice.getAnimeList(username).execute();
             return AnimeList.convertBaseArray(response.body().getAnime());
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getAnimeList", e);
@@ -117,7 +119,7 @@ public class MALApi {
     public IGFModel getProfileMangaList(String username) {
         Response<MangaList> response = null;
         try {
-            response = service.getMangaList(username).execute();
+            response = APIservice.getMangaList(username).execute();
             return MangaList.convertBaseArray(response.body().getManga());
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getMangaList", e);
@@ -128,7 +130,7 @@ public class MALApi {
     public UserList getAnimeList(String username) {
         Response<AnimeList> response = null;
         try {
-            response = service.getAnimeList(username).execute();
+            response = APIservice.getAnimeList(username).execute();
             return AnimeList.createBaseModel(response.body());
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getAnimeList", e);
@@ -139,7 +141,7 @@ public class MALApi {
     public UserList getMangaList(String username) {
         Response<MangaList> response = null;
         try {
-            response = service.getMangaList(username).execute();
+            response = APIservice.getMangaList(username).execute();
             return MangaList.createBaseModel(response.body());
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getMangaList", e);
@@ -150,7 +152,7 @@ public class MALApi {
     public Anime getAnime(int id, int mine) {
         Response<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Anime> response = null;
         try {
-            response = service.getAnime(id, mine).execute();
+            response = APIservice.getAnime(id, mine).execute();
             return response.body().createBaseModel();
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getAnime", e);
@@ -161,7 +163,7 @@ public class MALApi {
     public Manga getManga(int id, int mine) {
         Response<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Manga> response = null;
         try {
-            response = service.getManga(id, mine).execute();
+            response = APIservice.getManga(id, mine).execute();
             return response.body().createBaseModel();
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getManga", e);
@@ -171,7 +173,7 @@ public class MALApi {
 
     public boolean addOrUpdateAnime(Anime anime) {
         if (anime.getCreateFlag())
-            return APIHelper.isOK(service.addAnime(anime.getId(), anime.getWatchedStatus(), anime.getWatchedEpisodes(), anime.getScore()), "addOrUpdateAnime");
+            return APIHelper.isOK(APIservice.addAnime(anime.getId(), anime.getWatchedStatus(), anime.getWatchedEpisodes(), anime.getScore()), "addOrUpdateAnime");
         else {
             if (anime.isDirty()) {
                 // map anime property names to api field names
@@ -202,7 +204,7 @@ public class MALApi {
                         }
                     }
                 }
-                return APIHelper.isOK(service.updateAnime(anime.getId(), fieldMap), "addOrUpdateAnime");
+                return APIHelper.isOK(APIservice.updateAnime(anime.getId(), fieldMap), "addOrUpdateAnime");
             } else {
                 AppLog.log(Log.INFO, "Atarashii", "MALApi.addOrUpdateAnime(): No dirty fields found");
             }
@@ -212,7 +214,7 @@ public class MALApi {
 
     public boolean addOrUpdateManga(Manga manga) {
         if (manga.getCreateFlag())
-            return APIHelper.isOK(service.addManga(manga.getId(), manga.getReadStatus(), manga.getChaptersRead(), manga.getVolumesRead(), manga.getScore()), "addOrUpdateManga");
+            return APIHelper.isOK(APIservice.addManga(manga.getId(), manga.getReadStatus(), manga.getChaptersRead(), manga.getVolumesRead(), manga.getScore()), "addOrUpdateManga");
         else {
             if (manga.isDirty()) {
                 // map manga property names to api field names
@@ -240,7 +242,7 @@ public class MALApi {
                         }
                     }
                 }
-                return APIHelper.isOK(service.updateManga(manga.getId(), fieldMap), "addOrUpdateManga");
+                return APIHelper.isOK(APIservice.updateManga(manga.getId(), fieldMap), "addOrUpdateManga");
             } else {
                 AppLog.log(Log.INFO, "Atarashii", "MALApi.addOrUpdateManga(): No dirty fields found");
             }
@@ -249,18 +251,18 @@ public class MALApi {
     }
 
     public boolean deleteAnimeFromList(int id) {
-        return APIHelper.isOK(service.deleteAnime(id), "deleteAnimeFromList");
+        return APIHelper.isOK(APIservice.deleteAnime(id), "deleteAnimeFromList");
     }
 
     public boolean deleteMangaFromList(int id) {
-        return APIHelper.isOK(service.deleteManga(id), "deleteMangaFromList");
+        return APIHelper.isOK(APIservice.deleteManga(id), "deleteMangaFromList");
     }
 
     public IGFModel getBrowseAnime(Map<String, String> queries) {
         retrofit2.Response<ArrayList<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Anime>> response = null;
         AppLog.log(Log.INFO, "Atarashii", "MALApi.getBrowseAnime(): queries=" + queries.toString());
         try {
-            response = service.getBrowseAnime(queries).execute();
+            response = APIservice.getBrowseAnime(queries).execute();
             return AnimeList.convertBaseArray(response.body());
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getBrowseAnime: " + queries.toString(), e);
@@ -272,7 +274,7 @@ public class MALApi {
         retrofit2.Response<ArrayList<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Manga>> response = null;
         AppLog.log(Log.INFO, "Atarashii", "MALApi.getBrowseManga(): queries=" + queries.toString());
         try {
-            response = service.getBrowseManga(queries).execute();
+            response = APIservice.getBrowseManga(queries).execute();
             return MangaList.convertBaseArray(response.body());
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getBrowseManga: " + queries.toString(), e);
@@ -291,7 +293,7 @@ public class MALApi {
     public IGFModel getMostPopularAnime(int page) {
         Response<ArrayList<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Anime>> response = null;
         try {
-            response = service.getPopularAnime(page).execute();
+            response = APIservice.getPopularAnime(page).execute();
             return AnimeList.convertBaseArray(response.body());
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getMostPopularAnime: page =" + page, e);
@@ -302,7 +304,7 @@ public class MALApi {
     public IGFModel getMostPopularManga(int page) {
         Response<ArrayList<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Manga>> response = null;
         try {
-            response = service.getPopularManga(page).execute();
+            response = APIservice.getPopularManga(page).execute();
             return MangaList.convertBaseArray(response.body());
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getMostPopularManga: page =" + page, e);
@@ -313,7 +315,7 @@ public class MALApi {
     public IGFModel getTopRatedAnime(int page) {
         Response<ArrayList<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Anime>> response = null;
         try {
-            response = service.getTopRatedAnime(page).execute();
+            response = APIservice.getTopRatedAnime(page).execute();
             return AnimeList.convertBaseArray(response.body());
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getTopRatedAnime: page =" + page, e);
@@ -324,7 +326,7 @@ public class MALApi {
     public IGFModel getTopRatedManga(int page) {
         Response<ArrayList<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Manga>> response = null;
         try {
-            response = service.getTopRatedManga(page).execute();
+            response = APIservice.getTopRatedManga(page).execute();
             return MangaList.convertBaseArray(response.body());
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getTopRatedManga: page =" + page, e);
@@ -371,7 +373,7 @@ public class MALApi {
     public Profile getProfile(String user) {
         Response<net.somethingdreadful.MAL.api.MALModels.Profile> response = null;
         try {
-            response = service.getProfile(user).execute();
+            response = APIservice.getProfile(user).execute();
             return response.body().createBaseModel();
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getProfile", e);
@@ -382,7 +384,7 @@ public class MALApi {
     public ArrayList<Profile> getFriends(String user) {
         Response<ArrayList<Friend>> response = null;
         try {
-            response = service.getFriends(user).execute();
+            response = APIservice.getFriends(user).execute();
             return Friend.convertBaseFriendList(response.body());
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getFriends", e);
@@ -393,7 +395,7 @@ public class MALApi {
     public ForumMain getForum() {
         Response<ForumMain> response = null;
         try {
-            response = service.getForum().execute();
+            response = APIservice.getForum().execute();
             return response.body();
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getForum", e);
@@ -404,7 +406,7 @@ public class MALApi {
     public ForumMain getCategoryTopics(int id, int page) {
         Response<ForumMain> response = null;
         try {
-            response = service.getCategoryTopics(id, page).execute();
+            response = APIservice.getCategoryTopics(id, page).execute();
             return response.body();
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getCategoryTopics", e);
@@ -415,7 +417,7 @@ public class MALApi {
     public ForumMain getForumAnime(int id, int page) {
         Response<ForumMain> response = null;
         try {
-            response = service.getForumAnime(id, page).execute();
+            response = APIservice.getForumAnime(id, page).execute();
             return response.body();
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getForumAnime", e);
@@ -426,7 +428,7 @@ public class MALApi {
     public ForumMain getForumManga(int id, int page) {
         Response<ForumMain> response = null;
         try {
-            response = service.getForumManga(id, page).execute();
+            response = APIservice.getForumManga(id, page).execute();
             return response.body();
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getForumManga", e);
@@ -437,7 +439,7 @@ public class MALApi {
     public ForumMain getPosts(int id, int page) {
         Response<ForumMain> response = null;
         try {
-            response = service.getPosts(id, page).execute();
+            response = APIservice.getPosts(id, page).execute();
             return response.body();
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getPosts", e);
@@ -448,7 +450,7 @@ public class MALApi {
     public ForumMain getSubBoards(int id, int page) {
         Response<ForumMain> response = null;
         try {
-            response = service.getSubBoards(id, page).execute();
+            response = APIservice.getSubBoards(id, page).execute();
             return response.body();
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getSubBoards", e);
@@ -457,21 +459,21 @@ public class MALApi {
     }
 
     public boolean addComment(int id, String message) {
-        return APIHelper.isOK(service.addComment(id, message), "addComment");
+        return APIHelper.isOK(APIservice.addComment(id, message), "addComment");
     }
 
     public boolean updateComment(int id, String message) {
-        return APIHelper.isOK(service.updateComment(id, message), "updateComment");
+        return APIHelper.isOK(APIservice.updateComment(id, message), "updateComment");
     }
 
     public boolean addTopic(int id, String title, String message) {
-        return APIHelper.isOK(service.addTopic(id, title, message), "addTopic");
+        return APIHelper.isOK(APIservice.addTopic(id, title, message), "addTopic");
     }
 
     public ForumMain search(String query) {
         Response<ForumMain> response = null;
         try {
-            response = service.search(query).execute();
+            response = APIservice.search(query).execute();
             return response.body();
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "search", e);
@@ -482,7 +484,7 @@ public class MALApi {
     public ArrayList<Reviews> getAnimeReviews(int id, int page) {
         Response<ArrayList<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Reviews>> response = null;
         try {
-            response = service.getAnimeReviews(id, page).execute();
+            response = APIservice.getAnimeReviews(id, page).execute();
             return net.somethingdreadful.MAL.api.MALModels.AnimeManga.Reviews.convertBaseArray(response.body());
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getAnimeReviews", e);
@@ -493,7 +495,7 @@ public class MALApi {
     public ArrayList<Reviews> getMangaReviews(int id, int page) {
         Response<ArrayList<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Reviews>> response = null;
         try {
-            response = service.getMangaReviews(id, page).execute();
+            response = APIservice.getMangaReviews(id, page).execute();
             return net.somethingdreadful.MAL.api.MALModels.AnimeManga.Reviews.convertBaseArray(response.body());
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getMangaReviews", e);
@@ -504,7 +506,7 @@ public class MALApi {
     public ArrayList<net.somethingdreadful.MAL.api.BaseModels.History> getActivity(String username) {
         Response<ArrayList<History>> response = null;
         try {
-            response = service.getActivity(username).execute();
+            response = APIservice.getActivity(username).execute();
             return History.convertBaseHistoryList(response.body(), username);
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getActivity", e);
@@ -515,7 +517,7 @@ public class MALApi {
     public ArrayList<Recommendations> getAnimeRecs(int id) {
         Response<ArrayList<Recommendations>> response = null;
         try {
-            response = service.getAnimeRecs(id).execute();
+            response = APIservice.getAnimeRecs(id).execute();
             return response.body();
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getAnimeRecs", e);
@@ -526,7 +528,7 @@ public class MALApi {
     public ArrayList<Recommendations> getMangaRecs(int id) {
         Response<ArrayList<Recommendations>> response = null;
         try {
-            response = service.getMangaRecs(id).execute();
+            response = APIservice.getMangaRecs(id).execute();
             return response.body();
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getMangaRecs", e);
@@ -537,7 +539,7 @@ public class MALApi {
     public Schedule getSchedule() {
         Response<net.somethingdreadful.MAL.api.MALModels.AnimeManga.Schedule> response = null;
         try {
-            response = service.getSchedule().execute();
+            response = APIservice.getSchedule().execute();
             return response.body().convertBaseSchedule();
         } catch (Exception e) {
             APIHelper.logE(activity, response, "MALApi", "getSchedule", e);

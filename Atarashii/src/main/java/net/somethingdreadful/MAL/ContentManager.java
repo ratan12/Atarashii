@@ -338,12 +338,13 @@ public class ContentManager {
         return AccountService.Companion.isMAL() ? malApi.getManga(id, 0) : alApi.getManga(id);
     }
 
-    public void verifyAuthentication() {
+    public boolean verifyAuthentication() {
         AppLog.log(Log.INFO, "Atarashii", "ContentManager.verifyAuthentication()");
         if (AccountService.Companion.isMAL())
-            malApi.isAuth();
+            return !malApi.isAuth();
         else if (AccountService.Companion.getAccesToken() == null)
             alApi.getAccesToken();
+        return false;
     }
 
     public boolean writeAnimeDetails(Anime anime) {

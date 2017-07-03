@@ -5,15 +5,12 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
-
 import net.somethingdreadful.MAL.AppLog
 import net.somethingdreadful.MAL.ContentManager
-import net.somethingdreadful.MAL.account.AccountService
 import net.somethingdreadful.MAL.api.APIHelper
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Anime
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.GenericRecord
 import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Manga
-
 import net.somethingdreadful.MAL.broadcasts.RecordStatusUpdatedReceiver
 
 class WriteDetailTask(isAnime: Boolean, private val activity: Activity) : AsyncTask<GenericRecord, Void, Boolean>() {
@@ -28,12 +25,12 @@ class WriteDetailTask(isAnime: Boolean, private val activity: Activity) : AsyncT
         val isNetworkAvailable = APIHelper.isNetworkAvailable(activity)
         val manager = ContentManager(activity)
 
-        if (!AccountService.isMAL && isNetworkAvailable)
-            manager.verifyAuthentication()
+        if (isNetworkAvailable)
+            error = manager.verifyAuthentication()
 
         try {
             // Sync details if there is network connection
-            if (isNetworkAvailable) {
+            if (isNetworkAvailable && !error) {
                 if (isAnime) {
                     error = !manager.writeAnimeDetails(gr[0] as Anime)
                 } else {
