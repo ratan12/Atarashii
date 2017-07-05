@@ -51,7 +51,7 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
             listView.setOnItemClickListener { _, _, position, _ ->
                 AccountService.setAccount(accountAdapter!!.getItem(position) as AccountService.userAccount)
                 getPersonalList(TaskJob.GETLIST, personalList, null)
-                Theme.setNavDrawer(navigationView, this, this)
+                Theme.setNavDrawer(navigationBarView, this, this)
             }
             findViewById(R.id.addAccount).setOnClickListener(this)
         }
@@ -66,7 +66,7 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
     private var personalList = 0
     private var accountList = false
 
-    val navigationView: NavigationView by bindView(R.id.navigationView)
+    val navigationBarView: NavigationView by bindView(R.id.navigationBarView)
     val drawerLayout: DrawerLayout by bindView(R.id.drawerLayout)
     val tabs: TabLayout by bindView(R.id.tabs)
     val appBarLayout: AppBarLayout by bindView(R.id.tabsContainer)
@@ -103,10 +103,10 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
             searchView.setOnQueryTextListener(this)
             searchView.setArrowOnly(true)
 
-            //Initializing NavigationView
-            navigationView.setNavigationItemSelectedListener(this)
-            navigationView.menu.findItem(R.id.nav_list).isChecked = true
-            Theme.setNavDrawer(navigationView, this, this)
+            //Initializing navigationBarView
+            navigationBarView.setNavigationItemSelectedListener(this)
+            navigationBarView.menu.findItem(R.id.nav_list).isChecked = true
+            Theme.setNavDrawer(navigationBarView, this, this)
 
             //Initializing navigation toggle button
             val drawerToggle = object : ActionBarDrawerToggle(this, drawerLayout, findViewById(R.id.actionbar) as Toolbar, R.string.drawer_open, R.string.drawer_close) {
@@ -325,14 +325,16 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
                 lcdf.setCallback(this)
                 lcdf.show(fragmentManager, "fragment_InputDialogFragment")
             }
-            R.id.AccountList -> {
+            R.id.AccountList, R.id.name -> {
                 accountList = !accountList
-                if (accountList)
-                    navigationView.findViewById(R.id.accountswitch).scaleY = -1f
-                else
-                    navigationView.findViewById(R.id.accountswitch).scaleY = 1f
-                findViewById(R.id.accountGroup).visibility = if (accountList) VISIBLE else GONE
-                navigationView.menu.setGroupVisible(R.id.group_listitems, !accountList)
+                if (accountList) {
+                    navigationBarView.findViewById(R.id.accountswitch).scaleY = -1f
+                    findViewById(R.id.accountGroup).visibility = VISIBLE
+                } else {
+                    navigationBarView.findViewById(R.id.accountswitch).scaleY = 1f
+                    findViewById(R.id.accountGroup).visibility = GONE
+                }
+                navigationBarView.menu.setGroupVisible(R.id.group_listitems, !accountList)
             }
             R.id.addAccount -> {
                 startActivity(Intent(this, AddAccount::class.java))

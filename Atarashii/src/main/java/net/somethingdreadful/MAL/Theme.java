@@ -180,8 +180,10 @@ public class Theme extends Application {
             SimpleDraweeView image = (SimpleDraweeView) view.findViewById(R.id.Image);
             SimpleDraweeView image2 = (SimpleDraweeView) view.findViewById(R.id.NDimage);
             RelativeLayout accountList = (RelativeLayout) view.findViewById(R.id.AccountList);
-            ((TextView) view.findViewById(R.id.siteName)).setText(activity.getString(net.somethingdreadful.MAL.account.AccountService.Companion.isMAL() ? R.string.init_hint_myanimelist : R.string.init_hint_anilist));
-            ((TextView) view.findViewById(R.id.name)).setText(username);
+            TextView siteNameView = (TextView) view.findViewById(R.id.siteName);
+            TextView usernameView = (TextView) view.findViewById(R.id.name);
+            siteNameView.setText(activity.getString(net.somethingdreadful.MAL.account.AccountService.Companion.isMAL() ? R.string.init_hint_myanimelist : R.string.init_hint_anilist));
+            usernameView.setText(username);
 
             // Apply dark theme if an user enabled it in the settings.
             if (Theme.darkTheme) {
@@ -204,6 +206,7 @@ public class Theme extends Application {
             // init images
             image.setImageURI(Uri.parse(PrefManager.getProfileImage()));
             accountList.setOnClickListener(listener);
+            usernameView.setOnClickListener(listener);
             if (PrefManager.getNavigationBackground() != null)
                 image2.setImageURI(Uri.parse(PrefManager.getNavigationBackground()));
             if (listener != null) {
