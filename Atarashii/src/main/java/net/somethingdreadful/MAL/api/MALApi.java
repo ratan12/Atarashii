@@ -32,7 +32,7 @@ import retrofit2.Response;
 
 public class MALApi {
     // Use version 2.1 of the API interface
-    private static final String API_HOST = "https://api.atarashiiapp.com/2.1/";
+    private static final String API_HOST = "https://malapi.atarashiiapp.com/2.1/";
     private static final String MAL_HOST = "https://myanimelist.net/";
     private Activity activity = null;
 
