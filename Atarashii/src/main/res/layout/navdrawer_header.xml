@@ -100,7 +100,7 @@
                 android:contentDescription="@string/layout_card_loading"
                 android:gravity="center_vertical"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_person"/>
+                android:src="@drawable/ic_person_add_grey_48px"/>
 
 
             <TextView
