@@ -188,12 +188,32 @@ class AccountService : Service() {
         /**
          * Removes an account from the accountmanager.
          */
+        fun deleteAccount(accountId: Int) {
+            val accountManager = AccountManager.get(context)
+            val myaccount = accountManager.getAccountsByType(getAccountType())
+            AppLog.log(Log.INFO, "Atarashii", "AccountService: remove account "+ accountId + " found: " + myaccount.size)
+            if (myaccount != null)
+                for (account: Account in myaccount) {
+                    val tempAccountID = accountManager.getUserData(account, "accountId").toInt()
+                    if (tempAccountID == accountId) {
+                        accountManager.removeAccount(account, null, null)
+                        break
+                    }
+                }
+        }
+
+        /**
+         * Removes an account from the accountmanager.
+         */
         fun deleteAccount() {
             val accountManager = AccountManager.get(context)
+            val myaccount = accountManager.getAccountsByType(getAccountType())
             userAccount = null
-            if (getAccount() != null)
-                accountManager.removeAccount(getAccount(), null, null)
             accountType = null
+
+            for (account: Account in myaccount) {
+                accountManager.removeAccount(getAccount(), null, null)
+            }
         }
 
         /**

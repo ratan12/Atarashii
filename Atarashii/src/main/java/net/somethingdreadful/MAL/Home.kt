@@ -43,20 +43,6 @@ import net.somethingdreadful.MAL.tasks.TaskJob
 import java.util.*
 
 class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFragment.CoverListener, View.OnClickListener, ViewPager.OnPageChangeListener, NavigationView.OnNavigationItemSelectedListener, InputDialogFragment.onClickListener, RecordStatusUpdatedReceiver.RecordStatusUpdatedListener, SearchView.OnQueryTextListener, AccountTask.accountTaskListener {
-    override fun onAccountTaskFinished(result: ArrayList<AccountService.userAccount>?) {
-        if (result != null) {
-            val listView = findViewById(R.id.accounts) as ListView
-            accountAdapter = AccountListAdapter(result)
-            listView.adapter = accountAdapter
-            listView.setOnItemClickListener { _, _, position, _ ->
-                AccountService.setAccount(accountAdapter!!.getItem(position) as AccountService.userAccount)
-                getPersonalList(TaskJob.GETLIST, personalList, null)
-                Theme.setNavDrawer(navigationBarView, this, this)
-            }
-            findViewById(R.id.addAccount).setOnClickListener(this)
-        }
-    }
-
     private var af: CoverFragment? = null
     private var accountAdapter: AccountListAdapter? = null
     private var mf: CoverFragment? = null
@@ -224,6 +210,24 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
         if (af != null && mf != null) {
             af!!.getPersonalList(task, list)
             mf!!.getPersonalList(task, list)
+        }
+    }
+
+    override fun onAccountTaskFinished(result: ArrayList<AccountService.userAccount>?) {
+        if (result != null) {
+            val listView = findViewById(R.id.accounts) as ListView
+            accountAdapter = AccountListAdapter(result)
+            listView.adapter = accountAdapter
+            listView.setOnItemClickListener { _, _, position, _ ->
+                AccountService.setAccount(accountAdapter!!.getItem(position) as AccountService.userAccount)
+                getPersonalList(TaskJob.GETLIST, personalList, null)
+                Theme.setNavDrawer(navigationBarView, this, this)
+            }
+            listView.setOnItemLongClickListener { _, _, position, _ ->
+                AccountService.deleteAccount((accountAdapter!!.getItem(position) as AccountService.userAccount).id)
+                true
+            }
+            findViewById(R.id.addAccount).setOnClickListener(this)
         }
     }
 
