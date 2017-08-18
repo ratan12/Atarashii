@@ -15,7 +15,6 @@ import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Schedule
 class ScheduleTask(activity: Activity, private val forceRefresh: Boolean, private val callback: ScheduleTask.ScheduleTaskListener) : AsyncTask<String, Void, Schedule>() {
     private var activity: Activity? = null
 
-
     init {
         this.activity = activity
     }

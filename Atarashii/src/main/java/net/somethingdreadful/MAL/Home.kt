@@ -30,6 +30,7 @@ import net.somethingdreadful.MAL.Theme.context
 import net.somethingdreadful.MAL.account.AccountListAdapter
 import net.somethingdreadful.MAL.account.AccountService
 import net.somethingdreadful.MAL.account.AccountService.Companion.username
+import net.somethingdreadful.MAL.account.AddAccount
 import net.somethingdreadful.MAL.adapters.IGFPagerAdapter
 import net.somethingdreadful.MAL.api.APIHelper
 import net.somethingdreadful.MAL.api.BaseModels.IGFModel
@@ -39,10 +40,15 @@ import net.somethingdreadful.MAL.cover.CoverFragment
 import net.somethingdreadful.MAL.dialog.ChooseDialogFragment
 import net.somethingdreadful.MAL.dialog.InputDialogFragment
 import net.somethingdreadful.MAL.tasks.AccountTask
+import net.somethingdreadful.MAL.tasks.RemoveAccountTask
+import net.somethingdreadful.MAL.tasks.RemoveAccountTask.removeAccountTaskListener
 import net.somethingdreadful.MAL.tasks.TaskJob
 import java.util.*
 
-class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFragment.CoverListener, View.OnClickListener, ViewPager.OnPageChangeListener, NavigationView.OnNavigationItemSelectedListener, InputDialogFragment.onClickListener, RecordStatusUpdatedReceiver.RecordStatusUpdatedListener, SearchView.OnQueryTextListener, AccountTask.accountTaskListener {
+class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFragment.CoverListener, View.OnClickListener, ViewPager.OnPageChangeListener, NavigationView.OnNavigationItemSelectedListener, InputDialogFragment.onClickListener, RecordStatusUpdatedReceiver.RecordStatusUpdatedListener, SearchView.OnQueryTextListener, AccountTask.accountTaskListener, removeAccountTaskListener {
+    override fun onAccountRemovedTaskFinished(result: ArrayList<AccountService.userAccount>?, allAccounts: Boolean) {
+
+    }
     private var af: CoverFragment? = null
     private var accountAdapter: AccountListAdapter? = null
     private var mf: CoverFragment? = null
@@ -224,7 +230,16 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
                 Theme.setNavDrawer(navigationBarView, this, this)
             }
             listView.setOnItemLongClickListener { _, _, position, _ ->
-                AccountService.deleteAccount((accountAdapter!!.getItem(position) as AccountService.userAccount).id)
+                val lcdf = ChooseDialogFragment()
+                val bundle = Bundle()
+                bundle.putInt("id", R.id.accounts)
+                bundle.putInt("pos", position)
+                bundle.putString("title", getString(R.string.dialog_label_logout))
+                bundle.putString("message", getString(R.string.dialog_message_logout))
+                bundle.putString("positive", getString(R.string.dialog_label_logout))
+                lcdf.arguments = bundle
+                lcdf.setCallback(this)
+                lcdf.show(fragmentManager, "fragment_LogoutConfirmationDialog")
                 true
             }
             findViewById(R.id.addAccount).setOnClickListener(this)
@@ -253,17 +268,6 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
     private fun myListChanged() {
         if (menu != null)
             menu!!.findItem(R.id.action_search).isVisible = networkAvailable
-    }
-
-    private fun showLogoutDialog() {
-        val lcdf = ChooseDialogFragment()
-        val bundle = Bundle()
-        bundle.putString("title", getString(R.string.dialog_label_logout))
-        bundle.putString("message", getString(R.string.dialog_message_logout))
-        bundle.putString("positive", getString(R.string.dialog_label_logout))
-        lcdf.arguments = bundle
-        lcdf.setCallback(this)
-        lcdf.show(fragmentManager, "fragment_LogoutConfirmationDialog")
     }
 
     private fun checkNetworkAndDisplayCrouton() {
@@ -341,6 +345,7 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
                 navigationBarView.menu.setGroupVisible(R.id.group_listitems, !accountList)
             }
             R.id.addAccount -> {
+                finish()
                 startActivity(Intent(this, AddAccount::class.java))
             }
         }
@@ -359,10 +364,17 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
 
     override fun onPageScrollStateChanged(state: Int) {}
 
-    override fun onPositiveButtonClicked() {
-        AccountService.clearData()
-        startActivity(Intent(this, FirstTimeInit::class.java))
-        System.exit(0)
+    override fun onPositiveButtonClicked(id: Int, pos: Int) {
+        when (id) {
+            R.id.nav_logout -> {
+                startActivity(Intent(this, FirstTimeInit::class.java))
+                System.exit(0)
+                RemoveAccountTask(this, this, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+            }
+            R.id.accounts -> {
+                RemoveAccountTask(this, this, false).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, *arrayOf(pos.toString()))
+            }
+        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -391,7 +403,17 @@ class Home : AppCompatActivity(), ChooseDialogFragment.onClickListener, CoverFra
             R.id.nav_schedule -> startActivity(Intent(this, ScheduleActivity::class.java))
             R.id.nav_charts -> startActivity(Intent(this, ChartActivity::class.java))
             R.id.nav_browse -> startActivity(Intent(this, BrowseActivity::class.java))
-            R.id.nav_logout -> showLogoutDialog()
+            R.id.nav_logout -> {
+                val lcdf = ChooseDialogFragment()
+                val bundle = Bundle()
+                bundle.putInt("id", R.id.nav_logout)
+                bundle.putString("title", getString(R.string.dialog_label_logout))
+                bundle.putString("message", getString(R.string.dialog_message_logout))
+                bundle.putString("positive", getString(R.string.dialog_label_logout))
+                lcdf.arguments = bundle
+                lcdf.setCallback(this)
+                lcdf.show(fragmentManager, "fragment_LogoutConfirmationDialog")
+            }
             R.id.nav_settings -> startActivity(Intent(this, Settings::class.java))
             R.id.nav_support -> startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://atarashii.freshdesk.com/support/tickets/new")))
             R.id.nav_about -> startActivity(Intent(this, AboutActivity::class.java))

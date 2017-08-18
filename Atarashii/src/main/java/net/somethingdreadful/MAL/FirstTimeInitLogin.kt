@@ -19,6 +19,7 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import butterknife.Unbinder
 import butterknife.bindView
+import net.somethingdreadful.MAL.account.AddAccount
 import net.somethingdreadful.MAL.api.ALApi
 import net.somethingdreadful.MAL.api.APIHelper
 import net.somethingdreadful.MAL.dialog.ChooseDialogFragment
@@ -64,10 +65,8 @@ class FirstTimeInitLogin : Fragment(), ChooseDialogFragment.onClickListener {
                 webview.visibility = View.GONE
                 loginBlock.visibility = View.VISIBLE
                 footer.visibility = View.VISIBLE
-                activity1!!.showDoneButton(true)
             } else {
                 title.text = getString(R.string.init_hint_anilist)
-                activity1!!.showDoneButton(false)
                 webview.visibility = View.VISIBLE
                 loginBlock.visibility = View.GONE
                 footer.visibility = View.GONE
@@ -78,10 +77,8 @@ class FirstTimeInitLogin : Fragment(), ChooseDialogFragment.onClickListener {
                 webview.visibility = View.GONE
                 loginBlock.visibility = View.VISIBLE
                 footer.visibility = View.VISIBLE
-                activity2!!.showDoneButton(true)
             } else {
                 title.text = getString(R.string.init_hint_anilist)
-                activity2!!.showDoneButton(false)
                 webview.visibility = View.VISIBLE
                 loginBlock.visibility = View.GONE
                 footer.visibility = View.GONE
@@ -105,9 +102,9 @@ class FirstTimeInitLogin : Fragment(), ChooseDialogFragment.onClickListener {
                     if (code != null) {
                         input1!!.setText(code)
                         if (activity1 != null)
-                            activity1!!.onDonePressed(targetFragment)
+                            activity1!!.pressedDone()
                         else
-                            activity2!!.onDonePressed(targetFragment)
+                            activity2!!.pressedDone()
                         return true
                     } else {
                         return false
@@ -136,7 +133,7 @@ class FirstTimeInitLogin : Fragment(), ChooseDialogFragment.onClickListener {
         unbinder?.unbind()
     }
 
-    override fun onPositiveButtonClicked() {
+    override fun onPositiveButtonClicked(id:Int, pos:Int) {
         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://myanimelist.net/editprofile.php?go=myoptions")))
     }
 

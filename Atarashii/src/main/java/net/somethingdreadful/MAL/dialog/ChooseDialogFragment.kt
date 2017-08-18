@@ -12,9 +12,10 @@ class ChooseDialogFragment : DialogFragment() {
         val builder = AlertDialog.Builder(activity)
         builder.setTitle(arguments.getString("title"))
         builder.setMessage(arguments.getString("message"))
-        builder.setNegativeButton(R.string.dialog_label_cancel) { dialog, whichButton -> dismiss() }
-        builder.setPositiveButton(arguments.getString("positive")) { dialog, whichButton ->
-            callback!!.onPositiveButtonClicked()
+        builder.setNegativeButton(R.string.dialog_label_cancel) { _, _ -> dismiss() }
+        builder.setPositiveButton(arguments.getString("positive")) { _, _ ->
+            val pos = if (arguments.containsKey("pos")) arguments.getInt("pos") else -1
+            callback!!.onPositiveButtonClicked(arguments.getInt("id"), pos)
             dismiss()
         }
         return builder.create()
@@ -28,6 +29,6 @@ class ChooseDialogFragment : DialogFragment() {
      * The interface for callback
      */
     interface onClickListener {
-        fun onPositiveButtonClicked()
+        fun onPositiveButtonClicked(id: Int, pos: Int)
     }
 }

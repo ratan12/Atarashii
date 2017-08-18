@@ -26,6 +26,11 @@ public class Query {
         return new Query();
     }
 
+    public void clear(String column1, String value, String table) {
+        queryString += "DELETE FROM " + table + " WHERE " + column1 + " = '" + value + "'";
+        run();
+    }
+
     public void clear(String table) {
         queryString += "DELETE FROM " + table;
         run();

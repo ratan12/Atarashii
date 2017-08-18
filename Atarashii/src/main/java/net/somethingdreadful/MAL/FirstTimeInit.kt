@@ -38,14 +38,13 @@ class FirstTimeInit : AppIntro(), AuthenticationCheckTask.AuthenticationCheckLis
         super.onSkipPressed(currentFragment)
     }
 
-    override fun onDonePressed(currentFragment: Fragment?) {
-        super.onDonePressed(currentFragment)
+    fun pressedDone() {
         if (APIHelper.isNetworkAvailable(this)) {
             // Get username and password from the inputviews
-            if (firstTimeInitLogin.input1 != null && firstTimeInitLogin.input2 != null) {
-                username = firstTimeInitLogin.input1.text.toString()
-                password = firstTimeInitLogin.input2.text.toString()
+            username = firstTimeInitLogin.input1.text.toString()
+            password = firstTimeInitLogin.input2.text.toString()
 
+            if (username != "" && password != "" && isMAL || username != "" && !isMAL) {
                 // Create loading dialog
                 dialog = ProgressDialog(this)
                 dialog!!.isIndeterminate = true
@@ -61,12 +60,19 @@ class FirstTimeInit : AppIntro(), AuthenticationCheckTask.AuthenticationCheckLis
                 else
                     AuthenticationCheckTask(this, this, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, username)
             } else {
-                dialog!!.dismiss()
                 Theme.Snackbar(this, R.string.toast_error_layout)
             }
         } else {
-            dialog!!.dismiss()
             Theme.Snackbar(this, R.string.toast_error_noConnectivity)
+        }
+    }
+
+    override fun onDonePressed(currentFragment: Fragment?) {
+        super.onDonePressed(currentFragment)
+        if (isMAL) {
+            pressedDone()
+        } else {
+            Theme.Snackbar(this, R.string.toast_error_login)
         }
     }
 

@@ -17,6 +17,7 @@ import net.somethingdreadful.MAL.api.BaseModels.AnimeManga.Schedule
 import net.somethingdreadful.MAL.api.BaseModels.IGFModel
 import net.somethingdreadful.MAL.api.BaseModels.Profile
 import net.somethingdreadful.MAL.database.Table.*
+import org.apache.commons.lang3.StringUtils
 import java.util.*
 
 
@@ -55,21 +56,31 @@ class DatabaseManager(context: Context) {
     fun removeAccountTable(accountId: Int) {
         val tables = ArrayList<String>()
         val cursor = Query.newQuery(db).selectFrom("*", "sqlite_master").where("type", "table").run()
-        cursor.moveToFirst()
-        while (!cursor.isAfterLast) {
-            val tableName = cursor.getString(1)
-            if (tableName.contains("_" + accountId + "_"))
-                tables.add(tableName)
-            cursor.moveToNext()
+        if (cursor.moveToFirst()) {
+            do {
+                val tableName = cursor.getString(1)
+                if (tableName.contains("_" + accountId + "_")) {
+                    AppLog.log(Log.INFO, "Atarashii", "DatabaseManager.removeAccountTable($accountId): $tableName")
+                    tables.add(tableName)
+                }
+            } while (cursor.moveToNext())
         }
         cursor.close()
 
-        for (tableName in tables) {
-            db.execSQL("DROP TABLE IF EXISTS " + tableName)
+        try {
+            db.beginTransaction()
+            db.execSQL("DROP TABLE IF EXISTS " + StringUtils.join(tables, ", "))
+            db.setTransactionSuccessful()
+        } catch (e: Exception) {
+            AppLog.log(Log.ERROR, "Atarashii", "DatabaseManager.removeAccountTable(): " + e.message)
+            AppLog.logException(e)
+        } finally {
+            db.endTransaction()
         }
     }
 
     fun addAccount(id: Int, username: String, imageUrl: String, website: Int) {
+        AppLog.log(Log.INFO, "Atarashii", "DatabaseManager.addAccount(id=$id, username=$username, website=$website)")
         val cv = ContentValues()
         cv.put(DatabaseHelper.COLUMN_ID, id)
         cv.put("username", username)
@@ -82,6 +93,20 @@ class DatabaseManager(context: Context) {
             db.setTransactionSuccessful()
         } catch (e: Exception) {
             AppLog.log(Log.ERROR, "Atarashii", "DatabaseManager.addAccount(): " + e.message)
+            AppLog.logException(e)
+        } finally {
+            db.endTransaction()
+        }
+    }
+
+    fun removeAccount(id: Int) {
+        AppLog.log(Log.INFO, "Atarashii", "DatabaseManager.removeAccount()")
+        try {
+            db.beginTransaction()
+            Query.newQuery(db).clear(id.toString(), DatabaseHelper.COLUMN_ID, Table.TABLE_ACCOUNTS)
+            db.setTransactionSuccessful()
+        } catch (e: Exception) {
+            AppLog.log(Log.ERROR, "Atarashii", "DatabaseManager.removeAccount(): " + e.message)
             AppLog.logException(e)
         } finally {
             db.endTransaction()

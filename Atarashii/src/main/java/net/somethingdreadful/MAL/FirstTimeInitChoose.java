@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
 
+import net.somethingdreadful.MAL.account.AddAccount;
+
 public class FirstTimeInitChoose extends Fragment implements RadioGroup.OnCheckedChangeListener {
     private FirstTimeInit activity1;
     private AddAccount activity2;
@@ -52,7 +54,7 @@ public class FirstTimeInitChoose extends Fragment implements RadioGroup.OnChecke
         }
     }
 
-    public static FirstTimeInitChoose newInstance(AddAccount addAccount) {
+    public static Fragment newInstance(AddAccount addAccount) {
         FirstTimeInitChoose fragment = new FirstTimeInitChoose();
         fragment.activity2 = addAccount;
         return fragment;

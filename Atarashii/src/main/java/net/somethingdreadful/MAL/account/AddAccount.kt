@@ -1,10 +1,12 @@
-package net.somethingdreadful.MAL
+package net.somethingdreadful.MAL.account
 
 import android.app.ProgressDialog
+import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import com.github.paolorotolo.appintro.AppIntro
+import net.somethingdreadful.MAL.*
 import net.somethingdreadful.MAL.api.APIHelper
 import net.somethingdreadful.MAL.api.BaseModels.IGFModel
 import net.somethingdreadful.MAL.tasks.AuthenticationCheckTask
@@ -35,14 +37,13 @@ class AddAccount : AppIntro(), AuthenticationCheckTask.AuthenticationCheckListen
         super.onSkipPressed(currentFragment)
     }
 
-    override fun onDonePressed(currentFragment: Fragment?) {
-        super.onDonePressed(currentFragment)
+    fun pressedDone() {
         if (APIHelper.isNetworkAvailable(this)) {
             // Get username and password from the inputviews
-            if (AddAccountLogin.input1 != null && AddAccountLogin.input2 != null) {
-                username = AddAccountLogin.input1.text.toString()
-                password = AddAccountLogin.input2.text.toString()
+            username = AddAccountLogin.input1.text.toString()
+            password = AddAccountLogin.input2.text.toString()
 
+            if (username != "" && password != "" && isMAL || username != "" && !isMAL) {
                 // Create loading dialog
                 dialog = ProgressDialog(this)
                 dialog!!.isIndeterminate = true
@@ -58,12 +59,19 @@ class AddAccount : AppIntro(), AuthenticationCheckTask.AuthenticationCheckListen
                 else
                     AuthenticationCheckTask(this, this, false).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, username)
             } else {
-                dialog!!.dismiss()
                 Theme.Snackbar(this, R.string.toast_error_layout)
             }
         } else {
-            dialog!!.dismiss()
             Theme.Snackbar(this, R.string.toast_error_noConnectivity)
+        }
+    }
+
+    override fun onDonePressed(currentFragment: Fragment?) {
+        super.onDonePressed(currentFragment)
+        if (isMAL) {
+            pressedDone()
+        } else {
+            Theme.Snackbar(this, R.string.toast_error_login)
         }
     }
 
@@ -104,8 +112,13 @@ class AddAccount : AppIntro(), AuthenticationCheckTask.AuthenticationCheckListen
         dialog!!.setTitle(getString(R.string.dialog_title_records) + " (" + loadedRecords + "/2)")
         if (loadedRecords == 2) {
             dialog!!.dismiss()
-            finish()
+            onBackPressed()
         }
+    }
+
+    override fun onBackPressed() {
+        startActivity(Intent(this, Home::class.java))
+        finish()
     }
 
     /**

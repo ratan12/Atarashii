@@ -602,7 +602,7 @@ public class DetailView extends AppCompatActivity implements Serializable, Netwo
      * Used for the Remove dialog
      */
     @Override
-    public void onPositiveButtonClicked() {
+    public void onPositiveButtonClicked(int id, int pos) {
         if (isAnime)
             animeRecord.setDeleteFlag();
         else

@@ -48,7 +48,7 @@
             android:name=".Settings"
             android:label="@string/title_activity_settings"/>
         <activity
-            android:name=".AddAccount"
+            android:name=".account.AddAccount"
             android:label="@string/account_add"/>
         <activity
             android:name=".DetailView"

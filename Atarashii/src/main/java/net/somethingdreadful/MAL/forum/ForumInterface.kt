@@ -243,7 +243,7 @@ class ForumInterface(private val forum: ForumActivity) {
                 bundle.putString("positive", forum.getString(android.R.string.yes))
                 lcdf.arguments = bundle
                 lcdf.setCallback(object : ChooseDialogFragment.onClickListener {
-                    override fun onPositiveButtonClicked() {
+                    override fun onPositiveButtonClicked(id : Int, pos:Int) {
                         if (messageID == "0")
                             ForumNetworkTask(forum, forum, ForumJob.ADDCOMMENT, Integer.parseInt(details[1])).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, comment, details[3])
                         else

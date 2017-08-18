@@ -97,8 +97,12 @@ public class ContentManager {
     }
 
     public void removeAccountTable(int id) {
-        AppLog.log(Log.INFO, "Atarashii", "ContentManager.getAnime(): id=" + id);
+        AppLog.log(Log.INFO, "Atarashii", "ContentManager.removeAccountTable(): id=" + id);
         dbMan.removeAccountTable(id);
+    }
+    public void removeAccount(int id) {
+        AppLog.log(Log.INFO, "Atarashii", "ContentManager.removeAccount(): id=" + id);
+        dbMan.removeAccount(id);
     }
 
     public ArrayList<AccountService.userAccount> getAccounts() {
